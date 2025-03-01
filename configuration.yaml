@@ -1,0 +1,106 @@
+general:
+#  driver_path: edge-driver/msedgedriver.exe
+  driver_path: edge-driver/msedgedriver
+  page_loading_time: 3
+  action_wait_time: 1
+  headless: yes  # yes or no - if yes, the browser will not be displayed
+  mode: roundtrip  # oneway or roundtrip
+
+account:
+  username: ""
+  password: ""
+  wizzair_url: "https://multipass.wizzair.com/de/w6/subscriptions"
+
+
+flight_data:
+  max_stops: 0  # 0 or 1
+  departure_date:
+  return_date:
+  destination_airports:   # If not specified, all possible destination airports will be checked
+#    - London Luton
+#    - Memmingen/München-West
+#    - Paris Beauvais
+#    - Paris-Orly
+#    - Malé (Malediven)
+#    - Riad
+#    - Medina
+#    - Dschidda
+#    - Abu Dhabi
+#    - Amman
+#    - Aqaba
+#    - Baku
+#    - Bologna
+#    - Rom Ciampino
+#    - Rom Fiumicino
+#     - Budapest
+#    - Gran Canaria (Kanarische Inseln)
+#    - Kopenhagen
+#    - Samarkand
+#    - Teneriffa (Kanarische Inseln)
+#    - Madeira
+#    - Alicante
+#    - Bilbao
+#    - Castellón (Valencia)
+#    - Girona
+#    - Madrid
+#    - Ibiza
+#    - Palma de Mallorca
+#    - Santander
+#    - Saragossa
+#    - Sevilla
+#    - Valencia
+#    - Lissabon
+#    - Faro
+#    - Porto
+#    - Jerewan
+
+  departure_airports:
+#    - Riad
+#    - Barcelona El Prat
+#    - Amman
+    - Abu Dhabi
+#    - Dubai
+#    - Aqaba
+#    - Dortmund
+#    - Memmingen/München-West
+#    - Nürnberg
+#    - Stuttgart
+#    - Wien
+#    - Leipzig
+#    - Karlsruhe/Baden-Baden
+#    - Friedrichshafen
+#    - Frankfurt-Hahn
+#    - Salzburg
+#    - Bremen
+#    - Berlin Brandenburg
+#    - Tel Aviv
+#    - Breslau
+#    - Budapest
+#    - Prag
+
+
+logging:
+  log_level_file: "DEBUG"
+  log_level_console: "INFO"
+  log_file: "wizzair-scraper.log"
+  date_format: "%Y-%m-%d %H:%M:%S"
+  log_format: "%(asctime)s - %(levelname)s - [%(module_path)s:%(lineno)d in %(funcName)s()] %(message)s"
+
+
+data_manager:
+  airport_database_path: data/airport_database.yaml
+  possible_flights_path: data/possible_flights.yaml
+  checked_flights_path: data/checked_flights.yaml
+  available_flights_path: data/available_flights.yaml
+  use_cache: yes  # yes or no - if yes data in the database will not be scraped again
+
+reporter:
+  report_path: data/report.pdf
+  logo_path: data/logo.png
+
+scraper:
+  initialize_driver: yes  # yes or no - if no, the driver will not be initialized
+
+
+emailer:
+  recipient: test
