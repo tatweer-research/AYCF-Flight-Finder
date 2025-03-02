@@ -1,7 +1,7 @@
 [project]
-name = "aycf-flight-finder"
+name = "AYCF-Flight-Finder"
 version = "0.1.0"
-description = "All you can fly - Flight finder"
+description = "A web app that helps WizzAir All You Can Fly (AYCF) pass holders quickly find available flights."
 requires-python = ">=3.11"
 dependencies = [
     "email-validator>=2.2.0",

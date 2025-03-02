@@ -1,7 +1,0 @@
-PyYAML
-selenium
-reportlab
-schedule
-pathlib
-streamlit
-email-validator
