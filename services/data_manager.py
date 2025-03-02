@@ -35,16 +35,9 @@ class DataManager:
         with open('configuration.yaml', 'r', encoding='utf-8') as file:
             config = yaml.safe_load(file)
         self.config = config
-        # Log initialization message
         logger.info('Configuration file loaded successfully')
 
-        self.__airports_destinations = {}
-        # TODO: Write a dedicated class for flights
-        self.__possible_flights = {'possible_flights': []}
-        self.__checked_flights = {'checked_flights': {}}
-        self.__available_flights = {'available_flights': []}
         self.driver = None
-
         self._setup_logging()
         self._reset_databases()
         if self.config['scraper']['initialize_driver']:
@@ -101,6 +94,7 @@ class DataManager:
         Path('jobs').mkdir(exist_ok=True)
         Path('cache').mkdir(exist_ok=True)
 
+        # TODO: Write a dedicated class for flights
         self.__possible_flights = {'possible_flights': []}
         self.__checked_flights = {'checked_flights': {}}
         self.__available_flights = {'available_flights': []}
