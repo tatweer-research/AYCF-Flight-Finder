@@ -1,0 +1,14 @@
+[project]
+name = "aycf-flight-finder"
+version = "0.1.0"
+description = "All you can fly - Flight finder"
+requires-python = ">=3.11"
+dependencies = [
+    "email-validator>=2.2.0",
+    "pathlib>=1.0.1",
+    "pyyaml>=6.0.2",
+    "reportlab>=4.3.1",
+    "schedule>=1.2.2",
+    "selenium>=4.29.0",
+    "streamlit>=1.42.2",
+]
