@@ -182,7 +182,7 @@ def do_pending_jobs():
             try:
                 shutil.copy(file, 'cache')
                 # Do not change the order of the following lines
-                data_manager._setup_databases()
+                data_manager._reset_databases()
                 data_manager.config = data_manager.load_data(str(file))
                 data_manager._setup_edge_driver()
 

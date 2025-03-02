@@ -46,7 +46,7 @@ class DataManager:
         self.driver = None
 
         self._setup_logging()
-        self._setup_databases()
+        self._reset_databases()
         if self.config['scraper']['initialize_driver']:
             self._setup_edge_driver()
 
@@ -90,7 +90,7 @@ class DataManager:
 
         logger.debug('Logging has been configured with both console and file handlers.')
 
-    def _setup_databases(self):
+    def _reset_databases(self):
         self.__airports_destinations = self.load_data(self.config['data_manager']['airport_database_path'])
 
         # Remove available flights, checked and possible flights databases

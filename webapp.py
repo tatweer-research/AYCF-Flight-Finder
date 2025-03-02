@@ -95,7 +95,7 @@ def get_new_config():
 def get_scraping_time():
     config = get_new_config()
     flight_finder = FlightFinderService(config)
-    data_manager._setup_databases()
+    data_manager._reset_databases()
     if trip_type == 'Round Trip':
         flight_finder.find_possible_roundtrip_flights_from_departure_airports()
     else:
