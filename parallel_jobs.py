@@ -51,7 +51,7 @@ def round_trip_workflow():
         reporter = ReportService()
         reporter.generate_roundtrip_flight_report()
         email_service.send_email(**roundtrip_kwargs,
-                                 recipient_emails=[data_manager.config['emailer']['recipient']])
+                                 recipient_emails=[data_manager.config.emailer.recipient])
 
     except Exception as e:
         logger.error(f"Failed to complete round-trip workflow: {e}")
@@ -73,7 +73,7 @@ def one_way_workflow():
         # 1. Use the FlightFinderService to discover possible flights.
         #    For example, direct flights (max_stops=0) or one-stop (max_stops=1).
         flight_finder = FlightFinderService()
-        flight_finder.find_possible_one_stop_flights(max_stops=data_manager.config['flight_data']['max_stops'])
+        flight_finder.find_possible_one_stop_flights(max_stops=data_manager.config.flight_data.max_stops)
 
         # 2. Retrieve the flights that were discovered.
         possible_flights = data_manager.get_possible_flights()['possible_flights']
@@ -114,7 +114,7 @@ def one_way_workflow():
         # 8. Send the report via email (PDF attachment).
         email_service.send_email(
             **oneway_kwargs,
-            recipient_emails=[data_manager.config['emailer']['recipient']]
+            recipient_emails=[data_manager.config.emailer.recipient]
         )
 
     except Exception as e:

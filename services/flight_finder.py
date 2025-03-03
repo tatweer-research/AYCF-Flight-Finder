@@ -12,9 +12,9 @@ class FlightFinderService:
         self.config = data_manager.config if not config else config
         logger.debug('FlightFinderService initialized')
         self.database_airports = data_manager.get_all_airports()
-        self.departure_airports = self.config['flight_data']['departure_airports']
+        self.departure_airports = self.config.flight_data.departure_airports
         self.departure_airports = self.departure_airports if self.departure_airports else self.database_airports
-        self.destination_airports = self.config['flight_data']['destination_airports']
+        self.destination_airports = self.config.flight_data.destination_airports
         self.destination_airports = self.destination_airports if self.destination_airports else self.database_airports
 
     def find_possible_roundtrip_flights_from_airport(self, airport):

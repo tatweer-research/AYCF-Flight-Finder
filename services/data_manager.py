@@ -9,6 +9,8 @@ from selenium import webdriver
 from selenium.webdriver.edge.options import Options
 from selenium.webdriver.chrome.service import Service
 
+from settings import ConfigSchema
+
 logger = logging.getLogger(__name__)
 
 
@@ -34,13 +36,13 @@ class DataManager:
         # Load the YAML file
         with open('configuration.yaml', 'r', encoding='utf-8') as file:
             config = yaml.safe_load(file)
-        self.config = config
+        self.config = ConfigSchema(**config)
         logger.info('Configuration file loaded successfully')
 
         self.driver = None
         self._setup_logging()
         self._reset_databases()
-        if self.config['scraper']['initialize_driver']:
+        if self.config.scraper.initialize_driver:
             self._setup_edge_driver()
 
     def _setup_logging(self):
@@ -49,32 +51,32 @@ class DataManager:
         logger.setLevel(logging.DEBUG)
 
         # Create file handler
-        file_handler = logging.FileHandler(self.config['logging']['log_file'], mode='w', encoding='utf-8')
+        file_handler = logging.FileHandler(self.config.logging.log_file, mode='w', encoding='utf-8')
         file_handler.setFormatter(ModulePathFormatter(
-            self.config['logging']['log_format'],
-            self.config['logging']['date_format']
+            self.config.logging.log_format,
+            self.config.logging.date_format
         ))
-        file_handler.setLevel(self.config['logging']['log_level_console'])
+        file_handler.setLevel(self.config.logging.log_level_console)
 
         # File handler for DEBUG logs (DEBUG only)
         file_handler_debug = logging.FileHandler(
-            self.config['logging']['log_file'].split('.')[0] + '-debug.log',
+            self.config.logging.log_file.stem + '-debug.log',
             mode='w',
             encoding='utf-8'
         )
-        file_handler_debug.setLevel(self.config['logging']['log_level_file'])
+        file_handler_debug.setLevel(self.config.logging.log_level_file)
         file_handler_debug.setFormatter(ModulePathFormatter(
-            self.config['logging']['log_format'],
-            self.config['logging']['date_format']
+            self.config.logging.log_format,
+            self.config.logging.date_format
         ))
 
         # Create console handler
         console_handler = logging.StreamHandler()
         console_handler.setFormatter(ModulePathFormatter(
-            self.config['logging']['log_format'],
-            self.config['logging']['date_format']
+            self.config.logging.log_format,
+            self.config.logging.date_format
         ))
-        console_handler.setLevel(self.config['logging']['log_level_console'])
+        console_handler.setLevel(self.config.logging.log_level_console)
 
         # Add handlers to logger
         logger.addHandler(file_handler)
@@ -84,13 +86,13 @@ class DataManager:
         logger.debug('Logging has been configured with both console and file handlers.')
 
     def _reset_databases(self):
-        self.__airports_destinations = self.load_data(self.config['data_manager']['airport_database_path'])
+        self.__airports_destinations = self.load_data(self.config.data_manager.airport_database_path)
 
         # Remove available flights, checked and possible flights databases
-        self.remove_file(self.config['data_manager']['available_flights_path'])
-        self.remove_file(self.config['data_manager']['checked_flights_path'])
-        self.remove_file(self.config['data_manager']['possible_flights_path'])
-        self.remove_file(self.config['reporter']['report_path'])
+        self.remove_file(self.config.data_manager.available_flights_path)
+        self.remove_file(self.config.data_manager.checked_flights_path)
+        self.remove_file(self.config.data_manager.possible_flights_path)
+        self.remove_file(self.config.reporter.report_path)
         Path('jobs').mkdir(exist_ok=True)
         Path('cache').mkdir(exist_ok=True)
 
@@ -100,8 +102,8 @@ class DataManager:
         self.__available_flights = {'available_flights': []}
 
     def _setup_edge_driver(self):
-        driver_path = self.config['general']['driver_path']
-        headless = self.config['general'].get('headless', False)  # Default to False if not specified
+        driver_path = self.config.general.driver_path
+        headless = self.config.general.headless
 
         # Set up EdgeOptions for headless mode
         options = Options()
@@ -173,7 +175,7 @@ class DataManager:
                            f"Use the 'use_cache' parameter to overwrite the data.")
             return
         self.__airports_destinations[airport_name] = destinations
-        self.save_data(self.__airports_destinations, self.config['data_manager']['airport_database_path'])
+        self.save_data(self.__airports_destinations, self.config.data_manager.airport_database_path)
         logger.info(f"Airport {airport_name} has been added to the database.")
 
     def get_possible_flights(self):
@@ -181,7 +183,7 @@ class DataManager:
 
     def add_possible_flights(self, flights: List[List]):
         self.__possible_flights['possible_flights'] += flights
-        self.save_data(self.__possible_flights, self.config['data_manager']['possible_flights_path'])
+        self.save_data(self.__possible_flights, self.config.data_manager.possible_flights_path)
 
     def add_checked_flight(self, flight: Dict, result: Dict, date: str):
         """Thread-safe addition of a single flight check result."""
@@ -189,11 +191,11 @@ class DataManager:
             key = f"{flight['hash']}-{date}"
             self.__checked_flights['checked_flights'][key] = result
             self.save_data(self.__checked_flights,
-                           self.config['data_manager']['checked_flights_path'])
+                           self.config.data_manager.checked_flights_path)
 
     def add_checked_flights(self, flights: Dict):
         self.__checked_flights = flights
-        self.save_data(self.__checked_flights, self.config['data_manager']['checked_flights_path'])
+        self.save_data(self.__checked_flights, self.config.data_manager.checked_flights_path)
 
     def get_checked_flight(self, flight: Dict, date: str):
         return self.__checked_flights['checked_flights'][f"{flight['hash']}-{date}"]
@@ -206,11 +208,11 @@ class DataManager:
 
     def add_available_flight(self, flight: Dict):
         self.__available_flights['available_flights'].append(flight)
-        self.save_data(self.__available_flights, self.config['data_manager']['available_flights_path'])
+        self.save_data(self.__available_flights, self.config.data_manager.available_flights_path)
 
     def add_available_flights(self, flights: Dict):
         self.__available_flights = flights
-        self.save_data(self.__available_flights, self.config['data_manager']['available_flights_path'])
+        self.save_data(self.__available_flights, self.config.data_manager.available_flights_path)
 
 
 # A singleton used to manage data across all services

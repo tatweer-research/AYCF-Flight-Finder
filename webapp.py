@@ -82,13 +82,13 @@ email = st.text_input('Enter your email address (it is needed to send you the pd
 
 def get_new_config():
     config = copy.deepcopy(data_manager.config)
-    config['flight_data']['departure_airports'] = departure_airports
-    config['flight_data']['destination_airports'] = arrival_airports
-    config['emailer']['recipient'] = email
-    config['general']['mode'] = trip_type.lower().replace(' ', '')
-    config['general']['time_stamp'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    config['flight_data']['max_stops'] = 1 if stops == 'One-Stop' else 0
-    config['flight_data']['departure_date'] = selected_date.strftime("%d-%m-%Y") if selected_date else None
+    config.flight_data.departure_airports = departure_airports
+    config.flight_data.destination_airports = arrival_airports
+    config.emailer.recipient = email
+    config.general.mode = trip_type.lower().replace(' ', '')
+    config.general.time_stamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    config.flight_data.max_stops = 1 if stops == 'One-Stop' else 0
+    config.flight_data.departure_date = selected_date.strftime("%d-%m-%Y") if selected_date else None
     return config
 
 
@@ -99,7 +99,7 @@ def get_scraping_time():
     if trip_type == 'Round Trip':
         flight_finder.find_possible_roundtrip_flights_from_departure_airports()
     else:
-        flight_finder.find_possible_one_stop_flights(max_stops=config['flight_data']['max_stops'])
+        flight_finder.find_possible_one_stop_flights(max_stops=config.flight_data.max_stops)
     estimated_time = flight_finder.get_estimated_checking_time(data_manager.get_possible_flights()['possible_flights'])
     return estimated_time
 

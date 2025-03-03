@@ -69,7 +69,7 @@ class EmailService:
 # Initialize the EmailService
 email_service = EmailService(sender_email='mohundkmar@gmail.com', sender_password='')
 
-departure_airports = '\n- ' + '\n- '.join(data_manager.config['flight_data']['departure_airports'])
+departure_airports = '\n- ' + '\n- '.join(data_manager.config.flight_data.departure_airports)
 
 ROUNDTRIP_SUBJECT = "Round Trip: Wizz Air Flights Report!"
 ROUNDTRIP_MESSAGE_BODY = f"""
@@ -101,7 +101,7 @@ https://chat.whatsapp.com/CHvgbPvqRcbJS0E6D4O8ka
 Catch you in the skies (or WhatsApp)!
 Moh & Kmar 🕵️‍♂️✨
 """
-ATTACHMENT_PATHS = [data_manager.config['reporter']['report_path']]
+ATTACHMENT_PATHS = [data_manager.config.reporter.report_path]
                     # data_manager.config['logging']['log_file']]
 
 oneway_kwargs = {
