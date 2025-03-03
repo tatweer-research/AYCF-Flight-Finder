@@ -1,15 +1,14 @@
 import shutil
 import time
 from copy import deepcopy
+from pathlib import Path
 
 import schedule
-from pathlib import Path
 
 from services import ScraperService, data_manager, FlightFinderService, ReportService
 from services.data_manager import logger
 from services.emailer import email_service, roundtrip_kwargs, oneway_kwargs
 from utils import increment_date, get_current_date, is_date_in_range
-from services.parallel_scraper import manage_parallel_scraping
 
 
 def round_trip_workflow():

@@ -1,11 +1,10 @@
 import json
 import time
 
-import yaml
 from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 from services.data_manager import data_manager, logger
 
@@ -354,7 +353,7 @@ class ScraperService:
         from selenium import webdriver
         from selenium.webdriver.edge.service import Service
         from selenium.webdriver.edge.options import Options
-        from services.data_manager import data_manager, logger
+        from services.data_manager import logger
 
         try:
             driver_path = self.config.general.driver_path

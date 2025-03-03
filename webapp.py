@@ -1,13 +1,14 @@
 import copy
+import datetime as dt
 import uuid
 from datetime import datetime
 from pathlib import Path
-import datetime as dt
+
 import streamlit as st
+from email_validator import validate_email, EmailNotValidError
 
 from services import FlightFinderService
 from services.data_manager import data_manager, logger
-from email_validator import validate_email, EmailNotValidError
 
 
 class NoDepartureAirportsSelected(Exception):

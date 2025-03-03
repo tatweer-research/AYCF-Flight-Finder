@@ -5,10 +5,13 @@ description = "A web app that helps WizzAir All You Can Fly (AYCF) pass holders 
 requires-python = ">=3.11"
 dependencies = [
     "email-validator>=2.2.0",
+    "folium",
     "pathlib>=1.0.1",
+    "pydantic>=2.10.6",
     "pyyaml>=6.0.2",
     "reportlab>=4.3.1",
     "schedule>=1.2.2",
     "selenium>=4.29.0",
     "streamlit>=1.42.2",
+    "streamlit-folium",
 ]

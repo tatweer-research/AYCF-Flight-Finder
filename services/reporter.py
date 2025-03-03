@@ -1,11 +1,12 @@
 import copy
 
+import yaml
 from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer
 from reportlab.platypus.flowables import HRFlowable
-from reportlab.lib.styles import getSampleStyleSheet
-import yaml
+
 from services.data_manager import data_manager, logger
 from utils import compare_times, calculate_waiting_time, sum_flight_durations
 

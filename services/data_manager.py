@@ -1,13 +1,13 @@
-import os
 import logging
+import os
 import threading
-from typing import Dict, List
 from pathlib import Path
+from typing import Dict, List
 
 import yaml
 from selenium import webdriver
-from selenium.webdriver.edge.options import Options
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.edge.options import Options
 
 from settings import ConfigSchema
 

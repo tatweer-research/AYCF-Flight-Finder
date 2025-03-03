@@ -1,12 +1,12 @@
 # services/parallel_scraper.py
 
-import traceback
 import multiprocessing
-from concurrent.futures import ProcessPoolExecutor
-from services.scraper import ScraperService
-from services.data_manager import logger
 import random
 import time
+import traceback
+
+from services.data_manager import logger
+from services.scraper import ScraperService
 
 
 def _init_browser(config_dict):
