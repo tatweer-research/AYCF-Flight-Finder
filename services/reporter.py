@@ -51,10 +51,12 @@ class ReportService:
 
     def add_waiting_time(self, elements, outward, return_flight, styles, text="Waiting Time:"):
         arrival_date = calculate_arrival_date(outward)
-        waiting_time = calculate_waiting_time(outward['arrival']['time'],
-                                              return_flight['departure']['time'],
-                                              arrival_date,
-                                              return_flight['date'])
+        waiting_time = calculate_waiting_time(start_time=outward['arrival']['time'],
+                                              end_time=return_flight['departure']['time'],
+                                              start_timezone=outward['arrival']['timezone'],
+                                              end_timezone=return_flight['departure']['timezone'],
+                                              start_date=arrival_date,
+                                              end_date=return_flight['date'])
         # Make the waiting time bold and centered
         centered_style = copy.deepcopy(styles['Normal'])
         centered_style.alignment = 1  # Center alignment
