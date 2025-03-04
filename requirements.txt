@@ -1,7 +1,7 @@
-PyYAML
-selenium
-reportlab
-schedule
-pathlib
-streamlit
+PyYAML==6.0.2
+selenium==4.10.0
+reportlab==3.6.12
+schedule==1.2.0
+pathlib==1.0.1
+streamlit==1.33.0
 email-validator
