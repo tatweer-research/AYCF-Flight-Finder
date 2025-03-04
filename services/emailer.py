@@ -63,7 +63,7 @@ class EmailService:
                 server.send_message(message)
                 logger.info(f"Email sent to {', '.join(recipient_emails)} successfully.")
         except Exception as e:
-            logger.error(f"Failed to send email: {e}")
+            logger.exception(f"Failed to send email: {e}")
 
 
 # Initialize the EmailService
