@@ -43,7 +43,7 @@ class FlightFinderService:
                     flight = {
                         'outward_flight': {
                             'hash': outward_hash,  # Unique hash for the outward flight
-                            'type': 'direct',
+                            'type': 'direct',  # TODO: could it be, that you forgot to use this metadata for something? Remove it if unnecessary
                             'airport': airport,
                             'destination': destination
                         },
@@ -195,6 +195,7 @@ class FlightFinderService:
                             matching_first_flights.append(flight)
 
             # Check if it's a direct flight (second_flight is None)
+            # TODO: we could append the matched_first into available_flights directly in line 195!
             if second_flight is None:
                 if matching_first_flights:
                     for matched_first in matching_first_flights:
