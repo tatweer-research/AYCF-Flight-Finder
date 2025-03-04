@@ -108,7 +108,7 @@ class ReportService:
         # Extract available flights
         available_flights = data.get('available_flights', [])
         # Create the PDF document
-        pdf = SimpleDocTemplate(self.report_path, pagesize=letter)
+        pdf = SimpleDocTemplate(str(self.report_path), pagesize=letter)
         elements = []
         # Add logo
         try:
@@ -216,7 +216,7 @@ class ReportService:
             pdf.build(elements)
             logger.info(f"Report generated: {self.report_path}")
         except Exception as e:
-            logger.error(f"Error generating report: {e}")
+            logger.exception(f"Error generating report: {e}")
 
     def generate_oneway_flight_report(self):
         """
