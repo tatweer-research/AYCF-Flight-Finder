@@ -8,7 +8,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer
 from reportlab.platypus.flowables import HRFlowable
 
 from services.data_manager import data_manager, logger
-from utils import compare_times, calculate_waiting_time, sum_flight_durations
+from utils import compare_times, calculate_waiting_time, sum_flight_durations, calculate_arrival_date
 
 
 class ReportService:
@@ -50,9 +50,10 @@ class ReportService:
             logger.warning(f"Error adding second flight details: {e}")
 
     def add_waiting_time(self, elements, outward, return_flight, styles, text="Waiting Time:"):
+        arrival_date = calculate_arrival_date(outward)
         waiting_time = calculate_waiting_time(outward['arrival']['time'],
                                               return_flight['departure']['time'],
-                                              outward['date'],
+                                              arrival_date,
                                               return_flight['date'])
         # Make the waiting time bold and centered
         centered_style = copy.deepcopy(styles['Normal'])

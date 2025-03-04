@@ -1,5 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
+import pytz
 import streamlit as st
 
 
@@ -11,8 +12,6 @@ def increment_date(date_str, days=1):
     :param days: int, number of days to increment (default is 1)
     :return: str, incremented date in DD-MM-YYYY format
     """
-    from datetime import datetime, timedelta
-
     # Parse the input date string into a datetime object
     date_format = "%d-%m-%Y"
     date_obj = datetime.strptime(date_str, date_format)
@@ -33,8 +32,6 @@ def is_date_in_range(date_str, start_date_str, end_date_str):
     :param end_date_str: str, end of the range in DD-MM-YYYY format
     :return: bool, True if the date is within the range, False otherwise
     """
-    from datetime import datetime
-
     # Define the date format
     date_format = "%d-%m-%Y"
 
@@ -75,6 +72,71 @@ def compare_times(time1, time2, date1=None, date2=None):
         return True
     else:
         return False
+
+
+def get_timezone_name(tz_str):
+    """
+    Convert UTC+X format to timezone name.
+
+    Args:
+        tz_str (str): Timezone string in UTC+X format
+
+    Returns:
+        str: Standard timezone name
+    """
+    if tz_str == "UTC":
+        return "UTC"
+
+    # Extract offset from UTC+X or UTC-X format
+    offset = int(tz_str.replace("UTC", "").replace("+", ""))
+
+    # Create timezone string
+    if offset >= 0:
+        return f"Etc/GMT-{offset}"  # Note: Etc/GMT uses opposite sign
+    else:
+        return f"Etc/GMT+{abs(offset)}"
+
+
+def calculate_arrival_date(flight_data: dict) -> str:
+    """
+    Calculate the arrival date and time given flight departure and duration information.
+
+    Args:
+        flight_data (dict): Dictionary containing flight information
+
+    Returns:
+        str: Arrival date in the format 'Day DD, Month YYYY'
+    """
+    # Parse departure date and time
+    dep_date_str = flight_data['date']
+    dep_time_str = flight_data['departure']['time']
+
+    # Combine date and time strings
+    dep_datetime_str = f"{dep_date_str} {dep_time_str}"
+
+    # Parse departure datetime
+    departure_datetime = datetime.strptime(dep_datetime_str, "Wed %d, %B %Y %H:%M")
+
+    # Get timezone objects
+    dep_tz = pytz.timezone(get_timezone_name(flight_data['departure']['timezone']))
+    arr_tz = pytz.timezone(get_timezone_name(flight_data['arrival']['timezone']))
+
+    # Localize departure datetime
+    departure_datetime = dep_tz.localize(departure_datetime)
+
+    # Parse duration
+    duration_str = flight_data['duration']
+    hours, minutes = map(int, duration_str.replace('h ', ':').replace('m', '').split(':'))
+    duration = timedelta(hours=hours, minutes=minutes)
+
+    # Calculate arrival datetime in departure timezone
+    arrival_datetime = departure_datetime + duration
+
+    # Convert to arrival timezone
+    arrival_datetime = arrival_datetime.astimezone(arr_tz)
+
+    # Format arrival date
+    return arrival_datetime.strftime("%a %d, %B %Y")
 
 
 def calculate_waiting_time(start_time, end_time, start_date=None, end_date=None):
