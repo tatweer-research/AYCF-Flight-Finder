@@ -359,10 +359,13 @@ class ScraperService:
         try:
             driver_path = self.config['general']['driver_path']
             options = Options()
-            options.add_argument("--headless")  # Ensure headless mode
-            options.add_argument("--disable-gpu")
-            options.add_argument("--no-sandbox")
-            options.add_argument("--disable-dev-shm-usage")
+            headless = data_manager.config['general'].get('headless', False)  # Default to False if not specified
+
+            if headless:
+                options.add_argument("--headless")  # Ensure headless mode
+                options.add_argument("--disable-gpu")
+                options.add_argument("--no-sandbox")
+                options.add_argument("--disable-dev-shm-usage")
 
             service = Service(driver_path)
             self.driver = webdriver.Edge(service=service, options=options)
