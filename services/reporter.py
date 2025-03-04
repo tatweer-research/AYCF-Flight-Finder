@@ -175,7 +175,7 @@ class ReportService:
         elements.append(HRFlowable(width="30%", thickness=1, color="black"))
         elements.append(Spacer(1, 10))  # Add some space after the line
 
-        self.add_waiting_time(elements, outward, return_flight, styles, text="Vacation Time 🏖️ ")
+        self.add_waiting_time(elements, outward, return_flight, styles, text="Vacation Time 🏖️")
 
         # Return flight
         elements.append(Paragraph("<b>Return Flight:</b>", styles['Normal']))
