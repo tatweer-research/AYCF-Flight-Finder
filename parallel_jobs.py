@@ -104,7 +104,9 @@ def one_way_workflow():
             data_manager.add_checked_flight(mock_flight, flight_result, date)
 
         # 6. Filter the available flights now that we've added the checks.
-        available_flights = flight_finder.find_available_oneway_flights()
+        possible_flights = data_manager.get_possible_flights()
+        checked_flights = data_manager.get_checked_flights()
+        available_flights = flight_finder.find_available_oneway_flights(possible_flights, checked_flights)
         data_manager.add_available_flights(available_flights)
 
         # 7. Generate the one-way flight report.

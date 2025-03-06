@@ -105,7 +105,9 @@ def one_way_workflow():
                             break
                         second_result = scraper.check_direct_flight_availability(flight['second_flight'],
                                                                                  date)
-        available_flights = flight_finder.find_available_oneway_flights()
+        possible_flights = data_manager.get_possible_flights()
+        checked_flights = data_manager.get_checked_flights()
+        available_flights = flight_finder.find_available_oneway_flights(possible_flights, checked_flights)
         data_manager.add_available_flights(available_flights)
         reporter = ReportService()
         reporter.generate_oneway_flight_report()
@@ -140,7 +142,9 @@ def send_email():
 
 def check_available_flights():
     flight_finder = FlightFinderService()
-    available_flights = flight_finder.find_available_oneway_flights()
+    possible_flights = data_manager.get_possible_flights()
+    checked_flights = data_manager.get_checked_flights()
+    available_flights = flight_finder.find_available_oneway_flights(possible_flights, checked_flights)
     # flight_finder.find_possible_flights_from_departure_airports()
     # available_flights = flight_finder.find_available_roundtrip_flights()
     data_manager.add_available_flights(available_flights)
