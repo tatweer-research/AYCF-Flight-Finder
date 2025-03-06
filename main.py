@@ -49,7 +49,10 @@ def round_trip_workflow():
                     for outward_flight in outward_result:
                         return_result = scraper.check_direct_flight_availability(flight['return_flight'],
                                                                                  date)
-        available_flights = flight_finder.find_available_roundtrip_flights()
+
+        possible_flights = data_manager.get_possible_flights()
+        checked_flights = data_manager.get_checked_flights()
+        available_flights = flight_finder.find_available_roundtrip_flights(possible_flights, checked_flights)
         data_manager.add_available_flights(available_flights)
         reporter = ReportService()
         reporter.generate_roundtrip_flight_report()

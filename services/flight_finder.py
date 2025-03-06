@@ -232,14 +232,12 @@ class FlightFinderService:
         logger.info(f'Found {len(available_flights["available_flights"])} available flights')
         return available_flights
 
-    def find_available_roundtrip_flights(self):
+    @staticmethod
+    def find_available_roundtrip_flights(possible_flights, checked_flights):
         """
         Finds available roundtrip flights from possible_flights if they exist in checked_flights.
         Ensures valid sequencing and flight conditions.
         """
-        possible_flights = data_manager.get_possible_flights()
-        checked_flights = data_manager.get_checked_flights()
-
         available_flights = {"available_flights": []}
 
         for flight_set in possible_flights["possible_flights"]:

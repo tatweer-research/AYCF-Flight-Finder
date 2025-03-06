@@ -44,7 +44,9 @@ def round_trip_workflow():
             data_manager.add_checked_flight(mock_flight, flight_result, date)
 
         # 5. Now use the flight finder to see what's available
-        available_flights = flight_finder.find_available_roundtrip_flights()
+        possible_flights = data_manager.get_possible_flights()
+        checked_flights = data_manager.get_checked_flights()
+        available_flights = flight_finder.find_available_roundtrip_flights(possible_flights, checked_flights)
         data_manager.add_available_flights(available_flights)
 
         # 6. Generate and send the report
