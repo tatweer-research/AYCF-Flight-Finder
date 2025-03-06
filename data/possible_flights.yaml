@@ -1,0 +1,21 @@
+possible_flights:
+    -   outward_flight:
+            airport: Amman
+            destination: London Luton
+            hash: efc32f6d123581ecbf8438dd134d90d9060693f8e6fb60c85f8824e950d9c772
+            type: direct
+        return_flight:
+            airport: London Luton
+            destination: Amman
+            hash: 6771610cc4572b1d383cf64c485124330bc6f3de8a9305bedc65c161a77581a4
+            type: direct
+    -   outward_flight:
+            airport: Abu Dhabi
+            destination: Malé (Malediven)
+            hash: df72a0cbb695eed6208a64d7045435dd93f1389388700a804e9581ae99bf52cc
+            type: direct
+        return_flight:
+            airport: Malé (Malediven)
+            destination: Abu Dhabi
+            hash: f8b97400d709e57a837bb38738e4226b3a38f8c27cdefe72950f9260f12545c6
+            type: direct

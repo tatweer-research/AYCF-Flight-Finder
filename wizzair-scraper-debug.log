@@ -1,0 +1,394 @@
+2025-03-05 00:12:52 - DEBUG - [services.data_manager:86 in _setup_logging()] Logging has been configured with both console and file handlers.
+2025-03-05 00:12:56 - DEBUG - [services.scraper:24 in __init__()] ScraperService initialized with provided driver and config.
+2025-03-05 00:12:56 - DEBUG - [services.flight_finder:14 in __init__()] FlightFinderService initialized
+2025-03-05 00:12:56 - INFO - [services.flight_finder:59 in find_possible_roundtrip_flights_from_airport()] Found 0 possible flights from Riad to departure airports
+2025-03-05 00:12:56 - INFO - [services.flight_finder:59 in find_possible_roundtrip_flights_from_airport()] Found 0 possible flights from Barcelona El Prat to departure airports
+2025-03-05 00:12:56 - INFO - [services.flight_finder:59 in find_possible_roundtrip_flights_from_airport()] Found 1 possible flights from Amman to departure airports
+2025-03-05 00:12:56 - INFO - [services.flight_finder:59 in find_possible_roundtrip_flights_from_airport()] Found 1 possible flights from Abu Dhabi to departure airports
+2025-03-05 00:12:56 - INFO - [services.flight_finder:59 in find_possible_roundtrip_flights_from_airport()] Found 0 possible flights from Dubai to departure airports
+2025-03-05 00:12:56 - INFO - [services.flight_finder:72 in find_possible_roundtrip_flights_from_departure_airports()] Found a total of 2 possible roundtrip flights from all departure airports
+2025-03-05 00:12:56 - INFO - [services.flight_finder:73 in find_possible_roundtrip_flights_from_departure_airports()] Estimated scraping time: 2 minutes, 20 seconds
+2025-03-05 00:12:56 - INFO - [main:27 in round_trip_workflow()] Checking availability for possible flights...
+2025-03-05 00:12:59 - INFO - [services.scraper:370 in setup_browser()] Browser initialized successfully.
+2025-03-05 00:12:59 - DEBUG - [services.scraper:375 in setup_browser()] Setting up the browser for scraping.
+2025-03-05 00:13:01 - INFO - [services.scraper:379 in setup_browser()] WizzAir All You Can Fly website is opened.
+2025-03-05 00:13:04 - DEBUG - [services.scraper:31 in click_anmelden()] Attempting to locate and click the 'Anmelden' button.
+2025-03-05 00:13:04 - INFO - [services.scraper:35 in click_anmelden()] 'Anmelden' button clicked successfully.
+2025-03-05 00:13:07 - DEBUG - [services.scraper:40 in fill_in_login_info()] Filling in login credentials.
+2025-03-05 00:13:08 - DEBUG - [services.scraper:43 in fill_in_login_info()] Username entered.
+2025-03-05 00:13:08 - DEBUG - [services.scraper:47 in fill_in_login_info()] Password entered.
+2025-03-05 00:13:12 - INFO - [services.scraper:51 in fill_in_login_info()] Login form submitted.
+2025-03-05 00:13:15 - DEBUG - [services.scraper:115 in click_flug_suchen()] Locating 'Flug suchen' button to perform a search.
+2025-03-05 00:13:15 - INFO - [services.scraper:119 in click_flug_suchen()] 'Flug suchen' button clicked.
+2025-03-05 00:13:16 - INFO - [services.scraper:385 in setup_browser()] Website is ready for further operations.
+2025-03-05 00:13:16 - DEBUG - [services.scraper:435 in check_direct_flight_availability()] Checking flight availability for {'hash': 'efc32f6d123581ecbf8438dd134d90d9060693f8e6fb60c85f8824e950d9c772', 'type': 'direct', 'airport': 'Amman', 'destination': 'London Luton'} on 05-03-2025.
+2025-03-05 00:13:16 - DEBUG - [services.scraper:70 in select_start_airport()] Selecting start airport: Amman.
+2025-03-05 00:13:17 - INFO - [services.scraper:84 in select_start_airport()] Start airport selected: Amman.
+2025-03-05 00:13:18 - DEBUG - [services.scraper:92 in select_destination_airport()] Selecting destination airport: London Luton.
+2025-03-05 00:13:18 - INFO - [services.scraper:107 in select_destination_airport()] Destination airport selected: London Luton.
+2025-03-05 00:13:19 - DEBUG - [services.scraper:56 in select_abflugdatum()] Setting departure date to 05-03-2025.
+2025-03-05 00:13:19 - INFO - [services.scraper:62 in select_abflugdatum()] Departure date set to 05-03-2025.
+2025-03-05 00:13:20 - DEBUG - [services.scraper:125 in click_suchen()] Attempting to locate and click the 'SUCHEN' button.
+2025-03-05 00:13:22 - INFO - [services.scraper:131 in click_suchen()] 'SUCHEN' button clicked successfully.
+2025-03-05 00:13:24 - DEBUG - [services.scraper:291 in read_flight_information()] Waiting for the page to load.
+2025-03-05 00:13:24 - DEBUG - [services.scraper:296 in read_flight_information()] Reading flight information.
+2025-03-05 00:13:25 - INFO - [services.scraper:342 in read_flight_information()] Successfully fetched flight information
+2025-03-05 00:13:25 - INFO - [services.scraper:343 in read_flight_information()] Amman (17:20) -> London Luton (20:05)
+2025-03-05 00:13:25 - DEBUG - [services.scraper:345 in read_flight_information()] [
+    {
+        "date": "Wed 5, March 2025",
+        "departure": {
+            "time": "17:20",
+            "timezone": "UTC+3",
+            "city": "Amman"
+        },
+        "duration": "02h 45m",
+        "arrival": {
+            "time": "20:05",
+            "timezone": "UTC",
+            "city": "London Luton"
+        },
+        "flight_code": "W95304",
+        "carrier": "Durchgeführt von W9",
+        "price": "$11.49"
+    }
+]
+2025-03-05 00:13:25 - INFO - [services.scraper:464 in check_direct_flight_availability()] Flight availability checked in 8.28 seconds.
+2025-03-05 00:13:25 - DEBUG - [services.scraper:435 in check_direct_flight_availability()] Checking flight availability for {'hash': '6771610cc4572b1d383cf64c485124330bc6f3de8a9305bedc65c161a77581a4', 'type': 'direct', 'airport': 'London Luton', 'destination': 'Amman'} on 05-03-2025.
+2025-03-05 00:13:25 - DEBUG - [services.scraper:192 in select_availability_start_airport()] Selecting start airport for availability: London Luton.
+2025-03-05 00:13:25 - DEBUG - [services.scraper:195 in select_availability_start_airport()] Clearing destination airport field before selecting start airport.
+2025-03-05 00:13:25 - INFO - [services.scraper:201 in select_availability_start_airport()] Destination airport field cleared.
+2025-03-05 00:13:25 - DEBUG - [services.scraper:204 in select_availability_start_airport()] Clearing departure date field before selecting start airport.
+2025-03-05 00:13:25 - INFO - [services.scraper:210 in select_availability_start_airport()] Departure date field cleared.
+2025-03-05 00:13:25 - DEBUG - [services.scraper:213 in select_availability_start_airport()] Locating start airport input field.
+2025-03-05 00:13:25 - DEBUG - [services.scraper:220 in select_availability_start_airport()] Entered 'London Luton' into the start airport input field.
+2025-03-05 00:13:25 - INFO - [services.scraper:229 in select_availability_start_airport()] Start airport selected: London Luton.
+2025-03-05 00:13:27 - DEBUG - [services.scraper:236 in select_availability_destination_airport()] Selecting destination airport for availability: Amman.
+2025-03-05 00:13:27 - DEBUG - [services.scraper:245 in select_availability_destination_airport()] Entered 'Amman' into the destination airport input field.
+2025-03-05 00:13:27 - INFO - [services.scraper:254 in select_availability_destination_airport()] Destination airport selected: Amman.
+2025-03-05 00:13:28 - INFO - [services.scraper:148 in select_availability_abflugdatum()] Date input located successfully using XPath.
+2025-03-05 00:13:28 - INFO - [services.scraper:153 in select_availability_abflugdatum()] Existing text cleared successfully.
+2025-03-05 00:13:28 - INFO - [services.scraper:157 in select_availability_abflugdatum()] New date '05-03-2025' entered successfully.
+2025-03-05 00:13:28 - INFO - [services.scraper:161 in select_availability_abflugdatum()] Date change confirmed.
+2025-03-05 00:13:28 - DEBUG - [services.scraper:170 in click_availability_suchen()] Attempting to locate and click the 'Suchen' button.
+2025-03-05 00:13:28 - INFO - [services.scraper:176 in click_availability_suchen()] 'Suchen' button clicked successfully.
+2025-03-05 00:13:28 - INFO - [services.scraper:182 in click_availability_suchen()] Page loaded successfully after clicking 'Suchen' button.
+2025-03-05 00:13:29 - DEBUG - [services.scraper:291 in read_flight_information()] Waiting for the page to load.
+2025-03-05 00:13:29 - DEBUG - [services.scraper:296 in read_flight_information()] Reading flight information.
+2025-03-05 00:13:30 - INFO - [services.scraper:342 in read_flight_information()] Successfully fetched flight information
+2025-03-05 00:13:30 - INFO - [services.scraper:343 in read_flight_information()] London Luton (08:10) -> Amman (16:40)
+2025-03-05 00:13:30 - DEBUG - [services.scraper:345 in read_flight_information()] [
+    {
+        "date": "Wed 5, March 2025",
+        "departure": {
+            "time": "08:10",
+            "timezone": "UTC",
+            "city": "London Luton"
+        },
+        "duration": "08h 30m",
+        "arrival": {
+            "time": "16:40",
+            "timezone": "UTC+3",
+            "city": "Amman"
+        },
+        "flight_code": "W95303",
+        "carrier": "Durchgeführt von W9",
+        "price": "£8.99"
+    }
+]
+2025-03-05 00:13:30 - INFO - [services.scraper:464 in check_direct_flight_availability()] Flight availability checked in 5.36 seconds.
+2025-03-05 00:13:30 - DEBUG - [services.scraper:435 in check_direct_flight_availability()] Checking flight availability for {'hash': '6771610cc4572b1d383cf64c485124330bc6f3de8a9305bedc65c161a77581a4', 'type': 'direct', 'airport': 'London Luton', 'destination': 'Amman'} on 06-03-2025.
+2025-03-05 00:13:30 - DEBUG - [services.scraper:192 in select_availability_start_airport()] Selecting start airport for availability: London Luton.
+2025-03-05 00:13:30 - DEBUG - [services.scraper:195 in select_availability_start_airport()] Clearing destination airport field before selecting start airport.
+2025-03-05 00:13:30 - INFO - [services.scraper:201 in select_availability_start_airport()] Destination airport field cleared.
+2025-03-05 00:13:30 - DEBUG - [services.scraper:204 in select_availability_start_airport()] Clearing departure date field before selecting start airport.
+2025-03-05 00:13:30 - INFO - [services.scraper:210 in select_availability_start_airport()] Departure date field cleared.
+2025-03-05 00:13:30 - DEBUG - [services.scraper:213 in select_availability_start_airport()] Locating start airport input field.
+2025-03-05 00:13:30 - DEBUG - [services.scraper:220 in select_availability_start_airport()] Entered 'London Luton' into the start airport input field.
+2025-03-05 00:13:31 - INFO - [services.scraper:229 in select_availability_start_airport()] Start airport selected: London Luton.
+2025-03-05 00:13:32 - DEBUG - [services.scraper:236 in select_availability_destination_airport()] Selecting destination airport for availability: Amman.
+2025-03-05 00:13:32 - DEBUG - [services.scraper:245 in select_availability_destination_airport()] Entered 'Amman' into the destination airport input field.
+2025-03-05 00:13:32 - INFO - [services.scraper:254 in select_availability_destination_airport()] Destination airport selected: Amman.
+2025-03-05 00:13:33 - INFO - [services.scraper:148 in select_availability_abflugdatum()] Date input located successfully using XPath.
+2025-03-05 00:13:33 - INFO - [services.scraper:153 in select_availability_abflugdatum()] Existing text cleared successfully.
+2025-03-05 00:13:33 - INFO - [services.scraper:157 in select_availability_abflugdatum()] New date '06-03-2025' entered successfully.
+2025-03-05 00:13:33 - INFO - [services.scraper:161 in select_availability_abflugdatum()] Date change confirmed.
+2025-03-05 00:13:33 - DEBUG - [services.scraper:170 in click_availability_suchen()] Attempting to locate and click the 'Suchen' button.
+2025-03-05 00:13:34 - INFO - [services.scraper:176 in click_availability_suchen()] 'Suchen' button clicked successfully.
+2025-03-05 00:13:34 - INFO - [services.scraper:182 in click_availability_suchen()] Page loaded successfully after clicking 'Suchen' button.
+2025-03-05 00:13:35 - DEBUG - [services.scraper:291 in read_flight_information()] Waiting for the page to load.
+2025-03-05 00:13:35 - DEBUG - [services.scraper:296 in read_flight_information()] Reading flight information.
+2025-03-05 00:13:35 - ERROR - [services.scraper:305 in read_flight_information()] {
+    "error": "No flights found for the selected date."
+}
+2025-03-05 00:13:35 - INFO - [services.scraper:464 in check_direct_flight_availability()] Flight availability checked in 4.71 seconds.
+2025-03-05 00:13:35 - DEBUG - [services.scraper:435 in check_direct_flight_availability()] Checking flight availability for {'hash': '6771610cc4572b1d383cf64c485124330bc6f3de8a9305bedc65c161a77581a4', 'type': 'direct', 'airport': 'London Luton', 'destination': 'Amman'} on 07-03-2025.
+2025-03-05 00:13:35 - DEBUG - [services.scraper:192 in select_availability_start_airport()] Selecting start airport for availability: London Luton.
+2025-03-05 00:13:35 - DEBUG - [services.scraper:195 in select_availability_start_airport()] Clearing destination airport field before selecting start airport.
+2025-03-05 00:13:35 - INFO - [services.scraper:201 in select_availability_start_airport()] Destination airport field cleared.
+2025-03-05 00:13:35 - DEBUG - [services.scraper:204 in select_availability_start_airport()] Clearing departure date field before selecting start airport.
+2025-03-05 00:13:35 - INFO - [services.scraper:210 in select_availability_start_airport()] Departure date field cleared.
+2025-03-05 00:13:35 - DEBUG - [services.scraper:213 in select_availability_start_airport()] Locating start airport input field.
+2025-03-05 00:13:35 - DEBUG - [services.scraper:220 in select_availability_start_airport()] Entered 'London Luton' into the start airport input field.
+2025-03-05 00:13:35 - INFO - [services.scraper:229 in select_availability_start_airport()] Start airport selected: London Luton.
+2025-03-05 00:13:36 - DEBUG - [services.scraper:236 in select_availability_destination_airport()] Selecting destination airport for availability: Amman.
+2025-03-05 00:13:36 - DEBUG - [services.scraper:245 in select_availability_destination_airport()] Entered 'Amman' into the destination airport input field.
+2025-03-05 00:13:36 - INFO - [services.scraper:254 in select_availability_destination_airport()] Destination airport selected: Amman.
+2025-03-05 00:13:37 - INFO - [services.scraper:148 in select_availability_abflugdatum()] Date input located successfully using XPath.
+2025-03-05 00:13:38 - INFO - [services.scraper:153 in select_availability_abflugdatum()] Existing text cleared successfully.
+2025-03-05 00:13:38 - INFO - [services.scraper:157 in select_availability_abflugdatum()] New date '07-03-2025' entered successfully.
+2025-03-05 00:13:38 - INFO - [services.scraper:161 in select_availability_abflugdatum()] Date change confirmed.
+2025-03-05 00:13:38 - DEBUG - [services.scraper:170 in click_availability_suchen()] Attempting to locate and click the 'Suchen' button.
+2025-03-05 00:13:38 - INFO - [services.scraper:176 in click_availability_suchen()] 'Suchen' button clicked successfully.
+2025-03-05 00:13:38 - INFO - [services.scraper:182 in click_availability_suchen()] Page loaded successfully after clicking 'Suchen' button.
+2025-03-05 00:13:39 - DEBUG - [services.scraper:291 in read_flight_information()] Waiting for the page to load.
+2025-03-05 00:13:39 - DEBUG - [services.scraper:296 in read_flight_information()] Reading flight information.
+2025-03-05 00:13:39 - ERROR - [services.scraper:305 in read_flight_information()] {
+    "error": "No flights found for the selected date."
+}
+2025-03-05 00:13:39 - INFO - [services.scraper:464 in check_direct_flight_availability()] Flight availability checked in 4.23 seconds.
+2025-03-05 00:13:39 - DEBUG - [services.scraper:435 in check_direct_flight_availability()] Checking flight availability for {'hash': '6771610cc4572b1d383cf64c485124330bc6f3de8a9305bedc65c161a77581a4', 'type': 'direct', 'airport': 'London Luton', 'destination': 'Amman'} on 08-03-2025.
+2025-03-05 00:13:39 - DEBUG - [services.scraper:192 in select_availability_start_airport()] Selecting start airport for availability: London Luton.
+2025-03-05 00:13:39 - DEBUG - [services.scraper:195 in select_availability_start_airport()] Clearing destination airport field before selecting start airport.
+2025-03-05 00:13:39 - INFO - [services.scraper:201 in select_availability_start_airport()] Destination airport field cleared.
+2025-03-05 00:13:39 - DEBUG - [services.scraper:204 in select_availability_start_airport()] Clearing departure date field before selecting start airport.
+2025-03-05 00:13:39 - INFO - [services.scraper:210 in select_availability_start_airport()] Departure date field cleared.
+2025-03-05 00:13:39 - DEBUG - [services.scraper:213 in select_availability_start_airport()] Locating start airport input field.
+2025-03-05 00:13:39 - DEBUG - [services.scraper:220 in select_availability_start_airport()] Entered 'London Luton' into the start airport input field.
+2025-03-05 00:13:39 - INFO - [services.scraper:229 in select_availability_start_airport()] Start airport selected: London Luton.
+2025-03-05 00:13:40 - DEBUG - [services.scraper:236 in select_availability_destination_airport()] Selecting destination airport for availability: Amman.
+2025-03-05 00:13:41 - DEBUG - [services.scraper:245 in select_availability_destination_airport()] Entered 'Amman' into the destination airport input field.
+2025-03-05 00:13:41 - INFO - [services.scraper:254 in select_availability_destination_airport()] Destination airport selected: Amman.
+2025-03-05 00:13:42 - INFO - [services.scraper:148 in select_availability_abflugdatum()] Date input located successfully using XPath.
+2025-03-05 00:13:42 - INFO - [services.scraper:153 in select_availability_abflugdatum()] Existing text cleared successfully.
+2025-03-05 00:13:42 - INFO - [services.scraper:157 in select_availability_abflugdatum()] New date '08-03-2025' entered successfully.
+2025-03-05 00:13:42 - INFO - [services.scraper:161 in select_availability_abflugdatum()] Date change confirmed.
+2025-03-05 00:13:42 - DEBUG - [services.scraper:170 in click_availability_suchen()] Attempting to locate and click the 'Suchen' button.
+2025-03-05 00:13:43 - INFO - [services.scraper:176 in click_availability_suchen()] 'Suchen' button clicked successfully.
+2025-03-05 00:13:43 - INFO - [services.scraper:182 in click_availability_suchen()] Page loaded successfully after clicking 'Suchen' button.
+2025-03-05 00:13:44 - DEBUG - [services.scraper:291 in read_flight_information()] Waiting for the page to load.
+2025-03-05 00:13:44 - DEBUG - [services.scraper:296 in read_flight_information()] Reading flight information.
+2025-03-05 00:13:45 - INFO - [services.scraper:342 in read_flight_information()] Successfully fetched flight information
+2025-03-05 00:13:45 - INFO - [services.scraper:343 in read_flight_information()] London Luton (08:10) -> Amman (16:40)
+2025-03-05 00:13:45 - DEBUG - [services.scraper:345 in read_flight_information()] [
+    {
+        "date": "Fri 7, March 2025",
+        "departure": {
+            "time": "08:10",
+            "timezone": "UTC",
+            "city": "London Luton"
+        },
+        "duration": "08h 30m",
+        "arrival": {
+            "time": "16:40",
+            "timezone": "UTC+3",
+            "city": "Amman"
+        },
+        "flight_code": "W95303",
+        "carrier": "Durchgeführt von W9",
+        "price": "£8.99"
+    }
+]
+2025-03-05 00:13:45 - INFO - [services.scraper:464 in check_direct_flight_availability()] Flight availability checked in 5.67 seconds.
+2025-03-05 00:13:45 - DEBUG - [services.scraper:435 in check_direct_flight_availability()] Checking flight availability for {'hash': 'df72a0cbb695eed6208a64d7045435dd93f1389388700a804e9581ae99bf52cc', 'type': 'direct', 'airport': 'Abu Dhabi', 'destination': 'Malé (Malediven)'} on 05-03-2025.
+2025-03-05 00:13:45 - DEBUG - [services.scraper:192 in select_availability_start_airport()] Selecting start airport for availability: Abu Dhabi.
+2025-03-05 00:13:45 - DEBUG - [services.scraper:195 in select_availability_start_airport()] Clearing destination airport field before selecting start airport.
+2025-03-05 00:13:45 - INFO - [services.scraper:201 in select_availability_start_airport()] Destination airport field cleared.
+2025-03-05 00:13:45 - DEBUG - [services.scraper:204 in select_availability_start_airport()] Clearing departure date field before selecting start airport.
+2025-03-05 00:13:45 - INFO - [services.scraper:210 in select_availability_start_airport()] Departure date field cleared.
+2025-03-05 00:13:45 - DEBUG - [services.scraper:213 in select_availability_start_airport()] Locating start airport input field.
+2025-03-05 00:13:45 - DEBUG - [services.scraper:220 in select_availability_start_airport()] Entered 'Abu Dhabi' into the start airport input field.
+2025-03-05 00:13:45 - INFO - [services.scraper:229 in select_availability_start_airport()] Start airport selected: Abu Dhabi.
+2025-03-05 00:13:46 - DEBUG - [services.scraper:236 in select_availability_destination_airport()] Selecting destination airport for availability: Malé (Malediven).
+2025-03-05 00:13:46 - DEBUG - [services.scraper:245 in select_availability_destination_airport()] Entered 'Malé (Malediven)' into the destination airport input field.
+2025-03-05 00:13:46 - INFO - [services.scraper:254 in select_availability_destination_airport()] Destination airport selected: Malé (Malediven).
+2025-03-05 00:13:48 - INFO - [services.scraper:148 in select_availability_abflugdatum()] Date input located successfully using XPath.
+2025-03-05 00:13:48 - INFO - [services.scraper:153 in select_availability_abflugdatum()] Existing text cleared successfully.
+2025-03-05 00:13:48 - INFO - [services.scraper:157 in select_availability_abflugdatum()] New date '05-03-2025' entered successfully.
+2025-03-05 00:13:48 - INFO - [services.scraper:161 in select_availability_abflugdatum()] Date change confirmed.
+2025-03-05 00:13:48 - DEBUG - [services.scraper:170 in click_availability_suchen()] Attempting to locate and click the 'Suchen' button.
+2025-03-05 00:13:48 - INFO - [services.scraper:176 in click_availability_suchen()] 'Suchen' button clicked successfully.
+2025-03-05 00:13:48 - INFO - [services.scraper:182 in click_availability_suchen()] Page loaded successfully after clicking 'Suchen' button.
+2025-03-05 00:13:49 - DEBUG - [services.scraper:291 in read_flight_information()] Waiting for the page to load.
+2025-03-05 00:13:49 - DEBUG - [services.scraper:296 in read_flight_information()] Reading flight information.
+2025-03-05 00:13:49 - ERROR - [services.scraper:305 in read_flight_information()] {
+    "error": "No flights found for the selected date."
+}
+2025-03-05 00:13:49 - INFO - [services.scraper:464 in check_direct_flight_availability()] Flight availability checked in 4.46 seconds.
+2025-03-05 00:13:49 - DEBUG - [services.scraper:435 in check_direct_flight_availability()] Checking flight availability for {'hash': 'df72a0cbb695eed6208a64d7045435dd93f1389388700a804e9581ae99bf52cc', 'type': 'direct', 'airport': 'Abu Dhabi', 'destination': 'Malé (Malediven)'} on 06-03-2025.
+2025-03-05 00:13:49 - DEBUG - [services.scraper:192 in select_availability_start_airport()] Selecting start airport for availability: Abu Dhabi.
+2025-03-05 00:13:49 - DEBUG - [services.scraper:195 in select_availability_start_airport()] Clearing destination airport field before selecting start airport.
+2025-03-05 00:13:49 - INFO - [services.scraper:201 in select_availability_start_airport()] Destination airport field cleared.
+2025-03-05 00:13:49 - DEBUG - [services.scraper:204 in select_availability_start_airport()] Clearing departure date field before selecting start airport.
+2025-03-05 00:13:49 - INFO - [services.scraper:210 in select_availability_start_airport()] Departure date field cleared.
+2025-03-05 00:13:49 - DEBUG - [services.scraper:213 in select_availability_start_airport()] Locating start airport input field.
+2025-03-05 00:13:49 - DEBUG - [services.scraper:220 in select_availability_start_airport()] Entered 'Abu Dhabi' into the start airport input field.
+2025-03-05 00:13:50 - INFO - [services.scraper:229 in select_availability_start_airport()] Start airport selected: Abu Dhabi.
+2025-03-05 00:13:51 - DEBUG - [services.scraper:236 in select_availability_destination_airport()] Selecting destination airport for availability: Malé (Malediven).
+2025-03-05 00:13:51 - DEBUG - [services.scraper:245 in select_availability_destination_airport()] Entered 'Malé (Malediven)' into the destination airport input field.
+2025-03-05 00:13:51 - INFO - [services.scraper:254 in select_availability_destination_airport()] Destination airport selected: Malé (Malediven).
+2025-03-05 00:13:52 - INFO - [services.scraper:148 in select_availability_abflugdatum()] Date input located successfully using XPath.
+2025-03-05 00:13:52 - INFO - [services.scraper:153 in select_availability_abflugdatum()] Existing text cleared successfully.
+2025-03-05 00:13:52 - INFO - [services.scraper:157 in select_availability_abflugdatum()] New date '06-03-2025' entered successfully.
+2025-03-05 00:13:52 - INFO - [services.scraper:161 in select_availability_abflugdatum()] Date change confirmed.
+2025-03-05 00:13:52 - DEBUG - [services.scraper:170 in click_availability_suchen()] Attempting to locate and click the 'Suchen' button.
+2025-03-05 00:13:52 - INFO - [services.scraper:176 in click_availability_suchen()] 'Suchen' button clicked successfully.
+2025-03-05 00:13:52 - INFO - [services.scraper:182 in click_availability_suchen()] Page loaded successfully after clicking 'Suchen' button.
+2025-03-05 00:13:53 - DEBUG - [services.scraper:291 in read_flight_information()] Waiting for the page to load.
+2025-03-05 00:13:53 - DEBUG - [services.scraper:296 in read_flight_information()] Reading flight information.
+2025-03-05 00:13:54 - INFO - [services.scraper:342 in read_flight_information()] Successfully fetched flight information
+2025-03-05 00:13:54 - INFO - [services.scraper:343 in read_flight_information()] Abu Dhabi (00:55) -> Malé (Malediven) (07:10)
+2025-03-05 00:13:54 - DEBUG - [services.scraper:345 in read_flight_information()] [
+    {
+        "date": "Thu 6, March 2025",
+        "departure": {
+            "time": "00:55",
+            "timezone": "UTC+4",
+            "city": "Abu Dhabi"
+        },
+        "duration": "06h 15m",
+        "arrival": {
+            "time": "07:10",
+            "timezone": "UTC+5",
+            "city": "Malé (Malediven)"
+        },
+        "flight_code": "5W7105",
+        "carrier": "Durchgeführt von 5W",
+        "price": "AED42.00"
+    }
+]
+2025-03-05 00:13:54 - INFO - [services.scraper:464 in check_direct_flight_availability()] Flight availability checked in 4.67 seconds.
+2025-03-05 00:13:54 - DEBUG - [services.scraper:435 in check_direct_flight_availability()] Checking flight availability for {'hash': 'f8b97400d709e57a837bb38738e4226b3a38f8c27cdefe72950f9260f12545c6', 'type': 'direct', 'airport': 'Malé (Malediven)', 'destination': 'Abu Dhabi'} on 06-03-2025.
+2025-03-05 00:13:54 - DEBUG - [services.scraper:192 in select_availability_start_airport()] Selecting start airport for availability: Malé (Malediven).
+2025-03-05 00:13:54 - DEBUG - [services.scraper:195 in select_availability_start_airport()] Clearing destination airport field before selecting start airport.
+2025-03-05 00:13:54 - INFO - [services.scraper:201 in select_availability_start_airport()] Destination airport field cleared.
+2025-03-05 00:13:54 - DEBUG - [services.scraper:204 in select_availability_start_airport()] Clearing departure date field before selecting start airport.
+2025-03-05 00:13:54 - INFO - [services.scraper:210 in select_availability_start_airport()] Departure date field cleared.
+2025-03-05 00:13:54 - DEBUG - [services.scraper:213 in select_availability_start_airport()] Locating start airport input field.
+2025-03-05 00:13:54 - DEBUG - [services.scraper:220 in select_availability_start_airport()] Entered 'Malé (Malediven)' into the start airport input field.
+2025-03-05 00:13:54 - INFO - [services.scraper:229 in select_availability_start_airport()] Start airport selected: Malé (Malediven).
+2025-03-05 00:13:55 - DEBUG - [services.scraper:236 in select_availability_destination_airport()] Selecting destination airport for availability: Abu Dhabi.
+2025-03-05 00:13:55 - DEBUG - [services.scraper:245 in select_availability_destination_airport()] Entered 'Abu Dhabi' into the destination airport input field.
+2025-03-05 00:13:56 - INFO - [services.scraper:254 in select_availability_destination_airport()] Destination airport selected: Abu Dhabi.
+2025-03-05 00:13:57 - INFO - [services.scraper:148 in select_availability_abflugdatum()] Date input located successfully using XPath.
+2025-03-05 00:13:57 - INFO - [services.scraper:153 in select_availability_abflugdatum()] Existing text cleared successfully.
+2025-03-05 00:13:57 - INFO - [services.scraper:157 in select_availability_abflugdatum()] New date '06-03-2025' entered successfully.
+2025-03-05 00:13:57 - INFO - [services.scraper:161 in select_availability_abflugdatum()] Date change confirmed.
+2025-03-05 00:13:57 - DEBUG - [services.scraper:170 in click_availability_suchen()] Attempting to locate and click the 'Suchen' button.
+2025-03-05 00:13:57 - INFO - [services.scraper:176 in click_availability_suchen()] 'Suchen' button clicked successfully.
+2025-03-05 00:13:57 - INFO - [services.scraper:182 in click_availability_suchen()] Page loaded successfully after clicking 'Suchen' button.
+2025-03-05 00:13:58 - DEBUG - [services.scraper:291 in read_flight_information()] Waiting for the page to load.
+2025-03-05 00:13:58 - DEBUG - [services.scraper:296 in read_flight_information()] Reading flight information.
+2025-03-05 00:13:58 - INFO - [services.scraper:342 in read_flight_information()] Successfully fetched flight information
+2025-03-05 00:13:58 - INFO - [services.scraper:343 in read_flight_information()] Malé (Malediven) (08:05) -> Abu Dhabi (12:40)
+2025-03-05 00:13:58 - DEBUG - [services.scraper:345 in read_flight_information()] [
+    {
+        "date": "Thu 6, March 2025",
+        "departure": {
+            "time": "08:05",
+            "timezone": "UTC+5",
+            "city": "Malé (Malediven)"
+        },
+        "duration": "04h 35m",
+        "arrival": {
+            "time": "12:40",
+            "timezone": "UTC+4",
+            "city": "Abu Dhabi"
+        },
+        "flight_code": "5W7106",
+        "carrier": "Durchgeführt von 5W",
+        "price": "$11.49"
+    }
+]
+2025-03-05 00:13:58 - INFO - [services.scraper:464 in check_direct_flight_availability()] Flight availability checked in 4.73 seconds.
+2025-03-05 00:13:58 - DEBUG - [services.scraper:435 in check_direct_flight_availability()] Checking flight availability for {'hash': 'f8b97400d709e57a837bb38738e4226b3a38f8c27cdefe72950f9260f12545c6', 'type': 'direct', 'airport': 'Malé (Malediven)', 'destination': 'Abu Dhabi'} on 07-03-2025.
+2025-03-05 00:13:58 - DEBUG - [services.scraper:192 in select_availability_start_airport()] Selecting start airport for availability: Malé (Malediven).
+2025-03-05 00:13:58 - DEBUG - [services.scraper:195 in select_availability_start_airport()] Clearing destination airport field before selecting start airport.
+2025-03-05 00:13:58 - INFO - [services.scraper:201 in select_availability_start_airport()] Destination airport field cleared.
+2025-03-05 00:13:58 - DEBUG - [services.scraper:204 in select_availability_start_airport()] Clearing departure date field before selecting start airport.
+2025-03-05 00:13:59 - INFO - [services.scraper:210 in select_availability_start_airport()] Departure date field cleared.
+2025-03-05 00:13:59 - DEBUG - [services.scraper:213 in select_availability_start_airport()] Locating start airport input field.
+2025-03-05 00:13:59 - DEBUG - [services.scraper:220 in select_availability_start_airport()] Entered 'Malé (Malediven)' into the start airport input field.
+2025-03-05 00:13:59 - INFO - [services.scraper:229 in select_availability_start_airport()] Start airport selected: Malé (Malediven).
+2025-03-05 00:14:00 - DEBUG - [services.scraper:236 in select_availability_destination_airport()] Selecting destination airport for availability: Abu Dhabi.
+2025-03-05 00:14:00 - DEBUG - [services.scraper:245 in select_availability_destination_airport()] Entered 'Abu Dhabi' into the destination airport input field.
+2025-03-05 00:14:00 - INFO - [services.scraper:254 in select_availability_destination_airport()] Destination airport selected: Abu Dhabi.
+2025-03-05 00:14:01 - INFO - [services.scraper:148 in select_availability_abflugdatum()] Date input located successfully using XPath.
+2025-03-05 00:14:02 - INFO - [services.scraper:153 in select_availability_abflugdatum()] Existing text cleared successfully.
+2025-03-05 00:14:02 - INFO - [services.scraper:157 in select_availability_abflugdatum()] New date '07-03-2025' entered successfully.
+2025-03-05 00:14:02 - INFO - [services.scraper:161 in select_availability_abflugdatum()] Date change confirmed.
+2025-03-05 00:14:02 - DEBUG - [services.scraper:170 in click_availability_suchen()] Attempting to locate and click the 'Suchen' button.
+2025-03-05 00:14:02 - INFO - [services.scraper:176 in click_availability_suchen()] 'Suchen' button clicked successfully.
+2025-03-05 00:14:02 - INFO - [services.scraper:182 in click_availability_suchen()] Page loaded successfully after clicking 'Suchen' button.
+2025-03-05 00:14:03 - DEBUG - [services.scraper:291 in read_flight_information()] Waiting for the page to load.
+2025-03-05 00:14:03 - DEBUG - [services.scraper:296 in read_flight_information()] Reading flight information.
+2025-03-05 00:14:04 - INFO - [services.scraper:342 in read_flight_information()] Successfully fetched flight information
+2025-03-05 00:14:04 - INFO - [services.scraper:343 in read_flight_information()] Malé (Malediven) (08:05) -> Abu Dhabi (12:40)
+2025-03-05 00:14:04 - DEBUG - [services.scraper:345 in read_flight_information()] [
+    {
+        "date": "Fri 7, March 2025",
+        "departure": {
+            "time": "08:05",
+            "timezone": "UTC+5",
+            "city": "Malé (Malediven)"
+        },
+        "duration": "04h 35m",
+        "arrival": {
+            "time": "12:40",
+            "timezone": "UTC+4",
+            "city": "Abu Dhabi"
+        },
+        "flight_code": "5W7106",
+        "carrier": "Durchgeführt von 5W",
+        "price": "$11.49"
+    }
+]
+2025-03-05 00:14:04 - INFO - [services.scraper:464 in check_direct_flight_availability()] Flight availability checked in 5.17 seconds.
+2025-03-05 00:14:04 - DEBUG - [services.scraper:435 in check_direct_flight_availability()] Checking flight availability for {'hash': 'f8b97400d709e57a837bb38738e4226b3a38f8c27cdefe72950f9260f12545c6', 'type': 'direct', 'airport': 'Malé (Malediven)', 'destination': 'Abu Dhabi'} on 08-03-2025.
+2025-03-05 00:14:04 - DEBUG - [services.scraper:192 in select_availability_start_airport()] Selecting start airport for availability: Malé (Malediven).
+2025-03-05 00:14:04 - DEBUG - [services.scraper:195 in select_availability_start_airport()] Clearing destination airport field before selecting start airport.
+2025-03-05 00:14:04 - INFO - [services.scraper:201 in select_availability_start_airport()] Destination airport field cleared.
+2025-03-05 00:14:04 - DEBUG - [services.scraper:204 in select_availability_start_airport()] Clearing departure date field before selecting start airport.
+2025-03-05 00:14:04 - INFO - [services.scraper:210 in select_availability_start_airport()] Departure date field cleared.
+2025-03-05 00:14:04 - DEBUG - [services.scraper:213 in select_availability_start_airport()] Locating start airport input field.
+2025-03-05 00:14:04 - DEBUG - [services.scraper:220 in select_availability_start_airport()] Entered 'Malé (Malediven)' into the start airport input field.
+2025-03-05 00:14:04 - INFO - [services.scraper:229 in select_availability_start_airport()] Start airport selected: Malé (Malediven).
+2025-03-05 00:14:05 - DEBUG - [services.scraper:236 in select_availability_destination_airport()] Selecting destination airport for availability: Abu Dhabi.
+2025-03-05 00:14:06 - DEBUG - [services.scraper:245 in select_availability_destination_airport()] Entered 'Abu Dhabi' into the destination airport input field.
+2025-03-05 00:14:06 - INFO - [services.scraper:254 in select_availability_destination_airport()] Destination airport selected: Abu Dhabi.
+2025-03-05 00:14:07 - INFO - [services.scraper:148 in select_availability_abflugdatum()] Date input located successfully using XPath.
+2025-03-05 00:14:07 - INFO - [services.scraper:153 in select_availability_abflugdatum()] Existing text cleared successfully.
+2025-03-05 00:14:07 - INFO - [services.scraper:157 in select_availability_abflugdatum()] New date '08-03-2025' entered successfully.
+2025-03-05 00:14:07 - INFO - [services.scraper:161 in select_availability_abflugdatum()] Date change confirmed.
+2025-03-05 00:14:07 - DEBUG - [services.scraper:170 in click_availability_suchen()] Attempting to locate and click the 'Suchen' button.
+2025-03-05 00:14:08 - INFO - [services.scraper:176 in click_availability_suchen()] 'Suchen' button clicked successfully.
+2025-03-05 00:14:08 - INFO - [services.scraper:182 in click_availability_suchen()] Page loaded successfully after clicking 'Suchen' button.
+2025-03-05 00:14:09 - DEBUG - [services.scraper:291 in read_flight_information()] Waiting for the page to load.
+2025-03-05 00:14:09 - DEBUG - [services.scraper:296 in read_flight_information()] Reading flight information.
+2025-03-05 00:14:10 - INFO - [services.scraper:342 in read_flight_information()] Successfully fetched flight information
+2025-03-05 00:14:10 - INFO - [services.scraper:343 in read_flight_information()] Malé (Malediven) (08:05) -> Abu Dhabi (12:40)
+2025-03-05 00:14:10 - DEBUG - [services.scraper:345 in read_flight_information()] [
+    {
+        "date": "Fri 7, March 2025",
+        "departure": {
+            "time": "08:05",
+            "timezone": "UTC+5",
+            "city": "Malé (Malediven)"
+        },
+        "duration": "04h 35m",
+        "arrival": {
+            "time": "12:40",
+            "timezone": "UTC+4",
+            "city": "Abu Dhabi"
+        },
+        "flight_code": "5W7106",
+        "carrier": "Durchgeführt von 5W",
+        "price": "$11.49"
+    }
+]
+2025-03-05 00:14:10 - INFO - [services.scraper:464 in check_direct_flight_availability()] Flight availability checked in 5.99 seconds.
+2025-03-05 00:14:10 - INFO - [services.flight_finder:304 in find_available_roundtrip_flights()] Found 3 available roundtrip flights
+2025-03-05 00:14:10 - WARNING - [services.reporter:215 in generate_roundtrip_flight_report()] Error adding flight details: time data 'Thu 6, March 2025 00:55' does not match format 'Wed %d, %B %Y %H:%M'
+2025-03-05 00:14:10 - WARNING - [services.reporter:215 in generate_roundtrip_flight_report()] Error adding flight details: time data 'Thu 6, March 2025 00:55' does not match format 'Wed %d, %B %Y %H:%M'
+2025-03-05 00:14:10 - INFO - [services.reporter:220 in generate_roundtrip_flight_report()] Report generated: data\report.pdf
+2025-03-05 00:14:10 - INFO - [services.emailer:64 in send_email()] Email sent to test successfully.
