@@ -144,7 +144,8 @@ class FlightFinderService:
         logger.info(f'Estimated scraping time: {estimated_time}')
         data_manager.add_possible_flights(flights)
 
-    def get_estimated_checking_time(self, possible_flights):
+    @staticmethod
+    def get_estimated_checking_time(possible_flights):
         # Handle multiple cases for flight keys
         first_flights = []
         second_flights = []
