@@ -1,11 +1,10 @@
 import json
 import time
 
-import yaml
 from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 from services.data_manager import data_manager, logger
 
@@ -25,7 +24,7 @@ class ScraperService:
         logger.debug("ScraperService initialized with provided driver and config.")
         self.__first_run = None
         self.__browser_ready = False
-        self.__use_cache = self.config['data_manager']['use_cache']
+        self.__use_cache = self.config.data_manager.use_cache
 
     def click_anmelden(self):
         """Clicks the 'Anmelden' button to open the login form."""
@@ -34,23 +33,23 @@ class ScraperService:
                                                    "//button[contains(@class, 'CvoHeader-loginButton') and contains(text(), 'Anmelden')]")
         anmelden_button.click()
         logger.info("'Anmelden' button clicked successfully.")
-        time.sleep(self.config['general']['page_loading_time'])
+        time.sleep(self.config.general.page_loading_time)
 
     def fill_in_login_info(self):
         """Fills in login information and submits the form."""
         logger.debug("Filling in login credentials.")
         username_input = self.driver.find_element(By.ID, "username")
-        username_input.send_keys(self.config['account']['username'])
+        username_input.send_keys(self.config.account.username)
         logger.debug("Username entered.")
 
         password_input = self.driver.find_element(By.ID, "password")
-        password_input.send_keys(self.config['account']['password'])
+        password_input.send_keys(self.config.account.password)
         logger.debug("Password entered.")
 
         login_button = self.driver.find_element(By.ID, "kc-login")
         login_button.click()
         logger.info("Login form submitted.")
-        time.sleep(self.config['general']['page_loading_time'])
+        time.sleep(self.config.general.page_loading_time)
 
     def select_abflugdatum(self, flight_date):
         """Sets the departure date."""
@@ -61,7 +60,7 @@ class ScraperService:
             abflugdatum_input.send_keys(flight_date)
             abflugdatum_input.send_keys(u'\ue007')
             logger.info(f"Departure date set to {flight_date}.")
-            time.sleep(self.config['general']['action_wait_time'])
+            time.sleep(self.config.general.action_wait_time)
         except Exception as e:
             logger.error(f"Failed to set departure date: {e}")
             raise
@@ -70,20 +69,20 @@ class ScraperService:
         """Selects the departure airport."""
         logger.debug(f"Selecting start airport: {desired_airport}.")
         try:
-            airport_input = WebDriverWait(self.driver, self.config['general']['action_wait_time']).until(
+            airport_input = WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 EC.presence_of_element_located((By.XPATH, "//div[contains(@class, 'Autocomplete-inputWrapper')]/input"))
             )
             airport_input.clear()
             airport_input.send_keys(desired_airport)
 
-            suggestions_list = WebDriverWait(self.driver, self.config['general']['action_wait_time']).until(
+            suggestions_list = WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 EC.presence_of_element_located((By.XPATH,
                                                 "//ul[contains(@class, 'autocomplete-result-list') and not(contains(@style, 'visibility: hidden'))]"))
             )
             first_suggestion = suggestions_list.find_element(By.XPATH, ".//li[1]")
             first_suggestion.click()
             logger.info(f"Start airport selected: {desired_airport}.")
-            time.sleep(self.config['general']['action_wait_time'])
+            time.sleep(self.config.general.action_wait_time)
         except Exception as e:
             logger.error(f"Failed to select start airport: {e}")
             raise
@@ -92,21 +91,21 @@ class ScraperService:
         """Selects the destination airport."""
         logger.debug(f"Selecting destination airport: {desired_airport}.")
         try:
-            airport_input = WebDriverWait(self.driver, self.config['general']['action_wait_time']).until(
+            airport_input = WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 EC.visibility_of_element_located
                 ((By.XPATH, "//input[@role='combobox' and contains(@id, 'autocomplete-destination')]"))
             )
             airport_input.clear()
             airport_input.send_keys(desired_airport)
 
-            suggestions_list = WebDriverWait(self.driver, self.config['general']['action_wait_time']).until(
+            suggestions_list = WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 EC.presence_of_element_located((By.XPATH,
                                                 "//ul[contains(@class, 'autocomplete-result-list') and not(contains(@style, 'visibility: hidden'))]"))
             )
             first_suggestion = suggestions_list.find_element(By.XPATH, ".//li[1]")
             first_suggestion.click()
             logger.info(f"Destination airport selected: {desired_airport}.")
-            time.sleep(self.config['general']['action_wait_time'])
+            time.sleep(self.config.general.action_wait_time)
         except Exception as e:
             logger.error(f"Failed to select destination airport: {e}")
             raise
@@ -118,19 +117,19 @@ class ScraperService:
                                                       "//button[contains(@class, 'button') and contains(text(), 'Flug suchen')]")
         flug_suchen_button.click()
         logger.info("'Flug suchen' button clicked.")
-        time.sleep(self.config['general']['action_wait_time'])
+        time.sleep(self.config.general.action_wait_time)
 
     def click_suchen(self):
         """Clicks the 'SUCHEN' button."""
         try:
             logger.debug("Attempting to locate and click the 'SUCHEN' button.")
-            suchen_button = WebDriverWait(self.driver, self.config['general']['action_wait_time']).until(
+            suchen_button = WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 EC.presence_of_element_located((By.XPATH,
                                                 "//button[contains(@class, 'ActionButton SearchCombo-submit button ActionButton--primary ActionButton--md') and contains(text(), 'Suchen')]"))
             )
             suchen_button.click()
             logger.info("'SUCHEN' button clicked successfully.")
-            time.sleep(self.config['general']['action_wait_time'])
+            time.sleep(self.config.general.action_wait_time)
         except Exception as e:
             logger.error(f"Failed to click 'SUCHEN' button: {e}")
 
@@ -169,7 +168,7 @@ class ScraperService:
         """Clicks the 'Suchen' button and waits for the page to load."""
         try:
             logger.debug("Attempting to locate and click the 'Suchen' button.")
-            suchen_button = WebDriverWait(self.driver, self.config['general']['action_wait_time']).until(
+            suchen_button = WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 EC.element_to_be_clickable((By.XPATH,
                                             "//button[contains(@class, 'CvoSearchFlight-submit button') and contains(text(), 'Suchen')]"))
             )
@@ -177,7 +176,7 @@ class ScraperService:
             logger.info("'Suchen' button clicked successfully.")
 
             # Wait for the page to load completely
-            WebDriverWait(self.driver, self.config['general']['action_wait_time']).until(
+            WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 lambda driver: driver.execute_script("return document.readyState") == "complete"
             )
             logger.info("Page loaded successfully after clicking 'Suchen' button.")
@@ -194,7 +193,7 @@ class ScraperService:
         try:
             # Clear the destination airport input field
             logger.debug("Clearing destination airport field before selecting start airport.")
-            destination_airport_input = WebDriverWait(self.driver, self.config['general']['action_wait_time']).until(
+            destination_airport_input = WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 EC.presence_of_element_located((By.XPATH,
                                                 "//input[@role='combobox' and contains(@id, 'autocomplete-destination')]"))
             )
@@ -203,7 +202,7 @@ class ScraperService:
 
             # Clear the departure date input field
             logger.debug("Clearing departure date field before selecting start airport.")
-            departure_date_input = WebDriverWait(self.driver, self.config['general']['action_wait_time']).until(
+            departure_date_input = WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 EC.presence_of_element_located((By.XPATH,
                                                 "//div[contains(@class, 'CvoDatepicker-input-wrapper')]//input[@id='Abflugdatum']"))
             )
@@ -212,7 +211,7 @@ class ScraperService:
 
             # Locate the start airport input field
             logger.debug("Locating start airport input field.")
-            airport_input = WebDriverWait(self.driver, self.config['general']['action_wait_time']).until(
+            airport_input = WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 EC.presence_of_element_located((By.XPATH,
                                                 "//input[@role='combobox' and contains(@id, 'autocomplete-origin')]"))
             )
@@ -221,14 +220,14 @@ class ScraperService:
             logger.debug(f"Entered '{desired_airport}' into the start airport input field.")
 
             # Wait for suggestions list to appear
-            suggestions_list = WebDriverWait(self.driver, self.config['general']['action_wait_time']).until(
+            suggestions_list = WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 EC.presence_of_element_located((By.XPATH,
                                                 "//ul[contains(@class, 'autocomplete-result-list') and not(contains(@style, 'visibility: hidden'))]"))
             )
             first_suggestion = suggestions_list.find_element(By.XPATH, ".//li[1]")
             first_suggestion.click()
             logger.info(f"Start airport selected: {desired_airport}.")
-            time.sleep(self.config['general']['action_wait_time'])
+            time.sleep(self.config.general.action_wait_time)
         except Exception as e:
             logger.error(f"Failed to select start airport: {e}")
 
@@ -237,7 +236,7 @@ class ScraperService:
         logger.debug(f"Selecting destination airport for availability: {desired_airport}.")
         try:
             # Locate the destination airport input field
-            airport_input = WebDriverWait(self.driver, self.config['general']['action_wait_time']).until(
+            airport_input = WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 EC.presence_of_element_located((By.XPATH,
                                                 "//input[@role='combobox' and contains(@id, 'autocomplete-destination')]"))
             )
@@ -246,14 +245,14 @@ class ScraperService:
             logger.debug(f"Entered '{desired_airport}' into the destination airport input field.")
 
             # Wait for suggestions list to appear
-            suggestions_list = WebDriverWait(self.driver, self.config['general']['action_wait_time']).until(
+            suggestions_list = WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 EC.presence_of_element_located((By.XPATH,
                                                 "//ul[contains(@class, 'autocomplete-result-list') and not(contains(@style, 'visibility: hidden'))]"))
             )
             first_suggestion = suggestions_list.find_element(By.XPATH, ".//li[1]")
             first_suggestion.click()
             logger.info(f"Destination airport selected: {desired_airport}.")
-            time.sleep(self.config['general']['action_wait_time'])
+            time.sleep(self.config.general.action_wait_time)
         except Exception as e:
             logger.error(f"Failed to select destination airport: {e}")
 
@@ -261,14 +260,14 @@ class ScraperService:
         """Lists available destinations."""
         try:
             logger.debug("Fetching destination suggestions.")
-            bis_input = WebDriverWait(self.driver, self.config['general']['action_wait_time']).until(
+            bis_input = WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 EC.visibility_of_element_located
                 ((By.XPATH, "//input[@role='combobox' and contains(@id, 'autocomplete-destination')]"))
             )
             bis_input.click()
             time.sleep(2)
 
-            suggestions_list = WebDriverWait(self.driver, self.config['general']['action_wait_time']).until(
+            suggestions_list = WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 EC.presence_of_element_located((By.XPATH,
                                                 "//ul[contains(@class, 'autocomplete-result-list') and not(contains(@style, 'visibility: hidden'))]"))
             )
@@ -290,7 +289,7 @@ class ScraperService:
         """Reads flight information and outputs it as JSON."""
         try:
             logger.debug("Waiting for the page to load.")
-            WebDriverWait(self.driver, self.config['general']['action_wait_time']).until(
+            WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 lambda driver: self.driver.execute_script("return document.readyState") == "complete"
             )
 
@@ -298,7 +297,7 @@ class ScraperService:
             no_results_message = "//h1[contains(text(), 'Leider wurden keine Ergebnisse gefunden')]"
             found_flight_xpath = "//div[contains(@class, 'CvoCollapsibleDirectFlightRow-content')]"
 
-            WebDriverWait(self.driver, self.config['general']['action_wait_time']).until(
+            WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 EC.presence_of_element_located((By.XPATH, f"{no_results_message} | {found_flight_xpath}"))
             )
 
@@ -354,10 +353,10 @@ class ScraperService:
         from selenium import webdriver
         from selenium.webdriver.edge.service import Service
         from selenium.webdriver.edge.options import Options
-        from services.data_manager import data_manager, logger
+        from services.data_manager import logger
 
         try:
-            driver_path = self.config['general']['driver_path']
+            driver_path = self.config.general.driver_path
             options = Options()
             options.add_argument("--headless")  # Ensure headless mode
             options.add_argument("--disable-gpu")
@@ -375,10 +374,10 @@ class ScraperService:
 
         logger.debug("Setting up the browser for scraping.")
         # Open the Wizz Air Multipass German website
-        self.driver.get(self.config['account']['wizzair_url'])
+        self.driver.get(str(self.config.account.wizzair_url))
         self.driver.maximize_window()
         logger.info("WizzAir All You Can Fly website is opened.")
-        time.sleep(self.config['general']['page_loading_time'])
+        time.sleep(self.config.general.page_loading_time)
 
         self.click_anmelden()
         self.fill_in_login_info()
@@ -394,7 +393,7 @@ class ScraperService:
     def scrape_airport_destinations(self, airport):
         """Gathers the destination information for all airports in the configuration."""
         logger.debug(f"Gathering destination data for {airport}.")
-        if data_manager.is_airport_in_database(airport) and self.config['data_manager']['use_cache']:
+        if data_manager.is_airport_in_database(airport) and self.config.data_manager.use_cache:
             logger.debug(f"Airport {airport} is already in the database.")
             return
 
@@ -416,7 +415,7 @@ class ScraperService:
     def scrape_departure_airports_destinations_destinations(self):
         """The destinations are added to database and return flights are checked to departure airports."""
         logger.info("Gathering destinations for each departure airport and the destinations of those destinations.")
-        airports = self.config['flight_data']['departure_airports']
+        airports = self.config.flight_data.departure_airports
         for airport in airports:
             self.scrape_airport_destinations_destinations(airport)
         logger.info("All departure airports have been successfully processed and added to the database.")
@@ -452,13 +451,13 @@ class ScraperService:
                 self.select_abflugdatum(flight_date)
                 self.click_suchen()
                 self.__first_run = False
-                time.sleep(self.config['general']['action_wait_time'])
+                time.sleep(self.config.general.action_wait_time)
             else:
                 self.select_availability_start_airport(start_airport)
                 self.select_availability_destination_airport(destination)
                 self.select_availability_abflugdatum(flight_date)
                 self.click_availability_suchen()
-                time.sleep(self.config['general']['action_wait_time'])
+                time.sleep(self.config.general.action_wait_time)
             result = self.read_flight_information()
             data_manager.add_checked_flight(flight, result, flight_date)
             end_time = time.time()

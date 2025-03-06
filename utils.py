@@ -1,5 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
+import pytz
 import streamlit as st
 
 
@@ -11,8 +12,6 @@ def increment_date(date_str, days=1):
     :param days: int, number of days to increment (default is 1)
     :return: str, incremented date in DD-MM-YYYY format
     """
-    from datetime import datetime, timedelta
-
     # Parse the input date string into a datetime object
     date_format = "%d-%m-%Y"
     date_obj = datetime.strptime(date_str, date_format)
@@ -33,8 +32,6 @@ def is_date_in_range(date_str, start_date_str, end_date_str):
     :param end_date_str: str, end of the range in DD-MM-YYYY format
     :return: bool, True if the date is within the range, False otherwise
     """
-    from datetime import datetime
-
     # Define the date format
     date_format = "%d-%m-%Y"
 
@@ -77,37 +74,135 @@ def compare_times(time1, time2, date1=None, date2=None):
         return False
 
 
-def calculate_waiting_time(start_time, end_time, start_date=None, end_date=None):
+def get_timezone_name(tz_str):
     """
-    Calculate the waiting time between two times, optionally with dates.
+    Convert UTC+X format to timezone name.
 
-    :param start_time: The start time as a string in HH:MM format
-    :param end_time: The end time as a string in HH:MM format
-    :param start_date: Start date as string in format "Sat 28, December 2024" (optional)
-    :param end_date: End date as string in format "Fri 27, December 2024" (optional)
-    :return: The duration as a string in the format "duration: XXh XXm"
+    Args:
+        tz_str (str): Timezone string in UTC+X format
+
+    Returns:
+        str: Standard timezone name
     """
+    if tz_str == "UTC":
+        return "UTC"
+
+    # Extract offset from UTC+X or UTC-X format
+    offset = int(tz_str.replace("UTC", "").replace("+", ""))
+
+    # Create timezone string
+    if offset >= 0:
+        return f"Etc/GMT-{offset}"  # Note: Etc/GMT uses opposite sign
+    else:
+        return f"Etc/GMT+{abs(offset)}"
+
+
+def calculate_arrival_date(flight_data: dict) -> str:
+    """
+    Calculate the arrival date and time given flight departure and duration information.
+
+    Args:
+        flight_data (dict): Dictionary containing flight information
+
+    Returns:
+        str: Arrival date in the format 'Day DD, Month YYYY'
+    """
+    # Parse departure date and time
+    dep_date_str = flight_data['date']
+    dep_time_str = flight_data['departure']['time']
+
+    # Combine date and time strings
+    dep_datetime_str = f"{dep_date_str} {dep_time_str}"
+
+    # Parse departure datetime
+    departure_datetime = datetime.strptime(dep_datetime_str, "Wed %d, %B %Y %H:%M")
+
+    # Get timezone objects
+    dep_tz = pytz.timezone(get_timezone_name(flight_data['departure']['timezone']))
+    arr_tz = pytz.timezone(get_timezone_name(flight_data['arrival']['timezone']))
+
+    # Localize departure datetime
+    departure_datetime = dep_tz.localize(departure_datetime)
+
+    # Parse duration
+    duration_str = flight_data['duration']
+    hours, minutes = map(int, duration_str.replace('h ', ':').replace('m', '').split(':'))
+    duration = timedelta(hours=hours, minutes=minutes)
+
+    # Calculate arrival datetime in departure timezone
+    arrival_datetime = departure_datetime + duration
+
+    # Convert to arrival timezone
+    arrival_datetime = arrival_datetime.astimezone(arr_tz)
+
+    # Format arrival date
+    return arrival_datetime.strftime("%a %d, %B %Y")
+
+
+def calculate_waiting_time(start_time, end_time, start_timezone="UTC", end_timezone="UTC",
+                           start_date=None, end_date=None):
+    """
+    Calculate the waiting time between two times, considering different timezones.
+
+    Args:
+        start_time (str): The start time as a string in HH:MM format
+        end_time (str): The end time as a string in HH:MM format
+        start_timezone (str): Timezone for start time (default: "UTC")
+        end_timezone (str): Timezone for end time (default: "UTC")
+        start_date (str): Start date as string in format "Sat 28, December 2024" (optional)
+        end_date (str): End date as string in format "Fri 27, December 2024" (optional)
+
+    Returns:
+        str: The duration as a string in the format "XXh XXm"
+    """
+    # Convert timezone strings to pytz timezone objects
+    start_tz = pytz.timezone(get_timezone_name(start_timezone))
+    end_tz = pytz.timezone(get_timezone_name(end_timezone))
+
     if start_date and end_date:
-        # Convert datetime strings to datetime objects
+        # Convert datetime strings to datetime objects with timezone
         start_datetime = datetime.strptime(f"{start_date} {start_time}", "%a %d, %B %Y %H:%M")
         end_datetime = datetime.strptime(f"{end_date} {end_time}", "%a %d, %B %Y %H:%M")
 
+        # Localize the datetime objects
+        start_datetime = start_tz.localize(start_datetime)
+        end_datetime = end_tz.localize(end_datetime)
+
+        # Convert both times to UTC for comparison
+        start_datetime_utc = start_datetime.astimezone(pytz.UTC)
+        end_datetime_utc = end_datetime.astimezone(pytz.UTC)
+
         # Calculate time difference in minutes
-        time_diff = end_datetime - start_datetime
+        time_diff = end_datetime_utc - start_datetime_utc
         waiting_minutes = int(time_diff.total_seconds() / 60)
 
     else:
-        # Original time-only logic
-        start_hours, start_minutes = map(int, start_time.split(":"))
-        end_hours, end_minutes = map(int, end_time.split(":"))
+        # Create today's date for both times
+        today = datetime.now().date()
 
-        start_total_minutes = start_hours * 60 + start_minutes
-        end_total_minutes = end_hours * 60 + end_minutes
+        # Create datetime objects with timezone
+        start_datetime = start_tz.localize(
+            datetime.combine(today, datetime.strptime(start_time, "%H:%M").time())
+        )
+        end_datetime = end_tz.localize(
+            datetime.combine(today, datetime.strptime(end_time, "%H:%M").time())
+        )
 
-        if end_total_minutes < start_total_minutes:
-            end_total_minutes += 24 * 60
+        # Convert both times to UTC for comparison
+        start_datetime_utc = start_datetime.astimezone(pytz.UTC)
+        end_datetime_utc = end_datetime.astimezone(pytz.UTC)
 
-        waiting_minutes = end_total_minutes - start_total_minutes
+        # If end time is earlier than start time, add one day to end time
+        if end_datetime_utc < start_datetime_utc:
+            end_datetime = end_tz.localize(
+                datetime.combine(today + timedelta(days=1),
+                                 datetime.strptime(end_time, "%H:%M").time())
+            )
+            end_datetime_utc = end_datetime.astimezone(pytz.UTC)
+
+        # Calculate time difference in minutes
+        time_diff = end_datetime_utc - start_datetime_utc
+        waiting_minutes = int(time_diff.total_seconds() / 60)
 
     # Convert the waiting time to hours and minutes
     waiting_hours = abs(waiting_minutes) // 60

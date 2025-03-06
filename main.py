@@ -1,15 +1,14 @@
 import shutil
 import time
 from copy import deepcopy
+from pathlib import Path
 
 import schedule
-from pathlib import Path
 
 from services import ScraperService, data_manager, FlightFinderService, ReportService
 from services.data_manager import logger
 from services.emailer import email_service, roundtrip_kwargs, oneway_kwargs
 from utils import increment_date, get_current_date, is_date_in_range
-from services.parallel_scraper import manage_parallel_scraping
 
 
 def round_trip_workflow():
@@ -21,8 +20,7 @@ def round_trip_workflow():
         flight_finder.find_possible_roundtrip_flights_from_departure_airports()
         flights = data_manager.get_possible_flights()
 
-        departure_date = data_manager.config['flight_data']['departure_date'] if data_manager.config['flight_data'][
-            'departure_date'] \
+        departure_date = data_manager.config.flight_data.departure_date if data_manager.config.flight_data.departure_date \
             else get_current_date()
         last_date = increment_date(departure_date, 3)
 
@@ -55,7 +53,7 @@ def round_trip_workflow():
         data_manager.add_available_flights(available_flights)
         reporter = ReportService()
         reporter.generate_roundtrip_flight_report()
-        email_service.send_email(**oneway_kwargs, recipient_emails=[data_manager.config['emailer']['recipient']])
+        email_service.send_email(**oneway_kwargs, recipient_emails=[data_manager.config.emailer.recipient])
     except Exception as e:
         logger.error(f"Failed to complete the round-trip workflow: {e}")
     finally:
@@ -71,17 +69,14 @@ def one_way_workflow():
         scraper = ScraperService()
 
         flight_finder = FlightFinderService()
-        flight_finder.find_possible_one_stop_flights(max_stops=data_manager.config['flight_data']['max_stops'])
+        flight_finder.find_possible_one_stop_flights(max_stops=data_manager.config.flight_data.max_stops)
         flights = data_manager.get_possible_flights()
 
-        departure_date = data_manager.config['flight_data']['departure_date'] if data_manager.config['flight_data'][
-            'departure_date'] \
+        departure_date = data_manager.config.flight_data.departure_date if data_manager.config.flight_data.departure_date \
             else get_current_date()
-        last_date = data_manager.config['flight_data']['departure_date'] if data_manager.config['flight_data'][
-            'departure_date'] \
+        last_date = data_manager.config.flight_data.departure_date if data_manager.config.flight_data.departure_date \
             else increment_date(departure_date, 3)
-        last_date_one_stop = increment_date(deepcopy(last_date), 1) if data_manager.config['flight_data'][
-            'departure_date'] \
+        last_date_one_stop = increment_date(deepcopy(last_date), 1) if data_manager.config.flight_data.departure_date \
             else last_date
 
         logger.info('Checking availability for possible flights...')
@@ -114,9 +109,9 @@ def one_way_workflow():
         data_manager.add_available_flights(available_flights)
         reporter = ReportService()
         reporter.generate_oneway_flight_report()
-        email_service.send_email(**oneway_kwargs, recipient_emails=[data_manager.config['emailer']['recipient']])
+        email_service.send_email(**oneway_kwargs, recipient_emails=[data_manager.config.emailer.recipient])
     except Exception as e:
-        logger.error(f"Failed to complete the one-way workflow: {e}")
+        logger.exception(f"Failed to complete the one-way workflow: {e}")
     finally:
         # Close the browser
         time.sleep(5)
@@ -140,7 +135,7 @@ def create_report(mode='roundtrip'):
 
 
 def send_email():
-    email_service.send_email(**roundtrip_kwargs, recipient_emails=[data_manager.config['emailer']['recipient']])
+    email_service.send_email(**roundtrip_kwargs, recipient_emails=[data_manager.config.emailer.recipient])
 
 
 def check_available_flights():
@@ -182,13 +177,13 @@ def do_pending_jobs():
             try:
                 shutil.copy(file, 'cache')
                 # Do not change the order of the following lines
-                data_manager._setup_databases()
+                data_manager._reset_databases()
                 data_manager.config = data_manager.load_data(str(file))
                 data_manager._setup_edge_driver()
 
-                if data_manager.config['general']['mode'] == 'oneway':
+                if data_manager.config.general.mode == 'oneway':
                     one_way_workflow()
-                elif data_manager.config['general']['mode'] == 'roundtrip':
+                elif data_manager.config.general.mode == 'roundtrip':
                     round_trip_workflow()
                 file.unlink()
             except Exception as e:
@@ -208,7 +203,7 @@ if __name__ == '__main__':
     # update_airports_database()
     # finder = FlightFinderService()
     # finder.find_one_stop_flights(max_stops=0)
-    # checked_flights = data_manager.load_data(config['data_manager']['checked_flights_path'])
+    # checked_flights = data_manager.load_data(config.data_manager.checked_flights_path)
     # data_manager.add_checked_flights(checked_flights)
     # check_available_flights()
 
