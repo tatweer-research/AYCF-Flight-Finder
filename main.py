@@ -18,7 +18,7 @@ def round_trip_workflow():
 
         flight_finder = FlightFinderService()
         flight_finder.find_possible_roundtrip_flights_from_departure_airports()
-        flights = data_manager.get_possible_flights()
+        possible_flights = data_manager.get_possible_flights()
 
         departure_date = data_manager.config.flight_data.departure_date if data_manager.config.flight_data.departure_date \
             else get_current_date()
@@ -27,7 +27,7 @@ def round_trip_workflow():
         logger.info('Checking availability for possible flights...')
         scraper.setup_browser()
 
-        for flight in flights['possible_flights']:
+        for flight in possible_flights['possible_flights']:
             for i in range(4):
                 if i == 0:
                     date = deepcopy(departure_date)
@@ -50,7 +50,6 @@ def round_trip_workflow():
                         return_result = scraper.check_direct_flight_availability(flight['return_flight'],
                                                                                  date)
 
-        possible_flights = data_manager.get_possible_flights()
         checked_flights = data_manager.get_checked_flights()
         available_flights = flight_finder.find_available_roundtrip_flights(possible_flights, checked_flights)
         data_manager.add_available_flights(available_flights)
@@ -73,7 +72,7 @@ def one_way_workflow():
 
         flight_finder = FlightFinderService()
         flight_finder.find_possible_one_stop_flights(max_stops=data_manager.config.flight_data.max_stops)
-        flights = data_manager.get_possible_flights()
+        possible_flights = data_manager.get_possible_flights()
 
         departure_date = data_manager.config.flight_data.departure_date if data_manager.config.flight_data.departure_date \
             else get_current_date()
@@ -85,7 +84,7 @@ def one_way_workflow():
         logger.info('Checking availability for possible flights...')
         scraper.setup_browser()
 
-        for flight in flights['possible_flights']:
+        for flight in possible_flights['possible_flights']:
             for i in range(4):
                 if i == 0:
                     date = deepcopy(departure_date)
@@ -108,7 +107,6 @@ def one_way_workflow():
                             break
                         second_result = scraper.check_direct_flight_availability(flight['second_flight'],
                                                                                  date)
-        possible_flights = data_manager.get_possible_flights()
         checked_flights = data_manager.get_checked_flights()
         available_flights = flight_finder.find_available_oneway_flights(possible_flights, checked_flights)
         data_manager.add_available_flights(available_flights)
