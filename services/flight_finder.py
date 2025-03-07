@@ -1,8 +1,9 @@
 import hashlib
-from services.data_manager import data_manager, logger
 from collections import deque
+
+from services.data_manager import data_manager, logger
+from utils import compare_times, remove_duplicates_from_list
 from utils import format_seconds
-from utils import increment_date, compare_times, get_current_date, is_date_in_range, remove_duplicates_from_list
 
 
 class FlightFinderService:
@@ -12,9 +13,9 @@ class FlightFinderService:
         self.config = data_manager.config if not config else config
         logger.debug('FlightFinderService initialized')
         self.database_airports = data_manager.get_all_airports()
-        self.departure_airports = self.config['flight_data']['departure_airports']
+        self.departure_airports = self.config.flight_data.departure_airports
         self.departure_airports = self.departure_airports if self.departure_airports else self.database_airports
-        self.destination_airports = self.config['flight_data']['destination_airports']
+        self.destination_airports = self.config.flight_data.destination_airports
         self.destination_airports = self.destination_airports if self.destination_airports else self.database_airports
 
     def find_possible_roundtrip_flights_from_airport(self, airport):

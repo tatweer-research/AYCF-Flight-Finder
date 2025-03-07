@@ -1,11 +1,11 @@
-from services.data_manager import logger, data_manager
-
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email import encoders
 import os
+import smtplib
+from email import encoders
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+from services.data_manager import logger, data_manager
 
 
 class EmailService:
@@ -63,13 +63,13 @@ class EmailService:
                 server.send_message(message)
                 logger.info(f"Email sent to {', '.join(recipient_emails)} successfully.")
         except Exception as e:
-            logger.error(f"Failed to send email: {e}")
+            logger.exception(f"Failed to send email: {e}")
 
 
 # Initialize the EmailService
 email_service = EmailService(sender_email='mohundkmar@gmail.com', sender_password='')
 
-departure_airports = '\n- ' + '\n- '.join(data_manager.config['flight_data']['departure_airports'])
+departure_airports = '\n- ' + '\n- '.join(data_manager.config.flight_data.departure_airports)
 
 ROUNDTRIP_SUBJECT = "Round Trip: Wizz Air Flights Report!"
 ROUNDTRIP_MESSAGE_BODY = f"""
@@ -101,7 +101,7 @@ https://chat.whatsapp.com/CHvgbPvqRcbJS0E6D4O8ka
 Catch you in the skies (or WhatsApp)!
 Moh & Kmar 🕵️‍♂️✨
 """
-ATTACHMENT_PATHS = [data_manager.config['reporter']['report_path']]
+ATTACHMENT_PATHS = [data_manager.config.reporter.report_path]
                     # data_manager.config['logging']['log_file']]
 
 oneway_kwargs = {

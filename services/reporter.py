@@ -1,13 +1,14 @@
 import copy
 
+import yaml
 from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer
 from reportlab.platypus.flowables import HRFlowable
-from reportlab.lib.styles import getSampleStyleSheet
-import yaml
+
 from services.data_manager import data_manager, logger
-from utils import compare_times, calculate_waiting_time, sum_flight_durations
+from utils import compare_times, calculate_waiting_time, sum_flight_durations, calculate_arrival_date
 
 
 class ReportService:
@@ -18,9 +19,9 @@ class ReportService:
         Initialize the ReportService with a data manager and logger.
         """
         self.config = data_manager.config
-        self.report_path = self.config['reporter']['report_path']
-        self.available_flights_path = self.config['data_manager']['available_flights_path']
-        self.logo_path = self.config['reporter']['logo_path']
+        self.report_path = self.config.reporter.report_path
+        self.available_flights_path = self.config.data_manager.available_flights_path
+        self.logo_path = self.config.reporter.logo_path
 
     def add_second_flight(self, elements, flight, outward, styles):
         try:
@@ -49,10 +50,13 @@ class ReportService:
             logger.warning(f"Error adding second flight details: {e}")
 
     def add_waiting_time(self, elements, outward, return_flight, styles, text="Waiting Time:"):
-        waiting_time = calculate_waiting_time(outward['arrival']['time'],
-                                              return_flight['departure']['time'],
-                                              outward['date'],
-                                              return_flight['date'])
+        arrival_date = calculate_arrival_date(outward)
+        waiting_time = calculate_waiting_time(start_time=outward['arrival']['time'],
+                                              end_time=return_flight['departure']['time'],
+                                              start_timezone=outward['arrival']['timezone'],
+                                              end_timezone=return_flight['departure']['timezone'],
+                                              start_date=arrival_date,
+                                              end_date=return_flight['date'])
         # Make the waiting time bold and centered
         centered_style = copy.deepcopy(styles['Normal'])
         centered_style.alignment = 1  # Center alignment
@@ -107,7 +111,7 @@ class ReportService:
         # Extract available flights
         available_flights = data.get('available_flights', [])
         # Create the PDF document
-        pdf = SimpleDocTemplate(self.report_path, pagesize=letter)
+        pdf = SimpleDocTemplate(str(self.report_path), pagesize=letter)
         elements = []
         # Add logo
         try:
@@ -129,18 +133,18 @@ class ReportService:
         elements.append(Paragraph("<br/><br/>", styles['Normal']))
         elements.append(Paragraph("<b>Destination Airports:</b>", styles['Normal']))
         symbol = "✈ "
-        destination_airports = data_manager.config['flight_data']['destination_airports']
+        destination_airports = data_manager.config.flight_data.destination_airports
         if destination_airports:
-            for airport in data_manager.config['flight_data']['destination_airports']:
+            for airport in data_manager.config.flight_data.destination_airports:
                 elements.append(Paragraph(symbol + airport, styles['Normal']))
         else:
             elements.append(Paragraph("No destination airports specified.", styles['Normal']))
         elements.append(Paragraph("<br/><br/>", styles['Normal']))
 
         elements.append(Paragraph("<b>departure Airports:</b>", styles['Normal']))
-        departure_airports = data_manager.config['flight_data']['departure_airports']
+        departure_airports = data_manager.config.flight_data.departure_airports
         if departure_airports:
-            for airport in data_manager.config['flight_data']['departure_airports']:
+            for airport in data_manager.config.flight_data.departure_airports:
                 elements.append(Paragraph(symbol + airport, styles['Normal']))
         else:
             elements.append(Paragraph("No departure airports specified.", styles['Normal']))
@@ -215,7 +219,7 @@ class ReportService:
             pdf.build(elements)
             logger.info(f"Report generated: {self.report_path}")
         except Exception as e:
-            logger.error(f"Error generating report: {e}")
+            logger.exception(f"Error generating report: {e}")
 
     def generate_oneway_flight_report(self):
         """
