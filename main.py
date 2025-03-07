@@ -74,10 +74,8 @@ def one_way_workflow():
         flight_finder.find_possible_one_stop_flights(max_stops=data_manager.config.flight_data.max_stops)
         possible_flights = data_manager.get_possible_flights()
 
-        departure_date = data_manager.config.flight_data.departure_date if data_manager.config.flight_data.departure_date \
-            else get_current_date()
-        last_date = data_manager.config.flight_data.departure_date if data_manager.config.flight_data.departure_date \
-            else increment_date(departure_date, 3)
+        departure_date = data_manager.config.flight_data.departure_date or get_current_date()
+        last_date = data_manager.config.flight_data.departure_date or increment_date(departure_date, 3)
         last_date_one_stop = increment_date(deepcopy(last_date), 1) if data_manager.config.flight_data.departure_date \
             else last_date
 
