@@ -11,6 +11,29 @@ from services.data_manager import data_manager, logger
 
 AIRPORTS_WITH_NAME_CLASHES = ['Basel-Mulhouse-Freiburg']
 
+from stem.control import Controller
+import socks
+import socket
+import requests
+
+
+def change_tor_ip():
+    """Signals Tor to switch to a new exit node (new IP)."""
+    try:
+        with Controller.from_port(port=9051) as controller:
+            controller.authenticate(password="your_password")  # Change to your Tor password
+            controller.signal("NEWNYM")
+            logger.info("Tor IP changed successfully.")
+    except Exception as e:
+        logger.error(f"Failed to change Tor IP: {e}")
+
+
+def set_tor_proxy():
+    """Configures the Selenium driver to use the Tor network."""
+    socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", 9050)
+    socket.socket = socks.socksocket
+    logger.info("Tor proxy settings applied.")
+
 
 class ScraperService:
     """Scraps flight data from the WizzAir website"""
@@ -347,7 +370,12 @@ class ScraperService:
             return flight_data if flight_data else None
         except Exception as e:
             logger.error(f"Error reading flight information: {e}")
-            return
+            logger.info("Rotating IP via Tor and retrying...")
+
+            # Change Tor IP and retry
+            change_tor_ip()
+            time.sleep(5)  # Give it time to switch IP
+            set_tor_proxy()  # Reapply Tor proxy settings
 
     def setup_browser(self):
         # services/scraper.py
