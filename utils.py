@@ -344,3 +344,21 @@ Thank you for your support! 🙌
 """
     # Render in Streamlit
     st.markdown(button_html, unsafe_allow_html=True)
+
+
+def get_iata_code(airport_name):
+    """
+    Get the IATA code for a given airport name.
+
+    Args:
+        airport_name (str): Name of the airport
+
+    Returns:
+        str: IATA code for the airport
+    """
+    return airport_name.split(" ")[-1].replace("(", "").replace(")", "")
+
+
+if __name__ == '__main__':
+    name = "Budapest (BUD)"
+    print(get_iata_code(name))  # Output: BUD

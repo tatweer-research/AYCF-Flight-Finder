@@ -8,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 from services.data_manager import data_manager, logger
+from utils import get_iata_code
 
 AIRPORTS_WITH_NAME_CLASHES = ['Basel-Mulhouse-Freiburg']
 
@@ -69,12 +70,13 @@ class ScraperService:
     def select_start_airport(self, desired_airport):
         """Selects the departure airport."""
         logger.debug(f"Selecting start airport: {desired_airport}.")
+        iata_code = get_iata_code(desired_airport)
         try:
             airport_input = WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 EC.presence_of_element_located((By.XPATH, "//div[contains(@class, 'Autocomplete-inputWrapper')]/input"))
             )
             airport_input.clear()
-            airport_input.send_keys(desired_airport)
+            airport_input.send_keys(iata_code)
 
             suggestions_list = WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 EC.presence_of_element_located((By.XPATH,
@@ -91,13 +93,14 @@ class ScraperService:
     def select_destination_airport(self, desired_airport):
         """Selects the destination airport."""
         logger.debug(f"Selecting destination airport: {desired_airport}.")
+        iata_code = get_iata_code(desired_airport)
         try:
             airport_input = WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 EC.visibility_of_element_located
                 ((By.XPATH, "//input[@role='combobox' and contains(@id, 'autocomplete-destination')]"))
             )
             airport_input.clear()
-            airport_input.send_keys(desired_airport)
+            airport_input.send_keys(iata_code)
 
             suggestions_list = WebDriverWait(self.driver, self.config.general.action_wait_time).until(
                 EC.presence_of_element_located((By.XPATH,
@@ -191,6 +194,7 @@ class ScraperService:
         :param desired_airport: The start airport to select.
         """
         logger.debug(f"Selecting start airport for availability: {desired_airport}.")
+        iata_code = get_iata_code(desired_airport)
         try:
             # Clear the destination airport input field
             logger.debug("Clearing destination airport field before selecting start airport.")
@@ -217,7 +221,7 @@ class ScraperService:
                                                 "//input[@role='combobox' and contains(@id, 'autocomplete-origin')]"))
             )
             airport_input.clear()
-            airport_input.send_keys(desired_airport)
+            airport_input.send_keys(iata_code)
             logger.debug(f"Entered '{desired_airport}' into the start airport input field.")
 
             # Wait for suggestions list to appear
@@ -235,6 +239,7 @@ class ScraperService:
     def select_availability_destination_airport(self, desired_airport):
         """Sets the destination airport for availability search."""
         logger.debug(f"Selecting destination airport for availability: {desired_airport}.")
+        iata_code = get_iata_code(desired_airport)
         try:
             # Locate the destination airport input field
             airport_input = WebDriverWait(self.driver, self.config.general.action_wait_time).until(
@@ -242,7 +247,7 @@ class ScraperService:
                                                 "//input[@role='combobox' and contains(@id, 'autocomplete-destination')]"))
             )
             airport_input.clear()
-            airport_input.send_keys(desired_airport)
+            airport_input.send_keys(iata_code)
             logger.debug(f"Entered '{desired_airport}' into the destination airport input field.")
 
             # Wait for suggestions list to appear
@@ -278,7 +283,7 @@ class ScraperService:
                 return []
 
             logger.info("Fetched destination suggestions successfully.")
-            suggestions = [suggestion.text[:-6] for suggestion in suggestions]
+            suggestions = [suggestion.text for suggestion in suggestions]
             logger.debug(json.dumps(suggestions, ensure_ascii=False, indent=4))
             return suggestions
 
@@ -409,7 +414,7 @@ class ScraperService:
             destinations = self.list_destinations()
             data_manager.set_airport_destinations(airport, destinations, overwrite=not self.__use_cache)
         except Exception as e:
-            logger.error(f"Error while gathering destination data for {airport} - {e}")
+            logger.exception(f"Error while gathering destination data for {airport} - {e}")
 
     def scrape_airport_destinations_destinations(self, airport):
         """The destinations are added to database and return flights are checked to departure airports."""
@@ -427,14 +432,19 @@ class ScraperService:
             self.scrape_airport_destinations_destinations(airport)
         logger.info("All departure airports have been successfully processed and added to the database.")
 
-    def update_airport_database(self):
+    def update_airport_database(self, depth=0):
         """Updates the airport database with the latest data."""
         logger.info("Updating the airport database.")
         logger.info("Gathering destinations for each airport in the database and the destinations of those "
                     "destinations.")
         airports = data_manager.get_all_airports()
+        if not airports:
+            # If the database is empty, start with Budapest
+            airports = ['Budapest (BUD)']
         for airport in airports:
             self.scrape_airport_destinations_destinations(airport)
+        if depth < 2:
+            self.update_airport_database(depth + 1)
         logger.info("All airports have been successfully processed and added to the database.")
 
     def check_direct_flight_availability(self, flight, flight_date):
