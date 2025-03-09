@@ -348,12 +348,10 @@ class ScraperService:
         except Exception as e:
             logger.error(f"PID-{os.getpid()}: Error reading flight information: {e}")
             time.sleep(data_manager.config.general.rate_limit_wait_time)
-            # self.driver.refresh()
-            # self.driver.refresh()
-            # self.driver.refresh()
-            # self.read_flight_information(depth + 1)
-            # if depth == 2:
-            #     return
+            self.driver.refresh()
+            self.read_flight_information(depth + 1)
+            if depth == 2:
+                return
             return
 
     def setup_browser(self):
