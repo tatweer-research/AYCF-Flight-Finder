@@ -1,4 +1,5 @@
 version = 1
+revision = 1
 requires-python = ">=3.11"
 resolution-markers = [
     "python_full_version >= '3.12'",
@@ -62,7 +63,7 @@ requires-dist = [
     { name = "pydantic", specifier = "==2.10.6" },
     { name = "pytz", specifier = "==2025.1" },
     { name = "pyyaml", specifier = "==6.0.2" },
-    { name = "reportlab", specifier = "==3.6.12" },
+    { name = "reportlab", specifier = "==4.3.1" },
     { name = "schedule", specifier = "==1.2.0" },
     { name = "selenium", specifier = "==4.10.0" },
     { name = "streamlit", specifier = "==1.33.0" },
@@ -110,6 +111,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/50/b9/db34c4755a7bd1cb2d1603ac3863f22bcecbd1ba29e5ee841a4bc510b294/cffi-1.17.1-cp312-cp312-win_amd64.whl", hash = "sha256:51392eae71afec0d0c8fb1a53b204dbb3bcabcb3c9b807eedf3e1e6ccf2de903", size = 181976 },
     { url = "https://files.pythonhosted.org/packages/bf/ee/f94057fa6426481d663b88637a9a10e859e492c73d0384514a17d78ee205/cffi-1.17.1-cp313-cp313-win32.whl", hash = "sha256:e03eab0a8677fa80d646b5ddece1cbeaf556c313dcfac435ba11f107ba117b5d", size = 172475 },
     { url = "https://files.pythonhosted.org/packages/7c/fc/6a8cb64e5f0324877d503c854da15d76c1e50eb722e320b15345c4d0c6de/cffi-1.17.1-cp313-cp313-win_amd64.whl", hash = "sha256:f6a16c31041f09ead72d69f583767292f750d24913dadacf5756b966aacb3f1a", size = 182009 },
+]
+
+[[package]]
+name = "chardet"
+version = "5.2.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f3/0d/f7b6ab21ec75897ed80c17d79b15951a719226b9fababf1e40ea74d69079/chardet-5.2.0.tar.gz", hash = "sha256:1b3b6ff479a8c414bc3fa2c0852995695c4a026dcd6d0633b2dd092ca39c1cf7", size = 2069618 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/38/6f/f5fbc992a329ee4e0f288c1fe0e2ad9485ed064cac731ed2fe47dcc38cbf/chardet-5.2.0-py3-none-any.whl", hash = "sha256:e1cf59446890a00105fe7b7912492ea04b6e6f06d4b742b2c788469e34c82970", size = 199385 },
 ]
 
 [[package]]
@@ -726,22 +736,15 @@ wheels = [
 
 [[package]]
 name = "reportlab"
-version = "3.6.12"
+version = "4.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
+    { name = "chardet" },
     { name = "pillow" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b8/ac/10d68a650b321bd8c4d8cbefd9994e7727d57b381c9bdb0a013273011e62/reportlab-3.6.12.tar.gz", hash = "sha256:b13cebf4e397bba14542bcd023338b6ff2c151a3a12aabca89eecbf972cb361a", size = 4519536 }
+sdist = { url = "https://files.pythonhosted.org/packages/a7/5c/9b23c8a9a69f2bc1f1268ed545f393a60b59cbe5f9d861a28b676f809729/reportlab-4.3.1.tar.gz", hash = "sha256:230f78b21667194d8490ac9d12958d5c14686352db7fbe03b95140fafdf5aa97", size = 3499248 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/68/a7/4adb85071fa3dba123c1cc41361cc2a5ea9b8bcdd651370bdf74a4e32089/reportlab-3.6.12-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:236a6483210049205f6180d7a7595d0ca2e4ce343d83cc94ca719a4145809c6f", size = 2440921 },
-    { url = "https://files.pythonhosted.org/packages/20/21/1d722209384fb3a1eac3cee4f4d5107fc3a5fec96b3be3f58240b51151e5/reportlab-3.6.12-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:69f41295d696c822224334f0994f1f107df7efed72211d45a1118696f1427c84", size = 2408817 },
-    { url = "https://files.pythonhosted.org/packages/ac/c7/739a0865b6282b45420e1ac4f802158adf2e6c77a82822072a161b2d7153/reportlab-3.6.12-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f51dcb39e910a853749250c0f82aced80bca3f7315e9c4ee14349eb7cab6a3f8", size = 2749691 },
-    { url = "https://files.pythonhosted.org/packages/98/02/5fb3b081888270ac6863803492f624b0e32814e2227d6494d24199df1443/reportlab-3.6.12-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:a8dddc52e0e486291be0ad39184da0607fae9cc665fdba1881211de9cfc0b332", size = 2740108 },
-    { url = "https://files.pythonhosted.org/packages/5c/b4/1d9b3120ccb407703e3f2f3dee422e3b04b0f1b7a887c676e0a727bad515/reportlab-3.6.12-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:c4863c49602722237e35cbce5aa91af4539cc63a671f59504d2b3f3767d898cf", size = 2843498 },
-    { url = "https://files.pythonhosted.org/packages/80/52/f0b75d387374b132bf27d6786f2464bb35a9e3cdc64082f942733d3ecb3c/reportlab-3.6.12-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:8b1215facead57cc5325aef4229ef886e85d270b2ba02080fb5809ce9d2b81b4", size = 2782409 },
-    { url = "https://files.pythonhosted.org/packages/3f/f4/945064722ae0fce388655abc2d2b7170f10ed46c7ab334591cf398fc04d6/reportlab-3.6.12-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a12049314497d872f6788f811e2b331654db207937f8a2fb34ff3e3cd9897faa", size = 2765483 },
-    { url = "https://files.pythonhosted.org/packages/46/b1/985ab842c3c557e7c394193fdee30a609fd438dfc4dcad487b8228dd9112/reportlab-3.6.12-cp311-cp311-win32.whl", hash = "sha256:759495c2b8c15cb0d6b539c246896029e4cde42a896c3956f77e311c5f6b0807", size = 2278607 },
-    { url = "https://files.pythonhosted.org/packages/fa/0d/856234c4e6262143ded1b3bb9cb580c2bd8637d4f17f6afc215ab2e649da/reportlab-3.6.12-cp311-cp311-win_amd64.whl", hash = "sha256:666bdba4958b348460a765c48b8c0640e7085540846ed9494f47d8651604b33c", size = 2337547 },
+    { url = "https://files.pythonhosted.org/packages/ce/6b/42805895ed08a314a01be6110584b5d059328386988ddbc4f8f10014d30e/reportlab-4.3.1-py3-none-any.whl", hash = "sha256:0f37dd16652db3ef84363cf744632a28c38bd480d5bf94683466852d7bb678dd", size = 1949468 },
 ]
 
 [[package]]

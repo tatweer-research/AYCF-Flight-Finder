@@ -1,4 +1,5 @@
 import json
+import os
 import time
 
 from selenium.webdriver import Keys
@@ -285,7 +286,7 @@ class ScraperService:
             logger.error(f"Error while fetching destination suggestions: {e}")
             return []
 
-    def read_flight_information(self):
+    def read_flight_information(self, depth=0):
         """Reads flight information and outputs it as JSON."""
         try:
             logger.debug("Waiting for the page to load.")
@@ -345,7 +346,14 @@ class ScraperService:
             logger.debug(json.dumps(flight_data, ensure_ascii=False, indent=4))
             return flight_data if flight_data else None
         except Exception as e:
-            logger.error(f"Error reading flight information: {e}")
+            logger.error(f"PID-{os.getpid()}: Error reading flight information: {e}")
+            time.sleep(data_manager.config.general.rate_limit_wait_time)
+            # self.driver.refresh()
+            # self.driver.refresh()
+            # self.driver.refresh()
+            # self.read_flight_information(depth + 1)
+            # if depth == 2:
+            #     return
             return
 
     def setup_browser(self):
@@ -358,10 +366,11 @@ class ScraperService:
         try:
             driver_path = self.config.general.driver_path
             options = Options()
-            options.add_argument("--headless")  # Ensure headless mode
-            options.add_argument("--disable-gpu")
-            options.add_argument("--no-sandbox")
-            options.add_argument("--disable-dev-shm-usage")
+            if data_manager.config.general.headless:
+                options.add_argument("--headless")  # Ensure headless mode
+                options.add_argument("--disable-gpu")
+                options.add_argument("--no-sandbox")
+                options.add_argument("--disable-dev-shm-usage")
 
             service = Service(driver_path)
             self.driver = webdriver.Edge(service=service, options=options)

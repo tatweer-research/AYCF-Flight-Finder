@@ -163,7 +163,7 @@ class FlightFinderService:
 
         # Combine unique flight hashes and calculate estimated time
         number_unique_flights = len(set(first_flights + second_flights))
-        estimated_time = number_unique_flights * 5 * 2 * 3 + 20  # 5s per flight check and checked three times + 20s setup
+        estimated_time = number_unique_flights * 5 * 4 + 20  # 5s per flight check and checked four times + 20s setup
         return format_seconds(estimated_time)
 
     def find_available_oneway_flights(self):
