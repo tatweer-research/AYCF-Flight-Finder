@@ -1,3 +1,4 @@
+import json
 import shutil
 import time
 from copy import deepcopy
@@ -8,6 +9,7 @@ import schedule
 from services import ScraperService, data_manager, FlightFinderService, ReportService
 from services.data_manager import logger
 from services.emailer import email_service, roundtrip_kwargs, oneway_kwargs
+from services.parallel_scraper import manage_parallel_scraping
 from utils import increment_date, get_current_date, is_date_in_range
 
 
@@ -196,16 +198,22 @@ if __name__ == '__main__':
     # create_report('oneway')
     # create_report('roundtrip')
     # check_possible_flights_workflow('oneway')
-    one_way_workflow()
+    # one_way_workflow()
     # round_trip_workflow()
     # send_email()
     # schedule_one_way_workflow()
     # update_airports_database()
-    # finder = FlightFinderService()
-    # finder.find_one_stop_flights(max_stops=0)
-    # checked_flights = data_manager.load_data(config.data_manager.checked_flights_path)
+    # checked_flights = data_manager.load_data(config['data_manager']['checked_flights_path'])
     # data_manager.add_checked_flights(checked_flights)
     # check_available_flights()
 
-    # do_pending_jobs()
-    # manage_parallel_scraping()
+    do_pending_jobs()
+
+    # Parallel Processing
+    # finder = FlightFinderService()
+    # finder.find_possible_one_stop_flights(max_stops=0)
+    # shared_dict = manage_parallel_scraping(data_manager.get_possible_flights()['possible_flights'],
+    #                                          data_manager.config,
+    #                          max_workers=3)
+    # with open('shared_dict.json', 'w', encoding='utf-8') as f:
+    #     json.dump(shared_dict, f, ensure_ascii=False, indent=4)

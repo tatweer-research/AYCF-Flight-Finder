@@ -1,4 +1,5 @@
 import json
+import os
 import time
 
 from selenium.webdriver import Keys
@@ -9,29 +10,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from services.data_manager import data_manager, logger
 
 AIRPORTS_WITH_NAME_CLASHES = ['Basel-Mulhouse-Freiburg']
-
-from stem.control import Controller
-import socks
-import socket
-import requests
-
-
-def change_tor_ip():
-    """Signals Tor to switch to a new exit node (new IP)."""
-    try:
-        with Controller.from_port(port=9051) as controller:
-            controller.authenticate(password="your_password")  # Change to your Tor password
-            controller.signal("NEWNYM")
-            logger.info("Tor IP changed successfully.")
-    except Exception as e:
-        logger.error(f"Failed to change Tor IP: {e}")
-
-
-def set_tor_proxy():
-    """Configures the Selenium driver to use the Tor network."""
-    socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", 9050)
-    socket.socket = socks.socksocket
-    logger.info("Tor proxy settings applied.")
 
 
 class ScraperService:
@@ -308,7 +286,7 @@ class ScraperService:
             logger.error(f"Error while fetching destination suggestions: {e}")
             return []
 
-    def read_flight_information(self):
+    def read_flight_information(self, depth=0):
         """Reads flight information and outputs it as JSON."""
         try:
             logger.debug("Waiting for the page to load.")
@@ -368,13 +346,15 @@ class ScraperService:
             logger.debug(json.dumps(flight_data, ensure_ascii=False, indent=4))
             return flight_data if flight_data else None
         except Exception as e:
-            logger.error(f"Error reading flight information: {e}")
-            logger.info("Rotating IP via Tor and retrying...")
-
-            # Change Tor IP and retry
-            change_tor_ip()
-            time.sleep(5)  # Give it time to switch IP
-            set_tor_proxy()  # Reapply Tor proxy settings
+            logger.error(f"PID-{os.getpid()}: Error reading flight information: {e}")
+            time.sleep(data_manager.config.general.rate_limit_wait_time)
+            # self.driver.refresh()
+            # self.driver.refresh()
+            # self.driver.refresh()
+            # self.read_flight_information(depth + 1)
+            # if depth == 2:
+            #     return
+            return
 
     def setup_browser(self):
         # services/scraper.py
@@ -386,9 +366,7 @@ class ScraperService:
         try:
             driver_path = self.config.general.driver_path
             options = Options()
-            headless = data_manager.config['general'].get('headless', False)  # Default to False if not specified
-
-            if headless:
+            if data_manager.config.general.headless:
                 options.add_argument("--headless")  # Ensure headless mode
                 options.add_argument("--disable-gpu")
                 options.add_argument("--no-sandbox")
