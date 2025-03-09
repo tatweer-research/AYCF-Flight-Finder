@@ -43,7 +43,7 @@ class FlightFinderService:
                     flight = {
                         'outward_flight': {
                             'hash': outward_hash,  # Unique hash for the outward flight
-                            'type': 'direct',  # TODO: could it be, that you forgot to use this metadata for something? Remove it if unnecessary
+                            'type': 'direct',
                             'airport': airport,
                             'destination': destination
                         },
@@ -164,7 +164,7 @@ class FlightFinderService:
 
         # Combine unique flight hashes and calculate estimated time
         number_unique_flights = len(set(first_flights + second_flights))
-        estimated_time = number_unique_flights * 5 * 2 * 3 + 20  # 5s per flight check and checked three times + 20s setup
+        estimated_time = number_unique_flights * 5 * 4 + 20  # 5s per flight check and checked four times + 20s setup
         return format_seconds(estimated_time)
 
     @staticmethod
@@ -193,7 +193,6 @@ class FlightFinderService:
                             matching_first_flights.append(flight)
 
             # Check if it's a direct flight (second_flight is None)
-            # TODO: we could append the matched_first into available_flights directly in line 195!
             if second_flight is None:
                 if matching_first_flights:
                     for matched_first in matching_first_flights:

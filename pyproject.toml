@@ -4,15 +4,15 @@ version = "0.1.0"
 description = "A web app that helps WizzAir All You Can Fly (AYCF) pass holders quickly find available flights."
 requires-python = ">=3.11"
 dependencies = [
-    "email-validator>=2.2.0",
+    "email-validator==2.2.0",
     "folium==0.19.5",
-    "pathlib>=1.0.1",
-    "pydantic>=2.10.6",
-    "pytz>=2025.1",
-    "pyyaml>=6.0.2",
-    "reportlab>=4.3.1",
-    "schedule>=1.2.2",
-    "selenium>=4.29.0",
+    "pathlib==1.0.1",
+    "pydantic==2.10.6",
+    "pytz==2025.1",
+    "PyYAML==6.0.2",
+    "reportlab==4.3.1",
+    "schedule==1.2.0",
+    "selenium==4.10.0",
     "streamlit>=1.42.2",
     "streamlit-folium==0.24.0",
 ]

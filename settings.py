@@ -9,6 +9,7 @@ class GeneralConfig(BaseModel):
     driver_path: Union[str, os.PathLike]
     page_loading_time: int
     action_wait_time: int
+    rate_limit_wait_time: int
     headless: bool = False
     mode: Literal["oneway", "roundtrip"]
 
