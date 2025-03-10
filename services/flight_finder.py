@@ -2,7 +2,7 @@ import hashlib
 from collections import deque
 
 from services.data_manager import data_manager, logger
-from utils import compare_times, remove_duplicates_from_list
+from utils import compare_times, remove_duplicates_from_list, get_city
 from utils import format_seconds
 
 
@@ -189,8 +189,8 @@ class FlightFinderService:
                 if flights:
                     for flight in flights:
                         if (
-                                flight["departure"]["city"] == first_flight["airport"]
-                                and flight["arrival"]["city"] == first_flight["destination"]
+                                flight["departure"]["city"] == get_city(first_flight["airport"])
+                                and flight["arrival"]["city"] == get_city(first_flight["destination"])
                         ):
                             matching_first_flights.append(flight)
 
@@ -209,8 +209,8 @@ class FlightFinderService:
                 if flights:
                     for flight in flights:
                         if (
-                                flight["departure"]["city"] == second_flight["airport"]
-                                and flight["arrival"]["city"] == second_flight["destination"]
+                                flight["departure"]["city"] == get_city(second_flight["airport"])
+                                and flight["arrival"]["city"] == get_city(second_flight["destination"])
                         ):
                             matching_second_flights.append(flight)
 
@@ -253,8 +253,8 @@ class FlightFinderService:
                 if flights:
                     for flight in flights:
                         if (
-                                flight["departure"]["city"] == outward_flight["airport"]
-                                and flight["arrival"]["city"] == outward_flight["destination"]
+                                flight["departure"]["city"] == get_city(outward_flight["airport"])
+                                and flight["arrival"]["city"] == get_city(outward_flight["destination"])
                         ):
                             matching_outward_flights.append(flight)
 
@@ -269,8 +269,8 @@ class FlightFinderService:
                     if flights:
                         for flight in flights:
                             if (
-                                    flight["departure"]["city"] == return_flight["airport"]
-                                    and flight["arrival"]["city"] == return_flight["destination"]
+                                    flight["departure"]["city"] == get_city(return_flight["airport"])
+                                    and flight["arrival"]["city"] == get_city(return_flight["destination"])
                             ):
                                 matching_return_flights.append(flight)
 
