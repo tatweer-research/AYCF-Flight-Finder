@@ -1,5 +1,5 @@
 import io
-import json
+import yaml
 import logging
 import re
 from datetime import datetime
@@ -12,28 +12,23 @@ log = logging.getLogger(__name__)
 
 
 class FlightConnectionParser:
-    def __init__(self, json_path='data/flight_data.json'):
-        """Initialize the parser with a path to save/load JSON data."""
+    def __init__(self, yaml_path='data/flight_data.yaml'):
+        """Initialize the parser with a path to save/load yaml data."""
         self.url = "https://multipass.wizzair.com/aycf-availability.pdf"
-        self.json_path = json_path
+        self.yaml_path = yaml_path
 
     def load_saved_data(self):
-        """Load previously saved flight data from the JSON file."""
+        """Load previously saved flight data from the yaml file."""
         try:
-            with open(self.json_path, 'r') as f:
-                return json.load(f)
+            with open(self.yaml_path, 'r') as f:
+                return yaml.safe_load(f)
         except FileNotFoundError:
             return None
 
     def save_data(self, data):
-        """Save the parsed flight data to the JSON file."""
-
-        def datetime_converter(o):
-            if isinstance(o, datetime):
-                return o.strftime('%Y-%m-%d %H:%M:%S')  # Convert datetime to string
-
-        with open(self.json_path, 'w') as f:
-            json.dump(data, f, default=datetime_converter, indent=3)
+        """Save the parsed flight data to the yaml file."""
+        with open(self.yaml_path, 'w') as f:
+            yaml.dump(data, f, indent=3, sort_keys=False)
 
     def download_pdf(self):
         """Download the PDF from the specified URL."""
@@ -149,5 +144,5 @@ if __name__ == "__main__":
     flight_data = parser.get_flight_data()
     print(f"Last run: {flight_data['last_run']}")
     print(f"Departure period: {flight_data['departure_period']}")
-    for airport, connections in flight_data['airports'].items():
+    for airport, connections in flight_data['connections'].items():
         print(f"{airport}: {', '.join(connections)}")
