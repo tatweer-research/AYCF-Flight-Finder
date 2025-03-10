@@ -33,10 +33,8 @@ class DataManager:
     def __init__(self):
         self._write_lock = threading.Lock()
 
-        # Load the YAML file
-        with open('configuration.yaml', 'r', encoding='utf-8') as file:
-            config = yaml.safe_load(file)
-        self.config = ConfigSchema(**config)
+        self.config = None
+        self.init_config()
         logger.info('Configuration file loaded successfully')
 
         self.driver = None
@@ -44,6 +42,12 @@ class DataManager:
         self._reset_databases()
         if self.config.scraper.initialize_driver:
             self._setup_edge_driver()
+
+    def init_config(self, path: str = 'configuration.yaml'):
+        # Load the YAML file
+        with open(path, 'r', encoding='utf-8') as file:
+            config = yaml.safe_load(file)
+        self.config = ConfigSchema(**config)
 
     def _setup_logging(self):
         """Setup logging with console and file handlers."""
@@ -60,7 +64,7 @@ class DataManager:
 
         # File handler for DEBUG logs (DEBUG only)
         file_handler_debug = logging.FileHandler(
-            self.config.logging.log_file.stem + '-debug.log',
+            self.config.logging.log_file.split('.')[0] + '-debug.log',
             mode='w',
             encoding='utf-8'
         )

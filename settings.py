@@ -2,28 +2,23 @@ import os
 from pathlib import Path
 from typing import Optional, Literal, Union
 
-from pydantic import BaseModel, HttpUrl, field_validator, conlist
+from pydantic import BaseModel, field_validator, conlist
 
 
 class GeneralConfig(BaseModel):
-    driver_path: Union[str, os.PathLike]
+    driver_path: str
     page_loading_time: int
     action_wait_time: int
     rate_limit_wait_time: int
     headless: bool = False
     mode: Literal["oneway", "roundtrip"]
-
-    # noinspection PyNestedDecorators
-    @field_validator("driver_path", mode="before")
-    @classmethod
-    def convert_to_pathlib(cls, v):
-        return Path(v)
+    time_stamp: Optional[str] = None
 
 
 class AccountConfig(BaseModel):
     username: str
     password: str
-    wizzair_url: HttpUrl
+    wizzair_url: str
 
 
 class FlightDataConfig(BaseModel):
@@ -37,44 +32,22 @@ class FlightDataConfig(BaseModel):
 class LoggingConfig(BaseModel):
     log_level_file: str
     log_level_console: str
-    log_file: Union[str, os.PathLike]
+    log_file: str
     date_format: str
     log_format: str
 
-    # noinspection PyNestedDecorators
-    @field_validator("log_file", mode="before")
-    @classmethod
-    def convert_to_pathlib(cls, v):
-        return Path(v)
-
 
 class DataManagerConfig(BaseModel):
-    airport_database_path: Union[str, os.PathLike]
-    possible_flights_path: Union[str, os.PathLike]
-    checked_flights_path: Union[str, os.PathLike]
-    available_flights_path: Union[str, os.PathLike]
+    airport_database_path: str
+    possible_flights_path: str
+    checked_flights_path: str
+    available_flights_path: str
     use_cache: bool
-
-    # noinspection PyNestedDecorators
-    @field_validator("airport_database_path",
-                     "possible_flights_path",
-                     "checked_flights_path",
-                     "available_flights_path",
-                     mode="before")
-    @classmethod
-    def convert_to_pathlib(cls, v):
-        return Path(v)
 
 
 class ReporterConfig(BaseModel):
-    report_path: Union[str, os.PathLike]
-    logo_path: Union[str, os.PathLike]
-
-    # noinspection PyNestedDecorators
-    @field_validator("*", mode="before")
-    @classmethod
-    def convert_to_pathlib(cls, v):
-        return Path(v)
+    report_path: str
+    logo_path: str
 
 
 class ScraperConfig(BaseModel):

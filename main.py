@@ -180,7 +180,7 @@ def do_pending_jobs():
                 shutil.copy(file, 'cache')
                 # Do not change the order of the following lines
                 data_manager._reset_databases()
-                data_manager.config = data_manager.load_data(str(file))
+                data_manager.init_config(str(file))
                 data_manager._setup_edge_driver()
 
                 if data_manager.config.general.mode == 'oneway':
@@ -190,7 +190,7 @@ def do_pending_jobs():
                 file.unlink()
             except Exception as e:
                 file.unlink()
-                logger.error(f"Failed to process job: {file} - {e}")
+                logger.exception(f"Failed to process job: {file} - {e}")
         time.sleep(10)
 
 
@@ -203,7 +203,7 @@ if __name__ == '__main__':
     # send_email()
     # schedule_one_way_workflow()
     # update_airports_database()
-    # checked_flights = data_manager.load_data(config['data_manager']['checked_flights_path'])
+    # checked_flights = data_manager.load_data(data_manager.config.data_manager.checked_flights_path)
     # data_manager.add_checked_flights(checked_flights)
     # check_available_flights()
 
