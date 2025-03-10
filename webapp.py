@@ -11,11 +11,11 @@ from services import FlightFinderService
 from services.data_manager import data_manager, logger
 
 
-class NoDepartureAirportsSelected(Exception):
+class NoAirportsSelected(Exception):
     pass
 
 
-class NoDestinationAirportsSelected(Exception):
+class OneAirportNotSelected(Exception):
     pass
 
 
@@ -66,7 +66,7 @@ trip_type = st.radio(
 options = sorted(data_manager.get_all_airports())
 
 departure_airports = st.multiselect(
-    'Departure Airports:',
+    'Departure Airports (If nothing is selected, I will check for all airports):',
     options,
     max_selections=5
 )
@@ -123,11 +123,11 @@ def check_for_duplicate_jobs():
 # Validate email when the user submits the form
 if st.button('Submit'):
     try:
-        if not departure_airports:
-            raise NoDepartureAirportsSelected()
+        if not departure_airports and not arrival_airports:
+            raise NoAirportsSelected()
 
-        if not arrival_airports and stops == 'One-Stop':
-            raise NoDestinationAirportsSelected()
+        if not arrival_airports or not departure_airports and stops == 'One-Stop':
+            raise OneAirportNotSelected()
 
         # Validate the email
         valid = validate_email(email)
@@ -135,21 +135,21 @@ if st.button('Submit'):
         check_for_duplicate_jobs()
 
         file_name = f'{uuid.uuid4()}.yaml'
-        data_manager.save_data(get_new_config(), f'jobs/{file_name}')
+        data_manager.save_data(get_new_config().model_dump(), f'jobs/{file_name}')
         estimated_time = get_scraping_time()
         st.success(f'Your request has been received. I will notify you with the results at {email} and will be done '
                    f'in about {estimated_time} 😎')
     except EmailNotValidError as e:
         st.error(f'Invalid email address: {e}')
         logger.error(f'Invalid email address: {e}')
-    except NoDepartureAirportsSelected as e:
-        st.error(f'Please select at least one departure airport.')
+    except NoAirportsSelected as e:
+        st.error(f'Please select at least one departure or one destination airport.')
         logger.error(f'No departure airports selected.')
     except DuplicateJobError as e:
         st.error("A similar job has already been submitted. Please wait until you receive the results via email.")
         logger.error(f'Duplicate job detected.')
-    except NoDestinationAirportsSelected as e:
-        st.error(f'In the case of one-stop flights you need to select at least one destination airport.')
+    except OneAirportNotSelected as e:
+        st.error(f'In the case of one-stop flights you need to select both departure and destination airports.')
         logger.error(f'No destination airports selected.')
 
 
