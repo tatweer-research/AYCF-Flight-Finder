@@ -39,10 +39,7 @@ class ReportService:
                 f"Date: {return_flight['date']}<br/>"
                 f"Departure: {return_flight['departure']['city']} ({return_flight['departure']['time']} {return_flight['departure']['timezone']})<br/>"
                 f"Arrival: {return_flight['arrival']['city']} ({return_flight['arrival']['time']} {return_flight['arrival']['timezone']})<br/>"
-                f"Duration: {return_flight['duration']}<br/>"
-                f"Flight Code: {return_flight['flight_code']}<br/>"
-                f"Carrier: {return_flight['carrier']}<br/>"
-                f"Price: {return_flight['price']}",
+                f"Duration: {return_flight['duration']}<br/>",
                 styles['Normal']
             )
             elements.append(return_details)
@@ -88,10 +85,7 @@ class ReportService:
                 f"Date: {outward['date']}<br/>"
                 f"Departure: {outward['departure']['city']} ({outward['departure']['time']} {outward['departure']['timezone']})<br/>"
                 f"Arrival: {outward['arrival']['city']} ({outward['arrival']['time']} {outward['arrival']['timezone']})<br/>"
-                f"Duration: {outward['duration']}<br/>"
-                f"Flight Code: {outward['flight_code']}<br/>"
-                f"Carrier: {outward['carrier']}<br/>"
-                f"Price: {outward['price']}",
+                f"Duration: {outward['duration']}<br/>",
                 styles['Normal']
             )
             elements.append(outward_details)
@@ -163,10 +157,7 @@ class ReportService:
             f"Date: {outward['date']}<br/>"
             f"Departure: {outward['departure']['city']} ({outward['departure']['time']} {outward['departure']['timezone']})<br/>"
             f"Arrival: {outward['arrival']['city']} ({outward['arrival']['time']} {outward['arrival']['timezone']})<br/>"
-            f"Duration: {outward['duration']}<br/>"
-            f"Flight Code: {outward['flight_code']}<br/>"
-            f"Carrier: {outward['carrier']}<br/>"
-            f"Price: {outward['price']}",
+            f"Duration: {outward['duration']}<br/>",
             styles['Normal']
         )
         elements.append(outward_details)
@@ -185,10 +176,7 @@ class ReportService:
             f"Date: {return_flight['date']}<br/>"
             f"Departure: {return_flight['departure']['city']} ({return_flight['departure']['time']} {return_flight['departure']['timezone']})<br/>"
             f"Arrival: {return_flight['arrival']['city']} ({return_flight['arrival']['time']} {return_flight['arrival']['timezone']})<br/>"
-            f"Duration: {return_flight['duration']}<br/>"
-            f"Flight Code: {return_flight['flight_code']}<br/>"
-            f"Carrier: {return_flight['carrier']}<br/>"
-            f"Price: {return_flight['price']}",
+            f"Duration: {return_flight['duration']}<br/>",
             styles['Normal']
         )
         elements.append(return_details)
