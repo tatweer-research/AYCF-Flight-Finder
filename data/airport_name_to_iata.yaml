@@ -1,0 +1,194 @@
+Aberdeen: ABZ
+Abu Dhabi: AUH
+Agadir: AGA
+Aalesund: AES
+Alexandria: HBE
+Alghero: AHO
+Alicante: ALC
+Almaty: ALA
+Amman: AMM
+Ancona: AOI
+Antalya: AYT
+Aqaba: AQJ
+Astana: NQZ
+Athens: ATH
+Bacau: BCM
+Baku: GYD
+Banja Luka: BNX
+Barcelona: BCN
+Bari: BRI
+Basel/Mulhouse: BSL
+#Basel-Mulhouse-Freiburg: MLH
+Belgrade: BEG
+Bergen: BGO
+Berlin Brandenburg: BER
+Bilbao: BIO
+Billund: BLL
+Birmingham: BHX
+Bishkek: FRU
+Bologna: BLQ
+Brasov: GHV
+Bratislava: BTS
+Bremen: BRE
+Wroclaw: WRO
+Brindisi: BDS
+Brüssels: BRU
+#Brüssel-Charleroi: CRL
+Bucharest: BBU
+Budapest: BUD
+Bukarest H. Coanda: OTP
+Burgas: BOJ
+Giza: SPX
+Castellon: CDT
+Catania: CTA
+Chania: CHQ
+Chisinau: RMO
+Cluj: CLJ
+Comiso: CIY
+Constanța: CND
+Craiova: CRA
+Dalaman: DLM
+Dammam: DMM
+Danzig: GDN
+Debrecen: DEB
+Dortmund: DTM
+Dschidda: JED
+Dubai: DXB
+Dubrovnik: DBV
+Eindhoven: EIN
+Erbil: EBL
+Faro: FAO
+Flughafen Venedig-Tessera Marco Polo: VCE  # TODO: check
+Frankfurt: HHN
+Friedrichshafen: FDH
+Fuerteventura: FUE
+Gdansk: GDN
+Genf: GVA
+Genua: GOA
+Girona: GRO
+Glasgow: GLA
+Gran Canaria: LPA
+Grenoble: GNB
+Göteborg Landvetter: GOT   # TODO: check
+Hamburg: HAM
+Haugesund: HAU
+Heraklion: HER
+Hurghada: HRG
+Iasi: IAS
+Ibiza: IBZ
+Istanbul: IST
+Izmir: ADB
+Yerevan: EVN
+Karlsruhe/Baden-Baden: FKB
+Katowice: KTW
+Kaunas: KUN
+Kefalonia: EFL
+Kopenhagen: CPH
+Korfu: CFU
+Kos: KGS
+Košice: KSC
+Krakow: KRK
+Kutaisi: KUT
+Köln: CGN
+Larnaca: LCA
+Leeds/Bradford: LBA
+Leipzig/Halle: LEJ
+Lissabon: LIS
+Liverpool: LPL
+Ljubljana: LJU
+London: LGW
+#London Luton: LTN
+Lublin: LUZ
+Lyon: LYS
+Madeira: FNC
+Madrid: MAD
+Milan: BGY
+#Mailand Malpensa: MXP
+Malaga: AGP
+Malmö: MMX
+Malta: MLA
+Male: MLE
+Marrakesch: RAK
+Marsa Alam: RMF
+Maskat: MCT
+Madinah: MED
+Memmingen: FMM
+Mykonos: JMK
+Neapel: NAP
+Nizza: NCE
+Nis: INI
+Nürnberg: NUE
+Nur-Sultan: NQZ
+Ohrid: OHD
+Olbia: OLB
+Oslo: OSL
+#Oslo Sandefjord Torp: TRF
+Palma de Mallorca: PMI
+Paris Beauvais: BVA
+Paris-Orly: ORY
+Perugia: PEG
+Pescara: PSR
+Pisa: PSA
+Plowdiw: PDV
+Podgorica: TGD
+Poprad/Tatry: TAT
+Porto: OPO
+Posen: POZ
+Prag: PRG
+Priština: PRN
+Radom: RDO
+Reykjavik: KEF
+Rhodos: RHO
+Riad: RUH
+Riga: RIX
+Rimini: RMI
+Rome: CIA
+#Rom Fiumicino: FCO
+Rzeszów: RZE
+Salala: SLL
+Salerno: QSR
+Salzburg: SZG
+Samarkand: SKD
+Santander: SDR
+Santorini: JTR
+Saragossa: ZAZ
+Sarajevo: SJJ
+Satu Mare: SUJ
+Scharm El-Scheich: SSH
+Sevilla: SVQ
+Sibiu: SBZ
+Skiathos: JSI
+Skopje: SKP
+Sofia: SOF
+Sohag: HMB
+Split: SPU
+Stavanger: SVG
+Stettin: SZZ
+Stockholm Arlanda: ARN
+Stockholm Skavsta: NYO
+Stuttgart: STR
+Suceava: SCV
+Tallinn: TLL
+Tashkent: TAS
+Tel Aviv: TLV
+Teneriffa: TFS
+Thessaloniki: SKG
+Timisoara: TSR
+Tirana: TIA
+Triest: TRS
+Tromsø: TOS
+Trondheim: TRD
+Turin: TRN
+Turkistan: HSA
+Turku: TKU
+Tuzla: TZL
+Targu-Mures: TGM
+Valencia: VLC
+Venedig Treviso: TSF
+Verona: VRN
+Vilnius: VNO
+Warna: VAR
+Warsaw: WAW
+Vienna: VIE
+Zakynthos: ZTH
+Ålesund: AES

@@ -3,12 +3,15 @@ import os
 import threading
 from pathlib import Path
 from typing import Dict, List
+import unidecode
 
+import pandas as pd
 import yaml
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.edge.options import Options
 
+from services.flight_connector_parser import FlightConnectionParser
 from settings import ConfigSchema
 
 logger = logging.getLogger(__name__)
@@ -39,11 +42,79 @@ class DataManager:
         self.config = ConfigSchema(**config)
         logger.info('Configuration file loaded successfully')
 
+        # Get the new airport destinations
+        self.flight_connection_parser = FlightConnectionParser()
+        self.__airports_destinations = {}
+
+        # Read the airport_iata_icao_path CSV into a DataFrame
+        self.__orig_df_airport = None
+        self.__df_airport = None
+        self._setup_df_airports()
+
         self.driver = None
         self._setup_logging()
         self._reset_databases()
         if self.config.scraper.initialize_driver:
             self._setup_edge_driver()
+
+    def _setup_df_airports(self):
+        self.__orig_df_airport = pd.read_csv(self.config.data_manager.airport_iata_icao_path)
+        self.__orig_df_airport = self.__orig_df_airport[self.__orig_df_airport['iata'].notna() & (self.__orig_df_airport['iata'] != '')]
+        self.__orig_df_airport = self.__orig_df_airport.drop_duplicates(subset='iata', keep='first')
+        # Create a dictionary mapping IATA codes to (latitude, longitude) tuples
+        airport_coords = self.__orig_df_airport.set_index('iata')[['latitude', 'longitude']].to_dict(orient='index')
+        self.__orig_df_airport["airport_coords"] = self.__orig_df_airport["iata"].map(
+            lambda iata: (
+                airport_coords[iata]["latitude"], airport_coords[iata]["longitude"]) if iata in airport_coords else None
+        )
+
+    def _update_connections_in_df_airports(self):
+        # Read the YAML file
+        with open(self.config.data_manager.airport_name_to_iata_path, "r", encoding="utf-8") as f:
+            name_to_iata = yaml.safe_load(f)
+
+        # Refresh (if necessary) the airport destinations/connections
+        airports_destinations = self.flight_connection_parser.get_flight_data()['connections']
+        self.__airports_destinations = {}
+
+        # Validate & build connections dictionary mapping source IATA → list of destination IATAs.
+        for source_name, destination_names in airports_destinations.items():
+            # Convert source airport name to ASCII
+            source_name_ascii = unidecode.unidecode(source_name)
+
+            # Check that we have an IATA code for this source
+            source_iata = name_to_iata.get(source_name_ascii)
+            if not source_iata:
+                raise ValueError(f"No IATA code found for airport: {source_name} (ASCII: {source_name_ascii})")
+
+            # Collect all destination IATAs, also converting them to ASCII for lookup
+            dest_iatas = []
+            for dest_name in destination_names:
+                dest_name_ascii = unidecode.unidecode(dest_name)
+
+                if dest_name_ascii not in name_to_iata:
+                    raise ValueError(
+                        f"No IATA code found for destination airport: {dest_name} (ASCII: {dest_name_ascii})")
+
+                dest_iata = name_to_iata[dest_name_ascii]
+                dest_iatas.append(dest_iata)
+
+            self.__airports_destinations[source_iata] = dest_iatas
+
+        # Combine with csv data and check for missing iatas
+        flight_data_iatas = set(self.__airports_destinations.keys())
+        csv_iatas = set(self.__orig_df_airport["iata"])
+        missing_in_csv = flight_data_iatas - csv_iatas
+        if missing_in_csv:
+            raise ValueError(
+                f"The following IATA codes appear in flight_data but are not in the CSV: {missing_in_csv}"
+            )
+
+        # Create a new column in df_airports with the connections
+        self.__orig_df_airport["connections"] = self.__orig_df_airport["iata"].map(self.__airports_destinations)
+
+        # Remove airports without connections
+        self.__df_airport = self.__orig_df_airport.dropna(subset=["connections"]).copy()
 
     def _setup_logging(self):
         """Setup logging with console and file handlers."""
@@ -86,7 +157,8 @@ class DataManager:
         logger.debug('Logging has been configured with both console and file handlers.')
 
     def _reset_databases(self):
-        self.__airports_destinations = self.load_data(self.config.data_manager.airport_database_path)
+        # Update the connections in the dataframe
+        self._update_connections_in_df_airports()
 
         # Remove available flights, checked and possible flights databases
         self.remove_file(self.config.data_manager.available_flights_path)
@@ -147,9 +219,15 @@ class DataManager:
     def remove_file(path: str):
         if os.path.exists(path):
             os.remove(path)
-            print(f"The file {path} has been removed.")
+            logger.info(f"The file {path} has been removed.")
         else:
-            print(f"The file {path} does not exist.")
+            logger.info(f"The file {path} does not exist.")
+
+    def get_airport_coord(self, airport_name):
+        return self.__df_airport.set_index("iata")["airport_coords"].get(airport_name)
+
+    def get_airport_print_name(self, airport_name):
+        return self.__df_airport.set_index("iata")["airport"].get(airport_name) + " (" + airport_name + ")"
 
     def get_airport_database(self):
         return self.__airports_destinations

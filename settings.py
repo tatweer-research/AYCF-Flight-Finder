@@ -49,6 +49,8 @@ class LoggingConfig(BaseModel):
 
 
 class DataManagerConfig(BaseModel):
+    airport_iata_icao_path: Union[str, os.PathLike]
+    airport_name_to_iata_path: Union[str, os.PathLike]
     airport_database_path: Union[str, os.PathLike]
     possible_flights_path: Union[str, os.PathLike]
     checked_flights_path: Union[str, os.PathLike]
@@ -56,7 +58,8 @@ class DataManagerConfig(BaseModel):
     use_cache: bool
 
     # noinspection PyNestedDecorators
-    @field_validator("airport_database_path",
+    @field_validator("airport_iata_icao_path",
+                     "airport_database_path",
                      "possible_flights_path",
                      "checked_flights_path",
                      "available_flights_path",

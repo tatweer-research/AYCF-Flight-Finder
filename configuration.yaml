@@ -90,6 +90,8 @@ logging:
 
 
 data_manager:
+  airport_iata_icao_path: data/airport_iata_icao.csv
+  airport_name_to_iata_path: data/airport_name_to_iata.yaml
   airport_database_path: data/airport_database.yaml
   possible_flights_path: data/possible_flights.yaml
   checked_flights_path: data/checked_flights.yaml
