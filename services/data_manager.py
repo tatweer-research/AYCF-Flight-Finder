@@ -72,6 +72,7 @@ class DataManager:
         # Read the YAML file
         with open(self.config.data_manager.airport_name_to_iata_path, "r", encoding="utf-8") as f:
             name_to_iata = yaml.safe_load(f)
+        name_to_iata = {unidecode.unidecode(airport_name): iata for airport_name, iata in name_to_iata.items()}
 
         # Refresh (if necessary) the airport destinations/connections
         airports_destinations = self.flight_connection_parser.get_flight_data()['connections']
