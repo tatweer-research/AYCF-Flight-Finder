@@ -21,7 +21,7 @@ Basel/Mulhouse: BSL
 #Basel-Mulhouse-Freiburg: MLH
 Belgrade: BEG
 Bergen: BGO
-Berlin Brandenburg: BER
+Berlin: BER
 Bilbao: BIO
 Billund: BLL
 Birmingham: BHX
@@ -32,11 +32,11 @@ Bratislava: BTS
 Bremen: BRE
 Wroclaw: WRO
 Brindisi: BDS
-Brüssels: BRU
-#Brüssel-Charleroi: CRL
+Brussels: BRU
+#Brussels-Charleroi: CRL
 Bucharest: BBU
 Budapest: BUD
-Bukarest H. Coanda: OTP
+Bucharest H. Coanda: OTP
 Burgas: BOJ
 Giza: SPX
 Castellon: CDT
@@ -45,31 +45,29 @@ Chania: CHQ
 Chisinau: RMO
 Cluj: CLJ
 Comiso: CIY
-Constanța: CND
+Constanta: CND
 Craiova: CRA
 Dalaman: DLM
 Dammam: DMM
-Danzig: GDN
+Gdansk: GDN
 Debrecen: DEB
 Dortmund: DTM
-Dschidda: JED
+Jeddah: JED
 Dubai: DXB
 Dubrovnik: DBV
 Eindhoven: EIN
 Erbil: EBL
 Faro: FAO
-Flughafen Venedig-Tessera Marco Polo: VCE  # TODO: check
 Frankfurt: HHN
 Friedrichshafen: FDH
 Fuerteventura: FUE
-Gdansk: GDN
-Genf: GVA
-Genua: GOA
+Geneva: GVA
+Genoa: GOA
 Girona: GRO
 Glasgow: GLA
 Gran Canaria: LPA
 Grenoble: GNB
-Göteborg Landvetter: GOT   # TODO: check
+Gothenburg: GOT
 Hamburg: HAM
 Haugesund: HAU
 Heraklion: HER
@@ -83,17 +81,17 @@ Karlsruhe/Baden-Baden: FKB
 Katowice: KTW
 Kaunas: KUN
 Kefalonia: EFL
-Kopenhagen: CPH
-Korfu: CFU
+Copenhagen: CPH
+Corfu: CFU
 Kos: KGS
 Košice: KSC
 Krakow: KRK
 Kutaisi: KUT
-Köln: CGN
+Cologne: CGN
 Larnaca: LCA
 Leeds/Bradford: LBA
 Leipzig/Halle: LEJ
-Lissabon: LIS
+Lisbon: LIS
 Liverpool: LPL
 Ljubljana: LJU
 London: LGW
@@ -103,58 +101,58 @@ Lyon: LYS
 Madeira: FNC
 Madrid: MAD
 Milan: BGY
-#Mailand Malpensa: MXP
+#Milan Malpensa: MXP
 Malaga: AGP
-Malmö: MMX
+Malmo: MMX
 Malta: MLA
 Male: MLE
-Marrakesch: RAK
+Marrakech: RAK
 Marsa Alam: RMF
-Maskat: MCT
+Muscat: MCT
 Madinah: MED
 Memmingen: FMM
 Mykonos: JMK
-Neapel: NAP
-Nizza: NCE
+Naples: NAP
+Nice: NCE
 Nis: INI
-Nürnberg: NUE
+Nuremberg: NUE
 Nur-Sultan: NQZ
 Ohrid: OHD
 Olbia: OLB
 Oslo: OSL
 #Oslo Sandefjord Torp: TRF
 Palma de Mallorca: PMI
-Paris Beauvais: BVA
-Paris-Orly: ORY
+Paris: BVA
+#Paris Orly: ORY
 Perugia: PEG
 Pescara: PSR
 Pisa: PSA
-Plowdiw: PDV
+Plovdiv: PDV
 Podgorica: TGD
 Poprad/Tatry: TAT
 Porto: OPO
-Posen: POZ
-Prag: PRG
-Priština: PRN
+Poznan: POZ
+Prague: PRG
+Pristina: PRN
 Radom: RDO
 Reykjavik: KEF
-Rhodos: RHO
-Riad: RUH
+Rhodes: RHO
+Riyadh: RUH
 Riga: RIX
 Rimini: RMI
 Rome: CIA
-#Rom Fiumicino: FCO
+#Rome Fiumicino: FCO
 Rzeszów: RZE
-Salala: SLL
+Salalah: SLL
 Salerno: QSR
 Salzburg: SZG
 Samarkand: SKD
 Santander: SDR
 Santorini: JTR
-Saragossa: ZAZ
+Zaragoza: ZAZ
 Sarajevo: SJJ
 Satu Mare: SUJ
-Scharm El-Scheich: SSH
+Sharm el-Sheikh: SSH
 Sevilla: SVQ
 Sibiu: SBZ
 Skiathos: JSI
@@ -163,19 +161,19 @@ Sofia: SOF
 Sohag: HMB
 Split: SPU
 Stavanger: SVG
-Stettin: SZZ
-Stockholm Arlanda: ARN
-Stockholm Skavsta: NYO
+Szczecin: SZZ
+Stockholm: ARN
+#Stockholm Skavsta: NYO
 Stuttgart: STR
 Suceava: SCV
 Tallinn: TLL
 Tashkent: TAS
 Tel Aviv: TLV
-Teneriffa: TFS
+Tenerife: TFS
 Thessaloniki: SKG
 Timisoara: TSR
 Tirana: TIA
-Triest: TRS
+Trieste: TRS
 Tromsø: TOS
 Trondheim: TRD
 Turin: TRN
@@ -184,10 +182,11 @@ Turku: TKU
 Tuzla: TZL
 Targu-Mures: TGM
 Valencia: VLC
-Venedig Treviso: TSF
+Venice: TSF
+#Venice Marco Polo: VCE  # TODO: check
 Verona: VRN
 Vilnius: VNO
-Warna: VAR
+Varna: VAR
 Warsaw: WAW
 Vienna: VIE
 Zakynthos: ZTH
