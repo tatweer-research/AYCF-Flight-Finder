@@ -180,7 +180,7 @@ def do_pending_jobs():
                 shutil.copy(file, 'cache')
                 # Do not change the order of the following lines
                 data_manager._reset_databases()
-                data_manager.init_config(str(file))
+                data_manager.load_config(str(file))
                 data_manager._setup_edge_driver()
 
                 if data_manager.config.general.mode == 'oneway':

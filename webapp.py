@@ -9,6 +9,7 @@ from email_validator import validate_email, EmailNotValidError
 
 from services import FlightFinderService
 from services.data_manager import data_manager, logger
+from settings import ConfigSchema
 
 
 class NoAirportsSelected(Exception):
@@ -81,7 +82,7 @@ arrival_airports = st.multiselect(
 email = st.text_input('Enter your email address (it is needed to send you the pdf report):')
 
 
-def get_new_config():
+def get_new_config() -> ConfigSchema:
     config = copy.deepcopy(data_manager.config)
     config.flight_data.departure_airports = departure_airports
     config.flight_data.destination_airports = arrival_airports
@@ -135,7 +136,7 @@ if st.button('Submit'):
         check_for_duplicate_jobs()
 
         file_name = f'{uuid.uuid4()}.yaml'
-        data_manager.save_data(get_new_config().model_dump(), f'jobs/{file_name}')
+        data_manager.save_config(get_new_config(), f'jobs/{file_name}')
         estimated_time = get_scraping_time()
         st.success(f'Your request has been received. I will notify you with the results at {email} and will be done '
                    f'in about {estimated_time} 😎')
