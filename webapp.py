@@ -126,7 +126,7 @@ if st.button('Submit'):
         if not departure_airports and not arrival_airports:
             raise NoAirportsSelected()
 
-        if not arrival_airports or not departure_airports and stops == 'One-Stop':
+        if (not arrival_airports or not departure_airports) and stops == 'One-Stop':
             raise OneAirportNotSelected()
 
         # Validate the email
