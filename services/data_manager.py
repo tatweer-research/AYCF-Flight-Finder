@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import threading
@@ -5,6 +6,7 @@ from pathlib import Path
 from typing import Dict, List
 
 import yaml
+from pydantic import BaseModel
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.edge.options import Options
@@ -33,10 +35,8 @@ class DataManager:
     def __init__(self):
         self._write_lock = threading.Lock()
 
-        # Load the YAML file
-        with open('configuration.yaml', 'r', encoding='utf-8') as file:
-            config = yaml.safe_load(file)
-        self.config = ConfigSchema(**config)
+        self.config = None
+        self.load_config()
         logger.info('Configuration file loaded successfully')
 
         self.driver = None
@@ -44,6 +44,24 @@ class DataManager:
         self._reset_databases()
         if self.config.scraper.initialize_driver:
             self._setup_edge_driver()
+
+    def load_config(self, path: str = 'configuration.yaml'):
+        # Load the YAML file
+        with open(path, 'r', encoding='utf-8') as file:
+            config = yaml.safe_load(file)
+        self.config = ConfigSchema(**config)
+
+    @staticmethod
+    def save_config(config: BaseModel, path: str):
+        json_str = config.model_dump_json()
+        obj_dict = json.loads(json_str)
+        with open(path, 'w', encoding='utf-8') as file:
+            yaml.dump(obj_dict,
+                      file,
+                      indent=4,
+                      allow_unicode=True,
+                      Dumper=IndentedDumper,
+                      default_flow_style=False)
 
     def _setup_logging(self):
         """Setup logging with console and file handlers."""

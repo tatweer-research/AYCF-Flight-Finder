@@ -12,6 +12,7 @@ class GeneralConfig(BaseModel):
     rate_limit_wait_time: int
     headless: bool = False
     mode: Literal["oneway", "roundtrip"]
+    time_stamp: Optional[str] = None
 
     # noinspection PyNestedDecorators
     @field_validator("driver_path", mode="before")

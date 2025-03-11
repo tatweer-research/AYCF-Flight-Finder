@@ -359,6 +359,19 @@ def get_iata_code(airport_name):
     return airport_name.split(" ")[-1].replace("(", "").replace(")", "")
 
 
+def get_city(airport_name):
+    """
+    Get the city name from the airport name.
+
+    Args:
+        airport_name (str): Name of the airport
+
+    Returns:
+        str: City name
+    """
+    return airport_name.split(" (")[0]
+
+
 if __name__ == '__main__':
     name = "Budapest (BUD)"
     print(get_iata_code(name))  # Output: BUD
