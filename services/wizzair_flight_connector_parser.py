@@ -45,30 +45,30 @@ class WizzAirFlightConnectionParser:
         """Extract 'last run' and 'departure period' from the first page of the PDF."""
         pattern = r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) \((\w+)\) (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) \((\w+)\)'
         first_page = pdf.pages[0]
-        text = first_page.extract_text()
+        cropped = first_page.crop((40, 30, 550, 150))
+        text = cropped.extract_text_simple()
         lines = text.split('\n')
         metadata = {}
         metadata["departure_period"] = dict()
         metadata["last_run"] = dict()
-        for line in lines:
-            match = re.match(pattern, line)
-            if match:
-                start_time = datetime.strptime(match.group(1), "%Y-%m-%d %H:%M:%S")
-                end_time = datetime.strptime(match.group(2), "%Y-%m-%d %H:%M:%S")
-                timezone = match.group(3)
-                last_run_time = datetime.strptime(match.group(4), "%Y-%m-%d %H:%M:%S")
-                last_run_timezone = match.group(5)
+        line = lines[1]
+        match = re.match(pattern, line)
+        if match:
+            start_time = datetime.strptime(match.group(1), "%Y-%m-%d %H:%M:%S")
+            end_time = datetime.strptime(match.group(2), "%Y-%m-%d %H:%M:%S")
+            timezone = match.group(3)
+            last_run_time = datetime.strptime(match.group(4), "%Y-%m-%d %H:%M:%S")
+            last_run_timezone = match.group(5)
 
-                metadata["departure_period"] = {
-                    "start": start_time,
-                    "end": end_time,
-                    "timezone": timezone
-                }
-                metadata["last_run"] = {
-                    "time": last_run_time,
-                    "timezone": last_run_timezone
-                }
-                break
+            metadata["departure_period"] = {
+                "start": start_time,
+                "end": end_time,
+                "timezone": timezone
+            }
+            metadata["last_run"] = {
+                "time": last_run_time,
+                "timezone": last_run_timezone
+            }
         return metadata
 
     def extract_connections(self, pdf: PDF):

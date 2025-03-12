@@ -120,6 +120,7 @@ class DataManager:
         connections_dict = self.flight_connection_parser.get_flight_data()['connections']
 
         # Collect all departure & arrival names in one set
+        errors = []
         all_airport_names = set()
         for dep_name, arr_list in connections_dict.items():
             all_airport_names.add(dep_name)  # the departure airport
@@ -135,11 +136,14 @@ class DataManager:
 
             # If still none, raise an exception
             if matched_df.empty:
-                raise ValueError(f"No CSV match found for '{json_airport}' (even after special cases).")
+                errors.append(json_airport)
 
             # Gather unique IATA codes
             iata_codes = matched_df["iata"].dropna().unique().tolist()
             airport_to_iata[json_airport] = iata_codes
+
+        if errors:
+            raise ValueError(f"No CSV match found for '{errors}' (even after special cases).")
 
         # Parse airport_database.yaml
         routes_db = {}  # dictionary mapping, e.g. {"ABZ": ["GDN"], "AUH": ["HBE", "ALA", "AMM"], ...}
