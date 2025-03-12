@@ -1,18 +1,21 @@
 import io
-import yaml
 import logging
 import re
 from datetime import datetime
 
 import pandas as pd
 import pdfplumber
+from pdfplumber.pdf import PDF
 import requests
+import yaml
 
-log = logging.getLogger(__name__)
+from settings import system_config
+
+logger = logging.getLogger(__name__)
 
 
-class FlightConnectionParser:
-    def __init__(self, yaml_path='data/flight_data.yaml'):
+class WizzAirFlightConnectionParser:
+    def __init__(self, yaml_path):
         """Initialize the parser with a path to save/load yaml data."""
         self.url = "https://multipass.wizzair.com/aycf-availability.pdf"
         self.yaml_path = yaml_path
@@ -38,7 +41,7 @@ class FlightConnectionParser:
         else:
             raise Exception("Failed to download PDF")
 
-    def extract_metadata(self, pdf):
+    def extract_metadata(self, pdf: PDF):
         """Extract 'last run' and 'departure period' from the first page of the PDF."""
         pattern = r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) \((\w+)\) (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) \((\w+)\)'
         first_page = pdf.pages[0]
@@ -68,29 +71,33 @@ class FlightConnectionParser:
                 break
         return metadata
 
-    def extract_connections(self, pdf):
+    def extract_connections(self, pdf: PDF):
         """
         Extract airport connections from a PDF and return a dictionary mapping departure cities to arrival cities.
         """
         if not pdf.pages:
-            log.warning("No pages found in the PDF.")
+            logger.warning("No pages found in the PDF.")
             return {}
 
         table_dataframes = []
-        for page in pdf.pages:
-            log.info(f"Parsing page number: {page.page_number}")
+        pages = pdf.pages
+        for page in pages:
+            logger.info(f"Parsing page number: {page.page_number}")
             try:
                 tables = page.extract_tables(table_settings={})
             except Exception as e:
-                log.error(f"Error extracting tables on page {page.page_number}: {e}")
+                logger.error(f"Error extracting tables on page {page.page_number}: {e}")
                 tables = []
 
             # Skip the first table on the first page if it contains metadata (e.g., header info)
             if page.page_number == 1 and len(tables) == 3:
                 tables = tables[1:]  # Assume first table is not flight data
+            elif page.page_number == len(pages) and len(tables) == 1:
+                pass
             elif len(tables) != 2:
-                log.error(f'There were more than 2 tables detected in page number {page.page_numer}!'
-                          f'Returning empty dir since it is unclear why this happened.')
+                logger.error(f'There were more than 2 tables detected in page number {page.page_number} '
+                             f'(number of tables: {len(tables)})! '
+                             f'Returning empty dir since it is unclear why this happened.')
                 return {}
 
             for table in tables:
@@ -99,7 +106,7 @@ class FlightConnectionParser:
                 table_dataframes.append(df)
 
         if not table_dataframes:
-            log.warning("No valid tables extracted from the PDF.")
+            logger.warning("No valid tables extracted from the PDF.")
             return {}
 
         # Combine all tables into a single DataFrame
@@ -113,9 +120,9 @@ class FlightConnectionParser:
         )
         return connections_dict
 
-    def parse_pdf(self, pdf):
+    def parse_pdf(self, pdf: PDF, extracted_metadata=None):
         """Parse the PDF to extract metadata and airport connections."""
-        metadata = self.extract_metadata(pdf)
+        metadata = extracted_metadata or self.extract_metadata(pdf)
         connections = self.extract_connections(pdf)
         return {
             "last_run": metadata.get("last_run"),
@@ -130,17 +137,17 @@ class FlightConnectionParser:
         with pdfplumber.open(io.BytesIO(pdf_content)) as pdf:
             extracted_metadata = self.extract_metadata(pdf)
             if saved_data and saved_data.get("last_run") == extracted_metadata.get("last_run"):
+                logger.info('Using saved data of flight data')
                 return saved_data
             else:
-                data = self.parse_pdf(pdf)
+                logger.info('Refreshing flight data')
+                data = self.parse_pdf(pdf, extracted_metadata)
                 self.save_data(data)
                 return data
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-
-    parser = FlightConnectionParser()
+    parser = WizzAirFlightConnectionParser(system_config.data_manager.flight_data_path)
     flight_data = parser.get_flight_data()
     print(f"Last run: {flight_data['last_run']}")
     print(f"Departure period: {flight_data['departure_period']}")

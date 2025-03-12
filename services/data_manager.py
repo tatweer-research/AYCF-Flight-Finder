@@ -1,9 +1,9 @@
 import logging
 import os
+import re
 import threading
 from pathlib import Path
 from typing import Dict, List
-import unidecode
 
 import pandas as pd
 import yaml
@@ -17,19 +17,66 @@ from settings import system_config
 logger = logging.getLogger(__name__)
 
 
+def split_words(name):
+    """
+    Split the given airport name into a list of lowercase words (no punctuation).
+    E.g. "Abu Dhabi" -> ["abu", "dhabi"]
+         "Basel/Mulhouse" -> ["basel", "mulhouse"]
+    """
+    return re.findall(r"[A-Za-z0-9]+", name.lower())
+
+
+def is_complete_word_match(json_airport_name, csv_airport_name):
+    """
+    Checks if all words of 'json_airport_name' appear as whole words in 'csv_airport_name'.
+    """
+    # Split both into lists of words (lowercase).
+    json_words = split_words(json_airport_name)
+    csv_words  = split_words(csv_airport_name)
+
+    # We want every word from json_airport_name to appear in the CSV name's list of words:
+    return all(word in csv_words for word in json_words)
+
+
+def find_possible_csv_matches(airport_name, df_csv):
+    """
+    Returns all rows of df_csv where 'airport' is a *complete-word match* for airport_name.
+    If nothing found, returns an empty DataFrame.
+    """
+    matched_rows = df_csv[df_csv["airport"].apply(
+        lambda x: is_complete_word_match(airport_name, x)
+    )]
+    return matched_rows
+
+
+def parse_airport_line(line):
+    """
+    Given something like:
+       'Aberdeen (ABZ):'
+    return ('Aberdeen', 'ABZ')
+    """
+    # Regex to match:   Some Name (IATA):
+    match = re.match(r"^(.*?) \((.*?)\):", line.strip())
+    if not match:
+        return None, None
+    return match.group(1).strip(), match.group(2).strip()
+
+
+def parse_destination_line(line):
+    """
+    Given something like:
+       '- Danzig (GDN)'
+    return ('Danzig', 'GDN')
+    """
+    match = re.match(r"^- (.*?) \((.*?)\)$", line.strip())
+    if not match:
+        return None, None
+    return match.group(1).strip(), match.group(2).strip()
+
+
 class IndentedDumper(yaml.Dumper):
     def increase_indent(self, flow=False, indentless=False):
         return super(IndentedDumper, self).increase_indent(flow, False)
-
-
-class ModulePathFormatter(logging.Formatter):
-    def format(self, record):
-        # Convert the file path to a module-like path
-        content_root = os.getcwd()
-        relative_path = os.path.relpath(record.pathname, content_root)
-        module_path = relative_path.replace(os.sep, ".").rsplit(".py", 1)[0]
-        record.module_path = module_path
-        return super().format(record)
 
 
 class DataManager:
@@ -37,13 +84,11 @@ class DataManager:
         self._write_lock = threading.Lock()
 
         # Load the YAML file
-        with open('configuration.yaml', 'r', encoding='utf-8') as file:
-            config = yaml.safe_load(file)
-        self.config = ConfigSchema(**config)
+
         logger.info('Configuration file loaded successfully')
 
         # Get the new airport destinations
-        self.flight_connection_parser = FlightConnectionParser()
+        self.flight_connection_parser = WizzAirFlightConnectionParser(system_config.data_manager.flight_data_path)
         self.__airports_destinations = {}
 
         # Read the airport_iata_icao_path CSV into a DataFrame
@@ -57,7 +102,7 @@ class DataManager:
             self._setup_edge_driver()
 
     def _setup_df_airports(self):
-        self.__orig_df_airport = pd.read_csv(self.config.data_manager.airport_iata_icao_path)
+        self.__orig_df_airport = pd.read_csv(system_config.data_manager.airport_iata_icao_path)
         self.__orig_df_airport = self.__orig_df_airport[self.__orig_df_airport['iata'].notna() & (self.__orig_df_airport['iata'] != '')]
         self.__orig_df_airport = self.__orig_df_airport.drop_duplicates(subset='iata', keep='first')
         # Create a dictionary mapping IATA codes to (latitude, longitude) tuples
@@ -67,94 +112,100 @@ class DataManager:
                 airport_coords[iata]["latitude"], airport_coords[iata]["longitude"]) if iata in airport_coords else None
         )
 
+    # name_to_iata = {unidecode.unidecode(airport_name): iata for airport_name, iata in name_to_iata.items()}
+
     def _update_connections_in_df_airports(self):
-        # Read the YAML file
-        with open(self.config.data_manager.airport_name_to_iata_path, "r", encoding="utf-8") as f:
-            name_to_iata = yaml.safe_load(f)
-        name_to_iata = {unidecode.unidecode(airport_name): iata for airport_name, iata in name_to_iata.items()}
+        # Get possible IATA codes for airports in flight_connection_parser
+        with open(system_config.data_manager.airport_name_special_cases_path, "r", encoding="utf-8") as f:
+            special_name_map = yaml.safe_load(f)
 
-        # Refresh (if necessary) the airport destinations/connections
-        airports_destinations = self.flight_connection_parser.get_flight_data()['connections']
         self.__airports_destinations = {}
+        airport_to_iata = {}  # dictionary mapping e.g. {"Aalesund": [ "AES" ], "Aberdeen": [ "ABZ" ], ...}
+        connections_dict = self.flight_connection_parser.get_flight_data()['connections']
 
-        # Validate & build connections dictionary mapping source IATA → list of destination IATAs.
-        for source_name, destination_names in airports_destinations.items():
-            # Convert source airport name to ASCII
-            source_name_ascii = unidecode.unidecode(source_name)
+        # Collect all departure & arrival names in one set
+        all_airport_names = set()
+        for dep_name, arr_list in connections_dict.items():
+            all_airport_names.add(dep_name)  # the departure airport
+            all_airport_names.update(arr_list)  # all arrival airports
 
-            # Check that we have an IATA code for this source
-            source_iata = name_to_iata.get(source_name_ascii)
-            if not source_iata:
-                raise ValueError(f"No IATA code found for airport: {source_name} (ASCII: {source_name_ascii})")
+        for json_airport in all_airport_names:
+            matched_df = find_possible_csv_matches(json_airport, self.__orig_df_airport)
 
-            # Collect all destination IATAs, also converting them to ASCII for lookup
-            dest_iatas = []
-            for dest_name in destination_names:
-                dest_name_ascii = unidecode.unidecode(dest_name)
+            # If no match, check special cases
+            if matched_df.empty and json_airport in special_name_map:
+                corrected_name = special_name_map[json_airport]
+                matched_df = find_possible_csv_matches(corrected_name, self.__orig_df_airport)
 
-                if dest_name_ascii not in name_to_iata:
-                    raise ValueError(
-                        f"No IATA code found for destination airport: {dest_name} (ASCII: {dest_name_ascii})")
+            # If still none, raise an exception
+            if matched_df.empty:
+                raise ValueError(f"No CSV match found for '{json_airport}' (even after special cases).")
 
-                dest_iata = name_to_iata[dest_name_ascii]
-                dest_iatas.append(dest_iata)
+            # Gather unique IATA codes
+            iata_codes = matched_df["iata"].dropna().unique().tolist()
+            airport_to_iata[json_airport] = iata_codes
 
-            self.__airports_destinations[source_iata] = dest_iatas
+        # Parse airport_database.yaml
+        routes_db = {}  # dictionary mapping, e.g. {"ABZ": ["GDN"], "AUH": ["HBE", "ALA", "AMM"], ...}
+        current_departure_iata = None
 
-        # Combine with csv data and check for missing iatas
-        flight_data_iatas = set(self.__airports_destinations.keys())
-        csv_iatas = set(self.__orig_df_airport["iata"])
-        missing_in_csv = flight_data_iatas - csv_iatas
-        if missing_in_csv:
-            raise ValueError(
-                f"The following IATA codes appear in flight_data but are not in the CSV: {missing_in_csv}"
-            )
+        with open(system_config.data_manager.airport_database_path, "r", encoding="utf-8") as f:
+            airport_db_raw = f.read()
 
-        # Create a new column in df_airports with the connections
-        self.__orig_df_airport["connections"] = self.__orig_df_airport["iata"].map(self.__airports_destinations)
+        for raw_line in airport_db_raw.splitlines():
+            line = raw_line.strip()
+            if not line:
+                continue
+            # Check if this line is a "Departure" line with a colon
+            if line.endswith(":"):
+                # e.g. "Abu Dhabi (AUH):"
+                dep_name, dep_iata = parse_airport_line(line)
+                if dep_iata:
+                    current_departure_iata = dep_iata
+                    routes_db[current_departure_iata] = []
+            else:
+                # arrival line
+                arr_name, arr_iata = parse_destination_line(line)
+                if arr_iata and current_departure_iata:
+                    routes_db[current_departure_iata].append(arr_iata)
 
-        # Remove airports without connections
-        self.__df_airport = self.__orig_df_airport.dropna(subset=["connections"]).copy()
+        # Cross-reference routes
+        final_routes = {}  # e.g. { 'ABZ': ['GDN', 'ALA', ...], 'AUH': ['ALA', ...] }
 
-    def _setup_logging(self):
-        """Setup logging with console and file handlers."""
-        # Retrieve logger
-        logger.setLevel(logging.DEBUG)
+        for dep_name, arr_names in connections_dict.items():
+            dep_iatas = airport_to_iata[dep_name]  # e.g. ["ABZ", "???", ...]
 
-        # Create file handler
-        file_handler = logging.FileHandler(self.config.logging.log_file, mode='w', encoding='utf-8')
-        file_handler.setFormatter(ModulePathFormatter(
-            self.config.logging.log_format,
-            self.config.logging.date_format
-        ))
-        file_handler.setLevel(self.config.logging.log_level_console)
+            for dep_iata in dep_iatas:
+                if dep_iata not in routes_db:
+                    # means the YAML has no routes from that IATA => skip
+                    continue
 
-        # File handler for DEBUG logs (DEBUG only)
-        file_handler_debug = logging.FileHandler(
-            self.config.logging.log_file.stem + '-debug.log',
-            mode='w',
-            encoding='utf-8'
-        )
-        file_handler_debug.setLevel(self.config.logging.log_level_file)
-        file_handler_debug.setFormatter(ModulePathFormatter(
-            self.config.logging.log_format,
-            self.config.logging.date_format
-        ))
+                # among the arrivals in flight_data.json, see which are possible in routes_db
+                valid_arr_iatas = []
+                for arr_name in arr_names:
+                    arr_iatas = airport_to_iata[arr_name]  # e.g. ["GDN", "???"]
+                    # Check each arr_iata to see if it's in the routes_db[dep_iata]
+                    for a in arr_iatas:
+                        if a in routes_db[dep_iata]:
+                            valid_arr_iatas.append(a)
 
-        # Create console handler
-        console_handler = logging.StreamHandler()
-        console_handler.setFormatter(ModulePathFormatter(
-            self.config.logging.log_format,
-            self.config.logging.date_format
-        ))
-        console_handler.setLevel(self.config.logging.log_level_console)
+                # store in final_routes
+                if dep_iata not in final_routes:
+                    final_routes[dep_iata] = []
+                final_routes[dep_iata].extend(valid_arr_iatas)
 
-        # Add handlers to logger
-        logger.addHandler(file_handler)
-        logger.addHandler(console_handler)
-        logger.addHandler(file_handler_debug)
+        # Add new column to self.__orig_df_airport
+        def build_connections_list(iata_code):
+            if iata_code in final_routes:
+                return list(set(final_routes[iata_code]))  # or just final_routes[iata_code]
+            else:
+                return []
 
-        logger.debug('Logging has been configured with both console and file handlers.')
+        self.__orig_df_airport["connections"] = self.__orig_df_airport["iata"].apply(build_connections_list)
+
+        # Now drop any row that has an empty connections list:
+        self.__df_airport = self.__orig_df_airport[self.__orig_df_airport["connections"].apply(len) > 0]
+        self.__airports_destinations = final_routes
 
     def _reset_databases(self):
         # Update the connections in the dataframe
