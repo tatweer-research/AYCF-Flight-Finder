@@ -60,81 +60,91 @@ class DataManager:
 
         self.__airports_destinations = {}
         airport_to_iata = {}  # dictionary mapping e.g. {"Aalesund": [ "AES" ], "Aberdeen": [ "ABZ" ], ...}
-        connections_dict = self.flight_connection_parser.get_flight_data()['connections']
+        flight_data, updated = self.flight_connection_parser.get_flight_data()
+        connections_dict = flight_data['connections']
 
-        # Collect all departure & arrival names in one set
-        errors = []
-        all_airport_names = set()
-        for dep_name, arr_list in connections_dict.items():
-            all_airport_names.add(dep_name)  # the departure airport
-            all_airport_names.update(arr_list)  # all arrival airports
+        if updated or not system_config.data_manager.airport_database_dynamic_path.exists():
+            # Since the PDF changed, we have to re-do this logic
+            logger.info('WizzAir updated its PDF. Updating internal database of flights.')
 
-        for json_airport in all_airport_names:
-            matched_df = find_possible_csv_matches(json_airport, self.__orig_df_airport)
+            # Collect all departure & arrival names in one set
+            errors = []
+            all_airport_names = set()
+            for dep_name, arr_list in connections_dict.items():
+                all_airport_names.add(dep_name)  # the departure airport
+                all_airport_names.update(arr_list)  # all arrival airports
 
-            # If no match, check special cases
-            if matched_df.empty and json_airport in special_name_map:
-                corrected_name = special_name_map[json_airport]
-                matched_df = find_possible_csv_matches(corrected_name, self.__orig_df_airport)
+            for json_airport in all_airport_names:
+                matched_df = find_possible_csv_matches(json_airport, self.__orig_df_airport)
 
-            # If still none, raise an exception
-            if matched_df.empty:
-                errors.append(json_airport)
+                # If no match, check special cases
+                if matched_df.empty and json_airport in special_name_map:
+                    corrected_name = special_name_map[json_airport]
+                    matched_df = find_possible_csv_matches(corrected_name, self.__orig_df_airport)
 
-            # Gather unique IATA codes
-            iata_codes = matched_df["iata"].dropna().unique().tolist()
-            airport_to_iata[json_airport] = iata_codes
+                # If still none, raise an exception
+                if matched_df.empty:
+                    errors.append(json_airport)
 
-        if errors:
-            raise ValueError(f"No CSV match found for '{errors}' (even after special cases).")
+                # Gather unique IATA codes
+                iata_codes = matched_df["iata"].dropna().unique().tolist()
+                airport_to_iata[json_airport] = iata_codes
 
-        # Read airport_database_iata.yaml
-        routes_db = self.load_data(system_config.data_manager.airport_database_iata_path)
-        iata_to_german = self.load_data(system_config.data_manager.map_iata_to_german_name_path)
+            if errors:
+                raise ValueError(f"No CSV match found for '{errors}' (even after special cases).")
 
-        # Cross-reference routes
-        final_routes = {}  # e.g. { 'ABZ': ['GDN', 'ALA', ...], 'AUH': ['ALA', ...] }
+            # Read airport_database_iata.yaml
+            routes_db = self.load_data(system_config.data_manager.airport_database_iata_path)
+            iata_to_german = self.load_data(system_config.data_manager.map_iata_to_german_name_path)
 
-        for dep_name, arr_names in connections_dict.items():
-            dep_iatas = airport_to_iata[dep_name]  # e.g. ["ABZ", "???", ...]
+            # Cross-reference routes
+            final_routes = {}  # e.g. { 'ABZ': ['GDN', 'ALA', ...], 'AUH': ['ALA', ...] }
 
-            for dep_iata in dep_iatas:
-                if dep_iata not in routes_db:
-                    # means the YAML has no routes from that IATA => skip
-                    continue
+            for dep_name, arr_names in connections_dict.items():
+                dep_iatas = airport_to_iata[dep_name]  # e.g. ["ABZ", "???", ...]
 
-                # among the arrivals in flight_data.json, see which are possible in routes_db
-                valid_arr_iatas = []
-                for arr_name in arr_names:
-                    arr_iatas = airport_to_iata[arr_name]  # e.g. ["GDN", "???"]
-                    # Check each arr_iata to see if it's in the routes_db[dep_iata]
-                    for a in arr_iatas:
-                        if a in routes_db[dep_iata]:
-                            valid_arr_iatas.append(a)
+                for dep_iata in dep_iatas:
+                    if dep_iata not in routes_db:
+                        # means the YAML has no routes from that IATA => skip
+                        continue
 
-                # store in final_routes
-                if dep_iata not in final_routes:
-                    final_routes[dep_iata] = []
-                final_routes[dep_iata].extend(valid_arr_iatas)
+                    # among the arrivals in flight_data.json, see which are possible in routes_db
+                    valid_arr_iatas = []
+                    for arr_name in arr_names:
+                        arr_iatas = airport_to_iata[arr_name]  # e.g. ["GDN", "???"]
+                        # Check each arr_iata to see if it's in the routes_db[dep_iata]
+                        for a in arr_iatas:
+                            if a in routes_db[dep_iata]:
+                                valid_arr_iatas.append(a)
 
-        final_routes = {dep_iata: arr_iatas for dep_iata, arr_iatas in final_routes.items() if arr_iatas}
+                    # store in final_routes
+                    if dep_iata not in final_routes:
+                        final_routes[dep_iata] = []
+                    final_routes[dep_iata].extend(valid_arr_iatas)
 
-        # Add new column to self.__orig_df_airport
-        def build_connections_list(iata_code):
-            if iata_code in final_routes:
-                return list(set(final_routes[iata_code]))
-            else:
-                return []
+            final_routes = {dep_iata: arr_iatas for dep_iata, arr_iatas in final_routes.items() if arr_iatas}
 
-        self.__orig_df_airport["connections"] = self.__orig_df_airport["iata"].apply(build_connections_list)
+            # Add new column to self.__orig_df_airport
+            def build_connections_list(iata_code):
+                if iata_code in final_routes:
+                    return list(set(final_routes[iata_code]))
+                else:
+                    return []
 
-        # Now drop any row that has an empty connections list:
-        self.__df_airport = self.__orig_df_airport[self.__orig_df_airport["connections"].apply(len) > 0]
-        self.__airports_destinations = {
-            f"{iata_to_german.get(origin, origin)} ({origin})":
-                [f"{iata_to_german.get(dest, dest)} ({dest})" for dest in destinations]
-            for origin, destinations in final_routes.items()
-        }
+            self.__orig_df_airport["connections"] = self.__orig_df_airport["iata"].apply(build_connections_list)
+
+            # Now drop any row that has an empty connections list:
+            self.__df_airport = self.__orig_df_airport[self.__orig_df_airport["connections"].apply(len) > 0]
+            self.__airports_destinations = {
+                f"{iata_to_german.get(origin, origin)} ({origin})":
+                    [f"{iata_to_german.get(dest, dest)} ({dest})" for dest in destinations]
+                for origin, destinations in final_routes.items()
+            }
+            self.save_data(self.__airports_destinations, system_config.data_manager.airport_database_dynamic_path)
+        else:
+            # Read from the cache
+            logger.info('Reading internal database of flights.')
+            self.__airports_destinations = self.load_data(system_config.data_manager.airport_database_dynamic_path)
 
     def _reset_databases(self):
         # Update the connections in the dataframe

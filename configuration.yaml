@@ -77,6 +77,7 @@ data_manager:
   airport_name_special_cases_path: data/airport_name_special_cases.yaml
   airport_database_iata_path: data/airport_database_iata.yaml
   map_iata_to_german_name_path: data/map_iata_to_german_name.yaml
+  airport_database_dynamic_path: data/airport_database_dynamic.yaml
   airport_database_path: data/airport_database.yaml
   possible_flights_path: data/possible_flights.yaml
   checked_flights_path: data/checked_flights.yaml

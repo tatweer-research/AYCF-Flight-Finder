@@ -47,6 +47,7 @@ class DataManagerConfig(BaseModel):
     airport_name_special_cases_path: Union[str, os.PathLike]
     airport_database_iata_path: Union[str, os.PathLike]
     map_iata_to_german_name_path: Union[str, os.PathLike]
+    airport_database_dynamic_path: Union[str, os.PathLike]
     airport_database_path: Union[str, os.PathLike]
     possible_flights_path: Union[str, os.PathLike]
     checked_flights_path: Union[str, os.PathLike]
@@ -55,6 +56,11 @@ class DataManagerConfig(BaseModel):
 
     # noinspection PyNestedDecorators
     @field_validator("airport_iata_icao_path",
+                     "flight_data_path",
+                     "airport_name_special_cases_path",
+                     "airport_database_iata_path",
+                     "map_iata_to_german_name_path",
+                     "airport_database_dynamic_path",
                      "airport_database_path",
                      "possible_flights_path",
                      "checked_flights_path",

@@ -158,13 +158,21 @@ class WizzAirFlightConnectionParser:
 
         return now >= next_7am
 
-    def get_flight_data(self):
-        """Retrieve flight data, using saved data if 'last run' matches, otherwise parse the PDF."""
+    def get_flight_data(self) -> tuple[dict, bool]:
+        """
+        Retrieve flight data, either from cache or by parsing a new PDF.
+
+        If an update is required (i.e., the last saved data is outdated based on a 7 AM threshold),
+        the function downloads and parses the latest flight data from WizzAir PDF, saves it, and returns the new data
+        along with `True` indicating an update occurred.
+
+        Otherwise, it returns the previously saved flight data along with `False`, indicating no update was necessary.
+        """
         saved_data = self.load_saved_data()
 
         if saved_data and not self.has_passed_7am_since_last_parsed(saved_data):
             logger.info('Using saved data of flight data')
-            return saved_data
+            return saved_data, False
         else:
             logger.info('Refreshing flight data')
             pdf_content = self.download_pdf()
@@ -172,12 +180,12 @@ class WizzAirFlightConnectionParser:
                 extracted_metadata = self.extract_metadata(pdf)
                 data = self.parse_pdf(pdf, extracted_metadata)
                 self.save_data(data)
-                return data
+                return data, True
 
 
 if __name__ == "__main__":
     parser = WizzAirFlightConnectionParser(system_config.data_manager.flight_data_path)
-    flight_data = parser.get_flight_data()
+    flight_data, _ = parser.get_flight_data()
     print(f"Last run: {flight_data['last_run']}")
     print(f"Departure period: {flight_data['departure_period']}")
     for airport, connections in flight_data['connections'].items():
