@@ -83,10 +83,6 @@ class DataManager:
     def __init__(self):
         self._write_lock = threading.Lock()
 
-        # Load the YAML file
-
-        logger.info('Configuration file loaded successfully')
-
         # Get the new airport destinations
         self.flight_connection_parser = WizzAirFlightConnectionParser(system_config.data_manager.flight_data_path)
         self.__airports_destinations = {}

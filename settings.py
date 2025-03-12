@@ -105,3 +105,4 @@ system_config = ConfigSchema(**config)
 
 if not is_logging_configured():
     logging.config.dictConfig(system_config.logging_config.dictConfig)
+    logging.info('Configuration file loaded successfully')
