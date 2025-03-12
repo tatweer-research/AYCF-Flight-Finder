@@ -360,6 +360,19 @@ def get_iata_code(airport_name):
     return airport_name.split(" ")[-1].replace("(", "").replace(")", "")
 
 
+def get_city(airport_name):
+    """
+    Get the city name from the airport name.
+
+    Args:
+        airport_name (str): Name of the airport
+
+    Returns:
+        str: City name
+    """
+    return airport_name.split(" (")[0]
+
+
 def create_custom_yamls():
     """
     This is the script used to create the files airport_database_iata.yaml and map_iata_to_german_name.yaml

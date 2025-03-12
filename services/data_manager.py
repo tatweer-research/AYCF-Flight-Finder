@@ -212,7 +212,6 @@ class DataManager:
     def get_airport_database(self):
         return self.__airports_destinations
 
-    # TODO
     def get_all_airports(self):
         airports = []
         for airport in self.__airports_destinations:

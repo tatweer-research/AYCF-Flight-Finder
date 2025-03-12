@@ -24,11 +24,11 @@ flight_data:
     - Madrid (MAD)
 
   departure_airports:
-    - Riad
-    - Barcelona El Prat
-    - Amman
-    - Abu Dhabi
-    - Memmingen/München-West
+    - Riad (RUH)
+    - Barcelona El Prat (BCN)
+    - Amman (AMM)
+    - Abu Dhabi (AUH)
+    - Memmingen/München-West (FMM)
 
 
 logging_config:
