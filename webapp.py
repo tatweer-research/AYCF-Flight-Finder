@@ -15,6 +15,7 @@ from streamlit_folium import st_folium
 
 from services import FlightFinderService
 from services.data_manager import data_manager
+from settings import system_config
 
 logger = logging.getLogger(__name__)
 
