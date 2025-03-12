@@ -1,16 +1,21 @@
 import hashlib
+import logging
 from collections import deque
 
-from services.data_manager import data_manager, logger
+from services.data_manager import data_manager
+from settings import system_config
 from utils import compare_times, remove_duplicates_from_list
 from utils import format_seconds
+
+logger = logging.getLogger(__name__)
+
 
 
 class FlightFinderService:
     """Filters and processes the scrapped data to find suitable flights"""
 
     def __init__(self, config=None):
-        self.config = data_manager.config if not config else config
+        self.config = system_config if not config else config
         logger.debug('FlightFinderService initialized')
         self.database_airports = data_manager.get_all_airports()
         self.departure_airports = self.config.flight_data.departure_airports

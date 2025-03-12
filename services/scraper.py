@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import time
 
@@ -7,21 +8,23 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from services.data_manager import data_manager, logger
+from services.data_manager import data_manager
+from settings import system_config
 from utils import get_iata_code
 
 AIRPORTS_WITH_NAME_CLASHES = ['Basel-Mulhouse-Freiburg']
+logger = logging.getLogger(__name__)
 
 
 class ScraperService:
     """Scraps flight data from the WizzAir website"""
 
     def __init__(self, config_override=None):
-        # If user passes a config_override, use it; else fall back to data_manager.config
+        # If user passes a config_override, use it; else fall back to system_config
         if config_override:
             self.config = config_override
         else:
-            self.config = data_manager.config
+            self.config = system_config
         self.driver = data_manager.driver
         logger.debug("ScraperService initialized with provided driver and config.")
         self.__first_run = None
@@ -352,7 +355,7 @@ class ScraperService:
             return flight_data if flight_data else None
         except Exception as e:
             logger.error(f"PID-{os.getpid()}: Error reading flight information: {e}")
-            time.sleep(data_manager.config.general.rate_limit_wait_time)
+            time.sleep(system_config.general.rate_limit_wait_time)
             self.driver.refresh()
             self.read_flight_information(depth + 1)
             if depth == 2:
@@ -364,12 +367,11 @@ class ScraperService:
         from selenium import webdriver
         from selenium.webdriver.edge.service import Service
         from selenium.webdriver.edge.options import Options
-        from services.data_manager import logger
 
         try:
             driver_path = self.config.general.driver_path
             options = Options()
-            if data_manager.config.general.headless:
+            if system_config.general.headless:
                 options.add_argument("--headless")  # Ensure headless mode
                 options.add_argument("--disable-gpu")
                 options.add_argument("--no-sandbox")

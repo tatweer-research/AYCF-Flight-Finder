@@ -1,3 +1,4 @@
+import logging
 import multiprocessing
 import os
 import random
@@ -5,9 +6,11 @@ import time
 import traceback
 from copy import deepcopy
 
-from services.data_manager import logger, data_manager
 from services.scraper import ScraperService
+from settings import system_config
 from utils import get_current_date, increment_date, is_date_in_range
+
+logger = logging.getLogger(__name__)
 
 
 def _init_browser(config_dict):
@@ -72,7 +75,7 @@ def _process_worker(flights, config_dict, shared_dict, lock):
                 # If the worker has completed 9 flight checks, wait for 30 seconds
                 if flight_count % 9 == 0:
                     logger.info(f"PID-{os.getpid()}: Worker is pausing for 30 seconds to avoid rate limiting.")
-                    time.sleep(data_manager.config.general.rate_limit_wait_time)
+                    time.sleep(system_config.general.rate_limit_wait_time)
 
     except Exception as e:
         logger.error(f"Process encountered an error: {e}")

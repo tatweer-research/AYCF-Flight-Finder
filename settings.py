@@ -1,7 +1,10 @@
+import logging
+import logging.config
 import os
 from pathlib import Path
 from typing import Optional, Literal, Union
 
+import yaml
 from pydantic import BaseModel, HttpUrl, field_validator, conlist
 
 
@@ -35,22 +38,13 @@ class FlightDataConfig(BaseModel):
 
 
 class LoggingConfig(BaseModel):
-    log_level_file: str
-    log_level_console: str
-    log_file: Union[str, os.PathLike]
-    date_format: str
-    log_format: str
-
-    # noinspection PyNestedDecorators
-    @field_validator("log_file", mode="before")
-    @classmethod
-    def convert_to_pathlib(cls, v):
-        return Path(v)
+    dictConfig: dict
 
 
 class DataManagerConfig(BaseModel):
     airport_iata_icao_path: Union[str, os.PathLike]
-    airport_name_to_iata_path: Union[str, os.PathLike]
+    flight_data_path: Union[str, os.PathLike]
+    airport_name_special_cases_path: Union[str, os.PathLike]
     airport_database_path: Union[str, os.PathLike]
     possible_flights_path: Union[str, os.PathLike]
     checked_flights_path: Union[str, os.PathLike]
@@ -92,8 +86,22 @@ class ConfigSchema(BaseModel):
     general: GeneralConfig
     account: AccountConfig
     flight_data: FlightDataConfig
-    logging: LoggingConfig
+    logging_config: LoggingConfig
     data_manager: DataManagerConfig
     reporter: ReporterConfig
     scraper: ScraperConfig
     emailer: EmailerConfig
+
+
+def is_logging_configured():
+    root_logger = logging.getLogger()
+    return len(root_logger.handlers) > 0
+
+
+with open('configuration.yaml', 'r', encoding='utf-8') as file:
+    config = yaml.safe_load(file)
+
+system_config = ConfigSchema(**config)
+
+if not is_logging_configured():
+    logging.config.dictConfig(system_config.logging_config.dictConfig)

@@ -1,19 +1,22 @@
 import copy
 import datetime as dt
+import logging
+import os
+import time
 import uuid
 from datetime import datetime
 from pathlib import Path
 
+import folium
+import pandas as pd
 import streamlit as st
 from email_validator import validate_email, EmailNotValidError
-import pandas as pd
-import folium
 from streamlit_folium import st_folium
-import os
-import time
 
 from services import FlightFinderService
-from services.data_manager import data_manager, logger
+from services.data_manager import data_manager
+
+logger = logging.getLogger(__name__)
 
 
 class NoDepartureAirportsSelected(Exception):
@@ -86,7 +89,7 @@ with tab1:
     email = st.text_input('Enter your email address (it is needed to send you the pdf report):')
 
     def get_new_config():
-        config = copy.deepcopy(data_manager.config)
+        config = copy.deepcopy(system_config)
         config.flight_data.departure_airports = departure_airports
         config.flight_data.destination_airports = arrival_airports
         config.emailer.recipient = email

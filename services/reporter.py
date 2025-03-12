@@ -1,4 +1,5 @@
 import copy
+import logging
 
 import yaml
 from reportlab.lib.pagesizes import letter
@@ -7,8 +8,10 @@ from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer
 from reportlab.platypus.flowables import HRFlowable
 
-from services.data_manager import data_manager, logger
+from settings import system_config
 from utils import compare_times, calculate_waiting_time, sum_flight_durations, calculate_arrival_date
+
+logger = logging.getLogger(__name__)
 
 
 class ReportService:
@@ -18,10 +21,9 @@ class ReportService:
         """
         Initialize the ReportService with a data manager and logger.
         """
-        self.config = data_manager.config
-        self.report_path = self.config.reporter.report_path
-        self.available_flights_path = self.config.data_manager.available_flights_path
-        self.logo_path = self.config.reporter.logo_path
+        self.report_path = system_config.reporter.report_path
+        self.available_flights_path = system_config.data_manager.available_flights_path
+        self.logo_path = system_config.reporter.logo_path
 
     def add_second_flight(self, elements, flight, outward, styles):
         try:
@@ -133,18 +135,18 @@ class ReportService:
         elements.append(Paragraph("<br/><br/>", styles['Normal']))
         elements.append(Paragraph("<b>Destination Airports:</b>", styles['Normal']))
         symbol = "✈ "
-        destination_airports = data_manager.config.flight_data.destination_airports
+        destination_airports = system_config.flight_data.destination_airports
         if destination_airports:
-            for airport in data_manager.config.flight_data.destination_airports:
+            for airport in system_config.flight_data.destination_airports:
                 elements.append(Paragraph(symbol + airport, styles['Normal']))
         else:
             elements.append(Paragraph("No destination airports specified.", styles['Normal']))
         elements.append(Paragraph("<br/><br/>", styles['Normal']))
 
         elements.append(Paragraph("<b>departure Airports:</b>", styles['Normal']))
-        departure_airports = data_manager.config.flight_data.departure_airports
+        departure_airports = system_config.flight_data.departure_airports
         if departure_airports:
-            for airport in data_manager.config.flight_data.departure_airports:
+            for airport in system_config.flight_data.departure_airports:
                 elements.append(Paragraph(symbol + airport, styles['Normal']))
         else:
             elements.append(Paragraph("No departure airports specified.", styles['Normal']))

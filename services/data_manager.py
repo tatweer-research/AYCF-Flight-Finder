@@ -11,8 +11,8 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.edge.options import Options
 
-from services.flight_connector_parser import FlightConnectionParser
-from settings import ConfigSchema
+from services.wizzair_flight_connector_parser import WizzAirFlightConnectionParser
+from settings import system_config
 
 logger = logging.getLogger(__name__)
 
@@ -52,9 +52,8 @@ class DataManager:
         self._setup_df_airports()
 
         self.driver = None
-        self._setup_logging()
         self._reset_databases()
-        if self.config.scraper.initialize_driver:
+        if system_config.scraper.initialize_driver:
             self._setup_edge_driver()
 
     def _setup_df_airports(self):
@@ -162,10 +161,10 @@ class DataManager:
         self._update_connections_in_df_airports()
 
         # Remove available flights, checked and possible flights databases
-        self.remove_file(self.config.data_manager.available_flights_path)
-        self.remove_file(self.config.data_manager.checked_flights_path)
-        self.remove_file(self.config.data_manager.possible_flights_path)
-        self.remove_file(self.config.reporter.report_path)
+        self.remove_file(system_config.data_manager.available_flights_path)
+        self.remove_file(system_config.data_manager.checked_flights_path)
+        self.remove_file(system_config.data_manager.possible_flights_path)
+        self.remove_file(system_config.reporter.report_path)
         Path('jobs').mkdir(exist_ok=True)
         Path('cache').mkdir(exist_ok=True)
 
@@ -175,8 +174,8 @@ class DataManager:
         self.__available_flights = {'available_flights': []}
 
     def _setup_edge_driver(self):
-        driver_path = self.config.general.driver_path
-        headless = self.config.general.headless
+        driver_path = system_config.general.driver_path
+        headless = system_config.general.headless
 
         # Set up EdgeOptions for headless mode
         options = Options()
@@ -254,7 +253,7 @@ class DataManager:
                            f"Use the 'use_cache' parameter to overwrite the data.")
             return
         self.__airports_destinations[airport_name] = destinations
-        self.save_data(self.__airports_destinations, self.config.data_manager.airport_database_path)
+        self.save_data(self.__airports_destinations, system_config.data_manager.airport_database_path)
         logger.info(f"Airport {airport_name} has been added to the database.")
 
     def get_possible_flights(self):
@@ -262,7 +261,7 @@ class DataManager:
 
     def add_possible_flights(self, flights: List[List]):
         self.__possible_flights['possible_flights'] += flights
-        self.save_data(self.__possible_flights, self.config.data_manager.possible_flights_path)
+        self.save_data(self.__possible_flights, system_config.data_manager.possible_flights_path)
 
     def add_checked_flight(self, flight: Dict, result: Dict, date: str):
         """Thread-safe addition of a single flight check result."""
@@ -270,11 +269,11 @@ class DataManager:
             key = f"{flight['hash']}-{date}"
             self.__checked_flights['checked_flights'][key] = result
             self.save_data(self.__checked_flights,
-                           self.config.data_manager.checked_flights_path)
+                           system_config.data_manager.checked_flights_path)
 
     def add_checked_flights(self, flights: Dict):
         self.__checked_flights = flights
-        self.save_data(self.__checked_flights, self.config.data_manager.checked_flights_path)
+        self.save_data(self.__checked_flights, system_config.data_manager.checked_flights_path)
 
     def get_checked_flight(self, flight: Dict, date: str):
         return self.__checked_flights['checked_flights'][f"{flight['hash']}-{date}"]
@@ -287,11 +286,11 @@ class DataManager:
 
     def add_available_flight(self, flight: Dict):
         self.__available_flights['available_flights'].append(flight)
-        self.save_data(self.__available_flights, self.config.data_manager.available_flights_path)
+        self.save_data(self.__available_flights, system_config.data_manager.available_flights_path)
 
     def add_available_flights(self, flights: Dict):
         self.__available_flights = flights
-        self.save_data(self.__available_flights, self.config.data_manager.available_flights_path)
+        self.save_data(self.__available_flights, system_config.data_manager.available_flights_path)
 
 
 # A singleton used to manage data across all services
