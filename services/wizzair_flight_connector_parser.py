@@ -1,10 +1,11 @@
 import io
 import logging
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pandas as pd
 import pdfplumber
+import pytz
 from pdfplumber.pdf import PDF
 import requests
 import yaml
@@ -26,7 +27,7 @@ class WizzAirFlightConnectionParser:
             with open(self.yaml_path, 'r') as f:
                 return yaml.safe_load(f)
         except FileNotFoundError:
-            return None
+            return dict()
 
     def save_data(self, data):
         """Save the parsed flight data to the yaml file."""
@@ -48,9 +49,7 @@ class WizzAirFlightConnectionParser:
         cropped = first_page.crop((40, 30, 550, 150))
         text = cropped.extract_text_simple()
         lines = text.split('\n')
-        metadata = {}
-        metadata["departure_period"] = dict()
-        metadata["last_run"] = dict()
+        metadata = {'last_parsed': datetime.now(), "departure_period": dict(), "last_run": dict()}
         line = lines[1]
         match = re.match(pattern, line)
         if match:
@@ -125,22 +124,52 @@ class WizzAirFlightConnectionParser:
         metadata = extracted_metadata or self.extract_metadata(pdf)
         connections = self.extract_connections(pdf)
         return {
-            "last_run": metadata.get("last_run"),
-            "departure_period": metadata.get("departure_period"),
-            "connections": connections
+            "connections": connections,
+            **metadata
         }
+
+    @staticmethod
+    def has_passed_7am_since_last_parsed(metadata: dict):
+        """
+        Checks if at least one full 7 AM (CET) has passed since last_parsed datetime.
+        """
+        cet = pytz.timezone("Europe/Berlin")
+        last_parsed = metadata.get("last_parsed")
+
+        if not isinstance(last_parsed, datetime):
+            logger.error("'last_parsed' must be a datetime object. Returning 'False'")
+            return False
+
+        # Ensure last_parsed is in CET timezone
+        if last_parsed.tzinfo is None:
+            last_parsed = cet.localize(last_parsed)  # Make it timezone-aware if naive
+        else:
+            last_parsed = last_parsed.astimezone(cet)  # Convert to CET if it's in another timezone
+
+        # Get the next 7 AM after last_parsed
+        next_7am = last_parsed.replace(hour=7, minute=0, second=0, microsecond=0)
+
+        if last_parsed.hour >= 7:
+            # If last_parsed is after 7 AM, the next 7 AM is tomorrow
+            next_7am += timedelta(days=1)
+
+        # Get current CET time
+        now = datetime.now(cet)
+
+        return now >= next_7am
 
     def get_flight_data(self):
         """Retrieve flight data, using saved data if 'last run' matches, otherwise parse the PDF."""
         saved_data = self.load_saved_data()
-        pdf_content = self.download_pdf()
-        with pdfplumber.open(io.BytesIO(pdf_content)) as pdf:
-            extracted_metadata = self.extract_metadata(pdf)
-            if saved_data and saved_data.get("last_run") == extracted_metadata.get("last_run"):
-                logger.info('Using saved data of flight data')
-                return saved_data
-            else:
-                logger.info('Refreshing flight data')
+
+        if saved_data and not self.has_passed_7am_since_last_parsed(saved_data):
+            logger.info('Using saved data of flight data')
+            return saved_data
+        else:
+            logger.info('Refreshing flight data')
+            pdf_content = self.download_pdf()
+            with pdfplumber.open(io.BytesIO(pdf_content)) as pdf:
+                extracted_metadata = self.extract_metadata(pdf)
                 data = self.parse_pdf(pdf, extracted_metadata)
                 self.save_data(data)
                 return data
