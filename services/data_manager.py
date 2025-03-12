@@ -1,6 +1,5 @@
 import logging
 import os
-import re
 import threading
 from pathlib import Path
 from typing import Dict, List
@@ -13,65 +12,9 @@ from selenium.webdriver.edge.options import Options
 
 from services.wizzair_flight_connector_parser import WizzAirFlightConnectionParser
 from settings import system_config
+from utils import find_possible_csv_matches
 
 logger = logging.getLogger(__name__)
-
-
-def split_words(name):
-    """
-    Split the given airport name into a list of lowercase words (no punctuation).
-    E.g. "Abu Dhabi" -> ["abu", "dhabi"]
-         "Basel/Mulhouse" -> ["basel", "mulhouse"]
-    """
-    return re.findall(r"[A-Za-z0-9]+", name.lower())
-
-
-def is_complete_word_match(json_airport_name, csv_airport_name):
-    """
-    Checks if all words of 'json_airport_name' appear as whole words in 'csv_airport_name'.
-    """
-    # Split both into lists of words (lowercase).
-    json_words = split_words(json_airport_name)
-    csv_words  = split_words(csv_airport_name)
-
-    # We want every word from json_airport_name to appear in the CSV name's list of words:
-    return all(word in csv_words for word in json_words)
-
-
-def find_possible_csv_matches(airport_name, df_csv):
-    """
-    Returns all rows of df_csv where 'airport' is a *complete-word match* for airport_name.
-    If nothing found, returns an empty DataFrame.
-    """
-    matched_rows = df_csv[df_csv["airport"].apply(
-        lambda x: is_complete_word_match(airport_name, x)
-    )]
-    return matched_rows
-
-
-def parse_airport_line(line):
-    """
-    Given something like:
-       'Aberdeen (ABZ):'
-    return ('Aberdeen', 'ABZ')
-    """
-    # Regex to match:   Some Name (IATA):
-    match = re.match(r"^(.*?) \((.*?)\):", line.strip())
-    if not match:
-        return None, None
-    return match.group(1).strip(), match.group(2).strip()
-
-
-def parse_destination_line(line):
-    """
-    Given something like:
-       '- Danzig (GDN)'
-    return ('Danzig', 'GDN')
-    """
-    match = re.match(r"^- (.*?) \((.*?)\)$", line.strip())
-    if not match:
-        return None, None
-    return match.group(1).strip(), match.group(2).strip()
 
 
 class IndentedDumper(yaml.Dumper):
@@ -145,29 +88,9 @@ class DataManager:
         if errors:
             raise ValueError(f"No CSV match found for '{errors}' (even after special cases).")
 
-        # Parse airport_database.yaml
-        routes_db = {}  # dictionary mapping, e.g. {"ABZ": ["GDN"], "AUH": ["HBE", "ALA", "AMM"], ...}
-        current_departure_iata = None
-
-        with open(system_config.data_manager.airport_database_path, "r", encoding="utf-8") as f:
-            airport_db_raw = f.read()
-
-        for raw_line in airport_db_raw.splitlines():
-            line = raw_line.strip()
-            if not line:
-                continue
-            # Check if this line is a "Departure" line with a colon
-            if line.endswith(":"):
-                # e.g. "Abu Dhabi (AUH):"
-                dep_name, dep_iata = parse_airport_line(line)
-                if dep_iata:
-                    current_departure_iata = dep_iata
-                    routes_db[current_departure_iata] = []
-            else:
-                # arrival line
-                arr_name, arr_iata = parse_destination_line(line)
-                if arr_iata and current_departure_iata:
-                    routes_db[current_departure_iata].append(arr_iata)
+        # Read airport_database_iata.yaml
+        routes_db = self.load_data(system_config.data_manager.airport_database_iata_path)
+        iata_to_german = self.load_data(system_config.data_manager.map_iata_to_german_name_path)
 
         # Cross-reference routes
         final_routes = {}  # e.g. { 'ABZ': ['GDN', 'ALA', ...], 'AUH': ['ALA', ...] }
@@ -194,10 +117,12 @@ class DataManager:
                     final_routes[dep_iata] = []
                 final_routes[dep_iata].extend(valid_arr_iatas)
 
+        final_routes = {dep_iata: arr_iatas for dep_iata, arr_iatas in final_routes.items() if arr_iatas}
+
         # Add new column to self.__orig_df_airport
         def build_connections_list(iata_code):
             if iata_code in final_routes:
-                return list(set(final_routes[iata_code]))  # or just final_routes[iata_code]
+                return list(set(final_routes[iata_code]))
             else:
                 return []
 
@@ -205,7 +130,11 @@ class DataManager:
 
         # Now drop any row that has an empty connections list:
         self.__df_airport = self.__orig_df_airport[self.__orig_df_airport["connections"].apply(len) > 0]
-        self.__airports_destinations = final_routes
+        self.__airports_destinations = {
+            f"{iata_to_german.get(origin, origin)} ({origin})":
+                [f"{iata_to_german.get(dest, dest)} ({dest})" for dest in destinations]
+            for origin, destinations in final_routes.items()
+        }
 
     def _reset_databases(self):
         # Update the connections in the dataframe
@@ -283,6 +212,7 @@ class DataManager:
     def get_airport_database(self):
         return self.__airports_destinations
 
+    # TODO
     def get_all_airports(self):
         airports = []
         for airport in self.__airports_destinations:

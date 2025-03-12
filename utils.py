@@ -1,3 +1,4 @@
+import re
 from datetime import datetime, timedelta
 
 import pytz
@@ -357,6 +358,98 @@ def get_iata_code(airport_name):
         str: IATA code for the airport
     """
     return airport_name.split(" ")[-1].replace("(", "").replace(")", "")
+
+
+def create_custom_yamls():
+    """
+    This is the script used to create the files airport_database_iata.yaml and map_iata_to_german_name.yaml
+    """
+    routes_db = {}  # dictionary mapping, e.g. {"ABZ": ["GDN"], "AUH": ["HBE", "ALA", "AMM"], ...}
+    current_departure_iata = None
+    map_german_name_to_iata = set()
+
+    with open("data/airport_database.yaml", "r", encoding="utf-8") as f:
+        airport_db_raw = f.read()
+
+    for raw_line in airport_db_raw.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        # Check if this line is a "Departure" line with a colon
+        if line.endswith(":"):
+            # e.g. "Abu Dhabi (AUH):"
+            dep_name, dep_iata = parse_airport_line(line)
+            if dep_iata:
+                current_departure_iata = dep_iata
+                routes_db[current_departure_iata] = []
+                map_german_name_to_iata.add((dep_iata, dep_name))
+        else:
+            # arrival line
+            arr_name, arr_iata = parse_destination_line(line)
+            if arr_iata and current_departure_iata:
+                routes_db[current_departure_iata].append(arr_iata)
+                map_german_name_to_iata.add((arr_iata, arr_name))
+
+    iata_to_german = {iata: name for iata, name in map_german_name_to_iata}
+    # save_data(iata_to_german, 'data/map_iata_to_german_name.yaml')  # Save as YAML
+    # save_data(routes_db, 'data/airport_database_iata.yaml')  # Save as YAML
+
+
+def split_words(name):
+    """
+    Split the given airport name into a list of lowercase words (no punctuation).
+    E.g. "Abu Dhabi" -> ["abu", "dhabi"]
+         "Basel/Mulhouse" -> ["basel", "mulhouse"]
+    """
+    return re.findall(r"[A-Za-z0-9]+", name.lower())
+
+
+def is_complete_word_match(json_airport_name, csv_airport_name):
+    """
+    Checks if all words of 'json_airport_name' appear as whole words in 'csv_airport_name'.
+    """
+    # Split both into lists of words (lowercase).
+    json_words = split_words(json_airport_name)
+    csv_words  = split_words(csv_airport_name)
+
+    # We want every word from json_airport_name to appear in the CSV name's list of words:
+    return all(word in csv_words for word in json_words)
+
+
+def find_possible_csv_matches(airport_name, df_csv):
+    """
+    Returns all rows of df_csv where 'airport' is a *complete-word match* for airport_name.
+    If nothing found, returns an empty DataFrame.
+    """
+    matched_rows = df_csv[df_csv["airport"].apply(
+        lambda x: is_complete_word_match(airport_name, x)
+    )]
+    return matched_rows
+
+
+def parse_airport_line(line):
+    """
+    Given something like:
+       'Aberdeen (ABZ):'
+    return ('Aberdeen', 'ABZ')
+    """
+    # Regex to match:   Some Name (IATA):
+    match = re.match(r"^(.*?) \(([^()]+)\):$", line.strip())
+    if not match:
+        return None, None
+    return match.group(1).strip(), match.group(2).strip()
+
+
+def parse_destination_line(line):
+    """
+    Given something like:
+       '- Danzig (GDN)'
+    return ('Danzig', 'GDN')
+    """
+    match = re.match(r"^- (.*?) \(([^()]+)\)$", line.strip())
+    if not match:
+        return None, None
+    return match.group(1).strip(), match.group(2).strip()
 
 
 if __name__ == '__main__':

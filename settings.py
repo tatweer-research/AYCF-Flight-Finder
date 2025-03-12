@@ -45,6 +45,8 @@ class DataManagerConfig(BaseModel):
     airport_iata_icao_path: Union[str, os.PathLike]
     flight_data_path: Union[str, os.PathLike]
     airport_name_special_cases_path: Union[str, os.PathLike]
+    airport_database_iata_path: Union[str, os.PathLike]
+    map_iata_to_german_name_path: Union[str, os.PathLike]
     airport_database_path: Union[str, os.PathLike]
     possible_flights_path: Union[str, os.PathLike]
     checked_flights_path: Union[str, os.PathLike]
