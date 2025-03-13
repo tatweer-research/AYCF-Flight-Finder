@@ -63,6 +63,7 @@ class DataManagerConfig(BaseModel):
     possible_flights_path: Union[str, os.PathLike]
     checked_flights_path: Union[str, os.PathLike]
     available_flights_path: Union[str, os.PathLike]
+    multi_scraper_output_path: Union[str, os.PathLike]
     use_cache: bool
 
     # noinspection PyNestedDecorators
@@ -76,6 +77,7 @@ class DataManagerConfig(BaseModel):
                      "possible_flights_path",
                      "checked_flights_path",
                      "available_flights_path",
+                     "multi_scraper_output_path",
                      mode="before")
     @classmethod
     def convert_to_pathlib(cls, v):

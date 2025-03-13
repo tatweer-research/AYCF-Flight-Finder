@@ -50,6 +50,7 @@ data_manager:
   possible_flights_path: data/possible_flights.yaml
   checked_flights_path: data/checked_flights.yaml
   available_flights_path: data/available_flights.yaml
+  multi_scraper_output_path: data/multi_scraper_output.yaml
   use_cache: yes  # yes or no - if yes data in the database will not be scraped again
 
 reporter:
