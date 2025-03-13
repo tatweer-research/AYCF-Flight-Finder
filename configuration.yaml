@@ -8,8 +8,8 @@ general:
   time_stamp: ""
 
 account:
-  username: "Hachicha.Kmar.Hachicha@gmail.com"
-  password: "AB0123456789!"
+  username: ""
+  password: ""
   wizzair_url: "https://multipass.wizzair.com/de/w6/subscriptions"
 
 
