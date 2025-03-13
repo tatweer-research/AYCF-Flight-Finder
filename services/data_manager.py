@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import threading
@@ -6,6 +7,7 @@ from typing import Dict, List
 
 import pandas as pd
 import yaml
+from pydantic import BaseModel
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.edge.options import Options

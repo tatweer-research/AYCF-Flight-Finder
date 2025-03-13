@@ -21,7 +21,7 @@ def round_trip_workflow():
 
         flight_finder = FlightFinderService()
         flight_finder.find_possible_roundtrip_flights_from_departure_airports()
-        possible_flights = data_manager.get_possible_flights()
+        flights = data_manager.get_possible_flights()
 
         departure_date = system_config.flight_data.departure_date if system_config.flight_data.departure_date \
             else get_current_date()
@@ -30,7 +30,7 @@ def round_trip_workflow():
         logger.info('Checking availability for possible flights...')
         scraper.setup_browser()
 
-        for flight in possible_flights['possible_flights']:
+        for flight in flights['possible_flights']:
             for i in range(4):
                 if i == 0:
                     date = deepcopy(departure_date)
@@ -54,7 +54,7 @@ def round_trip_workflow():
                                                                                  date)
 
         checked_flights = data_manager.get_checked_flights()
-        available_flights = flight_finder.find_available_roundtrip_flights(possible_flights, checked_flights)
+        available_flights = flight_finder.find_available_roundtrip_flights(flights, checked_flights)
         data_manager.add_available_flights(available_flights)
         reporter = ReportService()
         reporter.generate_roundtrip_flight_report()
@@ -75,7 +75,7 @@ def one_way_workflow():
 
         flight_finder = FlightFinderService()
         flight_finder.find_possible_one_stop_flights(max_stops=system_config.flight_data.max_stops)
-        possible_flights = data_manager.get_possible_flights()
+        flights = data_manager.get_possible_flights()
 
         departure_date = system_config.flight_data.departure_date or get_current_date()
         last_date = system_config.flight_data.departure_date or increment_date(departure_date, 3)
@@ -85,7 +85,7 @@ def one_way_workflow():
         logger.info('Checking availability for possible flights...')
         scraper.setup_browser()
 
-        for flight in possible_flights['possible_flights']:
+        for flight in flights['possible_flights']:
             for i in range(4):
                 if i == 0:
                     date = deepcopy(departure_date)
@@ -109,7 +109,7 @@ def one_way_workflow():
                         second_result = scraper.check_direct_flight_availability(flight['second_flight'],
                                                                                  date)
         checked_flights = data_manager.get_checked_flights()
-        available_flights = flight_finder.find_available_oneway_flights(possible_flights, checked_flights)
+        available_flights = flight_finder.find_available_oneway_flights(flights, checked_flights)
         data_manager.add_available_flights(available_flights)
         reporter = ReportService()
         reporter.generate_oneway_flight_report()
@@ -142,13 +142,15 @@ def send_email():
     email_service.send_email(**roundtrip_kwargs, recipient_emails=[system_config.emailer.recipient])
 
 
-def check_available_flights():
+def check_available_flights(mode='roundtrip'):
     flight_finder = FlightFinderService()
-    possible_flights = data_manager.get_possible_flights()
+    flights = data_manager.get_possible_flights()
     checked_flights = data_manager.get_checked_flights()
-    available_flights = flight_finder.find_available_oneway_flights(possible_flights, checked_flights)
-    # flight_finder.find_possible_flights_from_departure_airports()
-    # available_flights = flight_finder.find_available_roundtrip_flights()
+    if mode == 'oneway':
+        available_flights = flight_finder.find_available_oneway_flights(flights, checked_flights)
+    elif mode == 'roundtrip':
+        # flight_finder.find_possible_flights_from_departure_airports()
+        available_flights = flight_finder.find_available_roundtrip_flights(flights, checked_flights)
     data_manager.add_available_flights(available_flights)
 
 
@@ -194,7 +196,7 @@ def do_pending_jobs():
                 file.unlink()
             except Exception as e:
                 file.unlink()
-                logger.error(f"Failed to process job: {file} - {e}")
+                logger.exception(f"Failed to process job: {file} - {e}")
         time.sleep(10)
 
 
@@ -207,9 +209,16 @@ if __name__ == '__main__':
     # send_email()
     # schedule_one_way_workflow()
     # update_airports_database()
-    # checked_flights = data_manager.load_data(config['data_manager']['checked_flights_path'])
+
+    # finder = FlightFinderService()
+    # # finder.find_possible_roundtrip_flights_from_departure_airports()
+    # finder.find_possible_one_stop_flights(max_stops=1)
+    #
+    # checked_flights = data_manager.load_data(data_manager.config.data_manager.checked_flights_path)
     # data_manager.add_checked_flights(checked_flights)
-    # check_available_flights()
+    # check_available_flights('oneway')
+    # create_report('oneway')
+    # create_report('roundtrip')
 
     do_pending_jobs()
 

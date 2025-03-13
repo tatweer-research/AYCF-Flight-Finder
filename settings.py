@@ -2,7 +2,7 @@ import logging
 import logging.config
 import os
 from pathlib import Path
-from typing import Optional, Literal, Union
+from typing import Optional, Literal, Union, List
 
 import yaml
 from pydantic import BaseModel, HttpUrl, field_validator, conlist
@@ -15,6 +15,7 @@ class GeneralConfig(BaseModel):
     rate_limit_wait_time: int
     headless: bool = False
     mode: Literal["oneway", "roundtrip"]
+    time_stamp: Optional[str] = None
 
     # noinspection PyNestedDecorators
     @field_validator("driver_path", mode="before")
@@ -33,8 +34,11 @@ class FlightDataConfig(BaseModel):
     max_stops: Literal[0, 1]
     departure_date: Optional[str] = None
     return_date: Optional[str] = None
-    destination_airports: Optional[conlist(str, max_length=5)] = None
-    departure_airports: Optional[conlist(str, max_length=5)] = None
+
+    # We only need to limit the length of the airports to 5 in the front end.
+    # Keep it unlimited here for testing purposes.
+    destination_airports: Optional[List[str]] = None
+    departure_airports: Optional[List[str]] = None
 
 
 class LoggingConfig(BaseModel):

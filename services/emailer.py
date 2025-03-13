@@ -72,22 +72,7 @@ class EmailService:
 # Initialize the EmailService
 email_service = EmailService(sender_email='mohundkmar@gmail.com', sender_password='')
 
-departure_airports = '\n- ' + '\n- '.join(system_config.flight_data.departure_airports)
-
 ROUNDTRIP_SUBJECT = "Round Trip: Wizz Air Flights Report!"
-ROUNDTRIP_MESSAGE_BODY = f"""
-Hey Kmar!
-Hey Moh!
-
-heute war ich fleißig und habe einen Bericht über die gefundenen WizzAir-Flüge zusammengestellt – perfekt für einen kleinen Kurzurlaub zwischendurch! 😎✈️
-
-Den Bericht findet ihr im Anhang. Abflug Flughäfen:\n {departure_airports}
-
-Viel Spaß beim Stöbern und Träumen von eurem nächsten Abenteuer!
-
-Liebe Grüße,
-Euer unermüdlicher WizzAir-Schnüffler 🕵️‍♂️✨
-"""
 
 ONEWAY_SUBJECT = "One Way: Wizz Air Flights Report!"
 ONEWAY_MESSAGE_BODY = f"""
@@ -103,9 +88,10 @@ https://chat.whatsapp.com/CHvgbPvqRcbJS0E6D4O8ka
 
 Catch you in the skies (or WhatsApp)!
 Moh & Kmar 🕵️‍♂️✨
+
+Website: https://aycf-flightfinder.tatweer.network/
 """
 ATTACHMENT_PATHS = [system_config.reporter.report_path]
-                    # system_config['logging']['log_file']]
 
 oneway_kwargs = {
                  'subject': ONEWAY_SUBJECT,
@@ -114,7 +100,7 @@ oneway_kwargs = {
 
 roundtrip_kwargs = {
                     'subject': ROUNDTRIP_SUBJECT,
-                    'message_body': ROUNDTRIP_MESSAGE_BODY,
+                    'message_body': ONEWAY_MESSAGE_BODY,
                     'attachment_paths': ATTACHMENT_PATHS}
 
 if __name__ == '__main__':
