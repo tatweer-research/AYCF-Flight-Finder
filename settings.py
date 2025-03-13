@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from typing import Optional, Literal, Union, List
 
-from pydantic import BaseModel, HttpUrl, field_validator, conlist
+from pydantic import BaseModel, HttpUrl, field_validator
 
 
 class GeneralConfig(BaseModel):
@@ -53,6 +53,12 @@ class LoggingConfig(BaseModel):
 
 
 class DataManagerConfig(BaseModel):
+    airport_iata_icao_path: Union[str, os.PathLike]
+    flight_data_path: Union[str, os.PathLike]
+    airport_name_special_cases_path: Union[str, os.PathLike]
+    airport_database_iata_path: Union[str, os.PathLike]
+    map_iata_to_german_name_path: Union[str, os.PathLike]
+    airport_database_dynamic_path: Union[str, os.PathLike]
     airport_database_path: Union[str, os.PathLike]
     possible_flights_path: Union[str, os.PathLike]
     checked_flights_path: Union[str, os.PathLike]
@@ -60,7 +66,13 @@ class DataManagerConfig(BaseModel):
     use_cache: bool
 
     # noinspection PyNestedDecorators
-    @field_validator("airport_database_path",
+    @field_validator("airport_iata_icao_path",
+                     "flight_data_path",
+                     "airport_name_special_cases_path",
+                     "airport_database_iata_path",
+                     "map_iata_to_german_name_path",
+                     "airport_database_dynamic_path",
+                     "airport_database_path",
                      "possible_flights_path",
                      "checked_flights_path",
                      "available_flights_path",

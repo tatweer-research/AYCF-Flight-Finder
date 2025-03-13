@@ -8,8 +8,8 @@ general:
   time_stamp: ""
 
 account:
-  username: ""
-  password: ""
+  username: "Hachicha.Kmar.Hachicha@gmail.com"
+  password: "AB0123456789!"
   wizzair_url: "https://multipass.wizzair.com/de/w6/subscriptions"
 
 
@@ -18,67 +18,17 @@ flight_data:
   departure_date:
   return_date:
   destination_airports:   # If not specified, all possible destination airports will be checked
-#    - London Luton
-#    - Memmingen/München-West
-#    - Paris Beauvais
-#    - Paris-Orly
-#    - Malé (Malediven)
-#    - Riad
-#    - Medina
-#    - Dschidda
-#    - Abu Dhabi
-#    - Amman
-#    - Aqaba
-#    - Baku
-#    - Bologna
-#    - Rom Ciampino
-#    - Rom Fiumicino
-#     - Budapest
-#    - Gran Canaria (Kanarische Inseln)
-#    - Kopenhagen
-#    - Samarkand
-#    - Teneriffa (Kanarische Inseln)
-#    - Madeira
-#    - Alicante
-#    - Bilbao
-#    - Castellón (Valencia)
-#    - Girona
-#    - Madrid
-#    - Ibiza
-#    - Palma de Mallorca
-#    - Santander
-#    - Saragossa
-#    - Sevilla
-#    - Valencia
-#    - Lissabon
-#    - Faro
-#    - Porto
-#    - Jerewan
+    - London Luton (LTN)
+    - Budapest (BUD)
+    - Kopenhagen (CPH)
+    - Madrid (MAD)
 
   departure_airports:
-#    - Riad
-#    - Barcelona El Prat
-#    - Amman
-#    - Abu Dhabi
-    - Podgorica
-#    - Dubai
-#    - Aqaba
-#    - Dortmund
-#    - Memmingen/München-West
-#    - Nürnberg
-#    - Stuttgart
-#    - Wien
-#    - Leipzig
-#    - Karlsruhe/Baden-Baden
-#    - Friedrichshafen
-#    - Frankfurt-Hahn
-#    - Salzburg
-#    - Bremen
-#    - Berlin Brandenburg
-#    - Tel Aviv
-#    - Breslau
-#    - Budapest
-#    - Prag
+    - Riad (RUH)
+    - Barcelona El Prat (BCN)
+    - Amman (AMM)
+    - Abu Dhabi (AUH)
+    - Memmingen/München-West (FMM)
 
 
 logging:
@@ -90,6 +40,12 @@ logging:
 
 
 data_manager:
+  airport_iata_icao_path: data/airport_iata_icao_filtered.csv
+  flight_data_path: data/flight_data.yaml
+  airport_name_special_cases_path: data/airport_name_special_cases.yaml
+  airport_database_iata_path: data/airport_database_iata.yaml
+  map_iata_to_german_name_path: data/map_iata_to_german_name.yaml
+  airport_database_dynamic_path: data/airport_database_dynamic.yaml
   airport_database_path: data/airport_database.yaml
   possible_flights_path: data/possible_flights.yaml
   checked_flights_path: data/checked_flights.yaml
