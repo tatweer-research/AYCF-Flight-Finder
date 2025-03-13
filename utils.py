@@ -139,7 +139,47 @@ def calculate_arrival_date(flight_data: dict) -> str:
     return arrival_datetime.strftime("%a %d, %B %Y")
 
 
-def calculate_waiting_time(start_time, end_time, start_timezone="UTC", end_timezone="UTC",
+def calculate_waiting_time(start_time, end_time, start_date=None, end_date=None):
+    """
+    Calculate the waiting time between two times, optionally with dates.
+
+    :param start_time: The start time as a string in HH:MM format
+    :param end_time: The end time as a string in HH:MM format
+    :param start_date: Start date as string in format "Sat 28, December 2024" (optional)
+    :param end_date: End date as string in format "Fri 27, December 2024" (optional)
+    :return: The duration as a string in the format "duration: XXh XXm"
+    """
+    if start_date and end_date:
+        # Convert datetime strings to datetime objects
+        start_datetime = datetime.strptime(f"{start_date} {start_time}", "%a %d, %B %Y %H:%M")
+        end_datetime = datetime.strptime(f"{end_date} {end_time}", "%a %d, %B %Y %H:%M")
+
+        # Calculate time difference in minutes
+        time_diff = end_datetime - start_datetime
+        waiting_minutes = int(time_diff.total_seconds() / 60)
+
+    else:
+        # Original time-only logic
+        start_hours, start_minutes = map(int, start_time.split(":"))
+        end_hours, end_minutes = map(int, end_time.split(":"))
+
+        start_total_minutes = start_hours * 60 + start_minutes
+        end_total_minutes = end_hours * 60 + end_minutes
+
+        if end_total_minutes < start_total_minutes:
+            end_total_minutes += 24 * 60
+
+        waiting_minutes = end_total_minutes - start_total_minutes
+
+    # Convert the waiting time to hours and minutes
+    waiting_hours = abs(waiting_minutes) // 60
+    waiting_remaining_minutes = abs(waiting_minutes) % 60
+
+    # Format the output
+    return f"{waiting_hours:02}h {waiting_remaining_minutes:02}m"
+
+
+def calculate_waiting_time_deprecated(start_time, end_time, start_timezone="UTC", end_timezone="UTC",
                            start_date=None, end_date=None):
     """
     Calculate the waiting time between two times, considering different timezones.

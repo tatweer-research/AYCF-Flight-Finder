@@ -140,11 +140,13 @@ def send_email():
     email_service.send_email(**roundtrip_kwargs, recipient_emails=[data_manager.config.emailer.recipient])
 
 
-def check_available_flights():
+def check_available_flights(mode='roundtrip'):
     flight_finder = FlightFinderService()
-    available_flights = flight_finder.find_available_oneway_flights()
-    # flight_finder.find_possible_flights_from_departure_airports()
-    # available_flights = flight_finder.find_available_roundtrip_flights()
+    if mode == 'oneway':
+        available_flights = flight_finder.find_available_oneway_flights()
+    elif mode == 'roundtrip':
+        # flight_finder.find_possible_flights_from_departure_airports()
+        available_flights = flight_finder.find_available_roundtrip_flights()
     data_manager.add_available_flights(available_flights)
 
 
@@ -195,17 +197,22 @@ def do_pending_jobs():
 
 
 if __name__ == '__main__':
-    # create_report('oneway')
-    # create_report('roundtrip')
     # check_possible_flights_workflow('oneway')
     # one_way_workflow()
     # round_trip_workflow()
     # send_email()
     # schedule_one_way_workflow()
     # update_airports_database()
+
+    # finder = FlightFinderService()
+    # # finder.find_possible_roundtrip_flights_from_departure_airports()
+    # finder.find_possible_one_stop_flights(max_stops=1)
+    #
     # checked_flights = data_manager.load_data(data_manager.config.data_manager.checked_flights_path)
     # data_manager.add_checked_flights(checked_flights)
-    # check_available_flights()
+    # check_available_flights('oneway')
+    # create_report('oneway')
+    # create_report('roundtrip')
 
     do_pending_jobs()
 

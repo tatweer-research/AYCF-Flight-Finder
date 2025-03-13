@@ -47,6 +47,19 @@ class ReportService:
             logger.warning(f"Error adding second flight details: {e}")
 
     def add_waiting_time(self, elements, outward, return_flight, styles, text="Waiting Time:"):
+        waiting_time = calculate_waiting_time(outward['arrival']['time'],
+                                              return_flight['departure']['time'],
+                                              outward['date'],
+                                              return_flight['date'])
+        # Make the waiting time bold and centered
+        centered_style = copy.deepcopy(styles['Normal'])
+        centered_style.alignment = 1  # Center alignment
+        centered_style.leading = 18  # Adjust line spacing if needed
+        elements.append(Paragraph(f"<b>{text} {waiting_time}</b>", centered_style))
+        return waiting_time
+
+
+    def add_waiting_time_deprecated(self, elements, outward, return_flight, styles, text="Waiting Time:"):
         arrival_date = calculate_arrival_date(outward)
         waiting_time = calculate_waiting_time(start_time=outward['arrival']['time'],
                                               end_time=return_flight['departure']['time'],
@@ -200,7 +213,7 @@ class ReportService:
                 try:
                     self.add_roundtrip(elements, flight, styles)
                 except Exception as e:
-                    logger.warning(f"Error adding flight details: {e}")
+                    logger.exception(f"Error adding flight details: {e}")
                     continue
 
             # Build the PDF
