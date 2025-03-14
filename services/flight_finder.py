@@ -13,12 +13,10 @@ class FlightFinderService:
         self.config = data_manager.config if not config else config
         logger.debug('FlightFinderService initialized')
         self.database_airports = data_manager.get_all_airports()
-        self.departure_airports = self.config.flight_data.departure_airports
-        self.departure_airports = self.departure_airports if self.departure_airports else self.database_airports
-        self.destination_airports = self.config.flight_data.destination_airports
-        self.destination_airports = self.destination_airports if self.destination_airports else self.database_airports
+        self.departure_airports = self.config.flight_data.departure_airports or self.database_airports
+        self.destination_airports = self.config.flight_data.destination_airports or self.database_airports
 
-    def find_possible_roundtrip_flights_from_airport(self, airport):
+    def find_possible_roundtrip_flights_from_airport(self, airport, save_data=True):
         """
         Find possible roundtrip flights from a given airport and return flights to list of departure airports.
         only direct flights are considered.
@@ -57,28 +55,29 @@ class FlightFinderService:
                     flights.append(flight)
 
         logger.info(f'Found {len(flights)} possible flights from {airport} to departure airports')
-        data_manager.add_possible_flights(flights)
+        data_manager.add_possible_flights(flights, save_data)
 
-    def find_possible_roundtrip_flights_from_departure_airports(self):
+    def find_possible_roundtrip_flights_from_departure_airports(self, save_data=True):
         """
         Finds possible roundtrip flights from all departure airports.
         Only direct flights are considered.
         """
         for airport in self.departure_airports:
-            self.find_possible_roundtrip_flights_from_airport(airport)
+            self.find_possible_roundtrip_flights_from_airport(airport, save_data)
 
         possible_flights = data_manager.get_possible_flights()['possible_flights']
         estimated_time = self.get_estimated_checking_time(possible_flights)
         logger.info(f'Found a total of {len(possible_flights)} possible roundtrip flights from all departure airports')
         logger.info(f'Estimated scraping time: {estimated_time}')
 
-    def find_possible_one_stop_flights(self, max_stops=1):
+    def find_possible_one_stop_flights(self, max_stops=1, save_data=True):
         """
         Finds possible direct and one-stop oneway flights from departure airports to destination airports.
         Uses BFS to find possible destinations from departure airports.
 
         Parameters:
             max_stops (int): Maximum number of stops to consider. 0 for direct flights, 1 for one-stop flights.
+            save_data (bool): Whether to save the possible flights into a YAML
         """
         flights = []  # List to hold both direct and one-stop flights
 
@@ -142,7 +141,7 @@ class FlightFinderService:
         logger.info(f'Found {len(flights)} possible flights (direct and one-stop) from departure airports to destination '
                     f'airports with max stops: {max_stops}')
         logger.info(f'Estimated scraping time: {estimated_time}')
-        data_manager.add_possible_flights(flights)
+        data_manager.add_possible_flights(flights, save_data)
 
     def get_estimated_checking_time(self, possible_flights):
         # Handle multiple cases for flight keys

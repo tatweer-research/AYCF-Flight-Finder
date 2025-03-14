@@ -497,9 +497,10 @@ class DataManager:
     def get_possible_flights(self):
         return self.__possible_flights
 
-    def add_possible_flights(self, flights: List[List]):
+    def add_possible_flights(self, flights: List[List], save_data=True):
         self.__possible_flights['possible_flights'] += flights
-        self.save_data(self.__possible_flights, self.config.data_manager.possible_flights_path)
+        if save_data:
+            self.save_data(self.__possible_flights, self.config.data_manager.possible_flights_path)
 
     def add_checked_flight(self, flight: Dict, result: Dict, date: str):
         """Thread-safe addition of a single flight check result."""
@@ -509,9 +510,10 @@ class DataManager:
             self.save_data(self.__checked_flights,
                            self.config.data_manager.checked_flights_path)
 
-    def add_checked_flights(self, flights: Dict):
+    def add_checked_flights(self, flights: Dict, save_data=True):
         self.__checked_flights = flights
-        self.save_data(self.__checked_flights, self.config.data_manager.checked_flights_path)
+        if save_data:
+            self.save_data(self.__checked_flights, self.config.data_manager.checked_flights_path)
 
     def get_checked_flight(self, flight: Dict, date: str):
         return self.__checked_flights['checked_flights'][f"{flight['hash']}-{date}"]
@@ -526,10 +528,13 @@ class DataManager:
         self.__available_flights['available_flights'].append(flight)
         self.save_data(self.__available_flights, self.config.data_manager.available_flights_path)
 
-    def add_available_flights(self, flights: Dict):
+    def add_available_flights(self, flights: Dict, save_data=True):
         self.__available_flights = flights
-        self.save_data(self.__available_flights, self.config.data_manager.available_flights_path)
+        if save_data:
+            self.save_data(self.__available_flights, self.config.data_manager.available_flights_path)
 
+    def get_available_flights(self):
+        return self.__available_flights
 
 # A singleton used to manage data across all services
 data_manager = DataManager()
