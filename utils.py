@@ -505,6 +505,57 @@ def parse_destination_line(line):
     return match.group(1).strip(), match.group(2).strip()
 
 
+# ------------------------------
+# Helper function for building HTML for each flight segment
+# ------------------------------
+def create_segments_html(segments, title="Flight"):
+    """
+    Given a list of flight segments (each a dict with keys like 'carrier', 'date', etc.),
+    return an HTML block with a nice layout.
+    """
+    if not segments:
+        return f"<p>No segments available for {title}.</p>"
+
+    # If you want to join multiple segments in one big block, do it here:
+    rows_html = []
+    for seg in segments:
+        # Extract details safely
+        carrier = seg.get("carrier", "Unknown carrier")
+        flight_code = seg.get("flight_code", "N/A")
+        date = seg.get("date", "N/A")
+        duration = seg.get("duration", "N/A")
+        price = seg.get("price", "N/A")
+
+        dep_city = seg["departure"].get("city", "N/A")
+        dep_time = seg["departure"].get("time", "N/A")
+        dep_tz = seg["departure"].get("timezone", "")
+
+        arr_city = seg["arrival"].get("city", "N/A")
+        arr_time = seg["arrival"].get("time", "N/A")
+        arr_tz = seg["arrival"].get("timezone", "")
+
+        segment_html = f"""
+            <div style="border-left:3px solid #2b8cbe; padding-left:0.75rem; margin-bottom:0.75rem;">
+              <p style="margin-bottom:0.25rem;"><strong>Carrier:</strong> {carrier}</p>
+              <p style="margin-bottom:0.25rem;"><strong>Flight Code:</strong> {flight_code}</p>
+              <p style="margin-bottom:0.25rem;"><strong>Date:</strong> {date}</p>
+              <p style="margin-bottom:0.25rem;">
+                <strong>Departure:</strong> {dep_city} {dep_time} ({dep_tz}) <br/>
+                <strong>Arrival:</strong> {arr_city} {arr_time} ({arr_tz})
+              </p>
+              <p style="margin-bottom:0.25rem;"><strong>Duration:</strong> {duration}</p>
+              <p style="margin-bottom:0.25rem;"><strong>Price:</strong> {price}</p>
+            </div>
+            """
+        rows_html.append(segment_html)
+
+    block = f"""
+        <h5 style="margin-top:0;">{title}</h5>
+        {''.join(rows_html)}
+        """
+    return block
+
+
 if __name__ == '__main__':
     name = "Budapest (BUD)"
     print(get_iata_code(name))  # Output: BUD
