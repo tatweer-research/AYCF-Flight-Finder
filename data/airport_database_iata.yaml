@@ -1,0 +1,1876 @@
+ABZ:
+    - GDN
+ADB:
+    - OTP
+AES:
+    - GDN
+AGA:
+    - LGW
+AGP:
+    - WRO
+    - BUD
+    - OTP
+    - CLJ
+    - GDN
+    - KTW
+    - KRK
+    - LGW
+    - MXP
+    - FCO
+    - SOF
+    - VNO
+    - WAW
+    - VIE
+AHO:
+    - BUD
+    - OTP
+ALA:
+    - AUH
+ALC:
+    - BUD
+    - OTP
+    - CLJ
+    - GDN
+    - KTW
+    - FCO
+    - SOF
+    - WAW
+AMM:
+    - AUH
+    - BUD
+    - LTN
+    - MXP
+    - FCO
+    - VIE
+AOI:
+    - TIA
+AQJ:
+    - AUH
+ARN:
+    - AUH
+    - ATH
+    - BEG
+    - WRO
+    - BUD
+    - OTP
+    - SPX
+    - RMO
+    - CLJ
+    - GDN
+    - DEB
+    - IAS
+    - EVN
+    - KTW
+    - KRK
+    - KUT
+    - LGW
+    - LTN
+    - MXP
+    - BVA
+    - PRG
+    - RDO
+    - FCO
+    - SOF
+    - TLV
+    - SKG
+    - VNO
+    - WAW
+    - VIE
+ATH:
+    - AUH
+    - BUD
+    - OTP
+    - VCE
+    - KTW
+    - KUT
+    - LCA
+    - LGW
+    - LTN
+    - MXP
+    - TLV
+    - TIA
+AUH:
+    - HBE
+    - ALA
+    - AMM
+    - AQJ
+    - NQZ
+    - ATH
+    - GYD
+    - BEG
+    - FRU
+    - BBU
+    - BUD
+    - OTP
+    - SPX
+    - RMO
+    - CLJ
+    - DMM
+    - EBL
+    - EVN
+    - KTW
+    - KRK
+    - KUT
+    - LCA
+    - MXP
+    - MLE
+    - MCT
+    - MED
+    - FCO
+    - SLL
+    - SKD
+    - SJJ
+    - SOF
+    - HMB
+    - TAS
+    - TLV
+    - TIA
+    - HSA
+    - VAR
+    - VIE
+AYT:
+    - BUD
+    - OTP
+    - DEB
+    - LGW
+    - LTN
+BBU:
+    - AUH
+    - KRK
+    - NAP
+    - WAW
+BCM:
+    - LTN
+    - BGY
+    - FCO
+BCN:
+    - BEG
+    - WRO
+    - BUD
+    - OTP
+    - RMO
+    - CLJ
+    - GDN
+    - VCE
+    - IAS
+    - KTW
+    - KRK
+    - KUT
+    - MXP
+    - FCO
+    - SKP
+    - SOF
+    - TSR
+    - TIA
+    - VNO
+    - WAW
+    - VIE
+BDS:
+    - TIA
+BEG:
+    - AUH
+    - BCN
+    - MLH
+    - BER
+    - DTM
+    - EIN
+    - GOT
+    - HAM
+    - HER
+    - FKB
+    - CPH
+    - LCA
+    - LIS
+    - LTN
+    - BGY
+    - MMX
+    - MLA
+    - FMM
+    - NCE
+    - BVA
+    - FCO
+    - NYO
+BER:
+    - GDN
+BGO:
+    - GDN
+    - KRK
+BGY:
+    - BCM
+    - BEG
+    - OTP
+    - CLJ
+    - CRA
+    - IAS
+    - SOF
+    - SCV
+    - TSR
+    - TIA
+    - WAW
+BHX:
+    - BUD
+    - OTP
+    - CRA
+BIO:
+    - FCO
+    - WAW
+    - VIE
+BLL:
+    - OTP
+    - IAS
+BLQ:
+    - OTP
+    - RMO
+    - CLJ
+    - CRA
+    - IAS
+    - KRK
+    - SKP
+    - SOF
+    - TSR
+    - TIA
+    - WAW
+BNX:
+    - MLH
+    - DTM
+BOJ:
+    - BUD
+    - GDN
+    - DEB
+    - KTW
+    - LTN
+    - LUZ
+    - TLV
+    - WAW
+    - VIE
+BRE:
+    - SKP
+BRI:
+    - WRO
+    - BUD
+    - OTP
+    - CLJ
+    - CRA
+    - SOF
+    - TSR
+    - TIA
+    - WAW
+BRU:
+    - BUD
+BSL:
+    - BUD
+    - OTP
+    - CLJ
+    - IAS
+    - KRK
+    - FCO
+    - SOF
+    - WAW
+BTS:
+    - LTN
+    - SKP
+BUD:
+    - AUH
+    - AHO
+    - ALC
+    - AMM
+    - AYT
+    - ATH
+    - GYD
+    - BCN
+    - BRI
+    - BSL
+    - BER
+    - BHX
+    - GHV
+    - BRU
+    - CRL
+    - OTP
+    - BOJ
+    - SPX
+    - CTA
+    - CHQ
+    - RMO
+    - DTM
+    - JED
+    - DXB
+    - EIN
+    - VCE
+    - GOA
+    - GRO
+    - GLA
+    - LPA
+    - HER
+    - HRG
+    - IST
+    - EVN
+    - CPH
+    - CFU
+    - KUT
+    - LCA
+    - LIS
+    - LPL
+    - LGW
+    - LTN
+    - FNC
+    - MAD
+    - MXP
+    - AGP
+    - MLA
+    - RAK
+    - FMM
+    - NAP
+    - NCE
+    - PMI
+    - ORY
+    - TGD
+    - KEF
+    - RHO
+    - RUH
+    - FCO
+    - QSR
+    - JTR
+    - SSH
+    - SKP
+    - ARN
+    - STR
+    - TLV
+    - TFS
+    - SKG
+    - TIA
+    - TGM
+    - VLC
+    - WAW
+    - ZTH
+BVA:
+    - BEG
+    - OTP
+    - RMO
+    - CLJ
+    - GDN
+    - IAS
+    - KUT
+    - LCA
+    - MXP
+    - SKP
+    - SOF
+    - TSR
+    - TIA
+    - VNO
+CDT:
+    - OTP
+    - CLJ
+    - FCO
+CFU:
+    - BUD
+    - OTP
+    - CLJ
+    - DEB
+    - KTW
+    - MXP
+    - NAP
+    - FCO
+    - WAW
+    - VIE
+CGN:
+    - SKP
+    - TIA
+CHQ:
+    - BUD
+    - CLJ
+    - WAW
+    - VIE
+CIA:
+    - OTP
+    - CLJ
+    - FCO
+CIY:
+    - TIA
+CLJ:
+    - AUH
+    - ALC
+    - BCN
+    - BRI
+    - BSL
+    - BLQ
+    - CRL
+    - CDT
+    - CTA
+    - CHQ
+    - DTM
+    - EIN
+    - HHN
+    - CFU
+    - LCA
+    - LBA
+    - LIS
+    - LTN
+    - LYS
+    - MAD
+    - BGY
+    - AGP
+    - MMX
+    - FMM
+    - NAP
+    - NCE
+    - NUE
+    - PMI
+    - BVA
+    - CIA
+    - ZAZ
+    - STR
+    - TLV
+    - VLC
+    - TSF
+    - VIE
+    - ZTH
+CND:
+    - LTN
+CPH:
+    - BEG
+    - BUD
+    - OTP
+    - GDN
+    - IAS
+    - KTW
+    - KUT
+    - SKP
+    - SOF
+    - WAW
+CRA:
+    - BRI
+    - BHX
+    - BLQ
+    - CRL
+    - LTN
+    - BGY
+    - FMM
+    - CIA
+CRL:
+    - BUD
+    - OTP
+    - CTA
+    - RMO
+    - CLJ
+    - CRA
+    - IAS
+    - KUT
+    - SKP
+    - SOF
+    - TSR
+    - TIA
+    - VAR
+    - WAW
+CTA:
+    - CRL
+    - BUD
+    - OTP
+    - CLJ
+    - HAM
+    - IAS
+    - KTW
+    - LGW
+    - FMM
+    - PRG
+    - SSH
+    - SOF
+    - TIA
+    - WAW
+DBV:
+    - WAW
+DEB:
+    - AYT
+    - BOJ
+    - EIN
+    - IST
+    - CFU
+    - LCA
+    - LTN
+    - FCO
+DLM:
+    - LGW
+    - LTN
+DMM:
+    - AUH
+    - FCO
+DTM:
+    - BNX
+    - BEG
+    - GHV
+    - BUD
+    - OTP
+    - RMO
+    - CLJ
+    - GDN
+    - IAS
+    - EVN
+    - KTW
+    - KUT
+    - OHD
+    - TGD
+    - PRN
+    - FCO
+    - SBZ
+    - SKP
+    - SOF
+    - SCV
+    - TSR
+    - TIA
+    - TZL
+    - VNO
+    - VAR
+    - WAW
+DXB:
+    - BUD
+    - OTP
+EBL:
+    - AUH
+EFL:
+    - FCO
+EIN:
+    - BEG
+    - WRO
+    - BUD
+    - OTP
+    - CLJ
+    - GDN
+    - DEB
+    - IAS
+    - KTW
+    - KRK
+    - FCO
+    - SKP
+    - SOF
+    - TIA
+    - VNO
+    - VAR
+    - WAW
+EVN:
+    - AUH
+    - BUD
+    - DTM
+    - VCE
+    - LCA
+    - MXP
+    - FCO
+    - SOF
+    - VIE
+FAO:
+    - LGW
+FCO:
+    - AUH
+    - ALC
+    - AMM
+    - BCM
+    - GYD
+    - BCN
+    - BSL
+    - BEG
+    - BER
+    - BIO
+    - BUD
+    - OTP
+    - SPX
+    - CDT
+    - RMO
+    - DMM
+    - GDN
+    - DEB
+    - DTM
+    - JED
+    - EIN
+    - GOT
+    - HAM
+    - HER
+    - IBZ
+    - EVN
+    - KTW
+    - EFL
+    - CFU
+    - KGS
+    - KRK
+    - KUT
+    - LCA
+    - LIS
+    - LGW
+    - LYS
+    - FNC
+    - MAD
+    - AGP
+    - RAK
+    - RMF
+    - FMM
+    - JMK
+    - NCE
+    - PMI
+    - ORY
+    - OPO
+    - POZ
+    - PRG
+    - KEF
+    - RUH
+    - RZE
+    - JTR
+    - ZAZ
+    - SJJ
+    - SSH
+    - SVQ
+    - JSI
+    - SOF
+    - SPU
+    - TLV
+    - TFS
+    - TIA
+    - VLC
+    - VNO
+    - WAW
+    - VIE
+    - ZTH
+FDH:
+    - OTP
+    - SKP
+FKB:
+    - BEG
+    - SBZ
+    - SKP
+    - TSR
+    - TIA
+FMM:
+    - BEG
+    - BUD
+    - OTP
+    - CTA
+    - RMO
+    - CLJ
+    - CRA
+    - IAS
+    - KUT
+    - INI
+    - OHD
+    - TGD
+    - PRN
+    - FCO
+    - SBZ
+    - SKP
+    - SOF
+    - SCV
+    - TSR
+    - TIA
+    - TZL
+    - VAR
+FNC:
+    - BUD
+    - GDN
+    - KTW
+    - FCO
+    - WAW
+    - VIE
+FRU:
+    - AUH
+FUE:
+    - KTW
+    - WAW
+GDN:
+    - ABZ
+    - ALC
+    - BCN
+    - BGO
+    - BOJ
+    - DTM
+    - EIN
+    - GOT
+    - HAM
+    - HAU
+    - HER
+    - CPH
+    - LCA
+    - LBA
+    - LPL
+    - LTN
+    - FNC
+    - MXP
+    - AGP
+    - MMX
+    - OSL
+    - TRF
+    - BVA
+    - KEF
+    - FCO
+    - SPU
+    - SVG
+    - ARN
+    - TFS
+    - TIA
+    - TOS
+    - TRD
+    - TKU
+    - VLC
+    - VRN
+    - AES
+GHV:
+    - BUD
+    - DTM
+    - LTN
+GLA:
+    - BUD
+GNB:
+    - LGW
+    - LTN
+    - VNO
+    - WAW
+GOA:
+    - BUD
+    - KRK
+    - TIA
+    - WAW
+GOT:
+    - BEG
+    - GDN
+    - FCO
+    - SKP
+    - WAW
+GRO:
+    - BUD
+GVA:
+    - OTP
+    - SOF
+GYD:
+    - AUH
+    - BUD
+    - FCO
+HAM:
+    - BUD
+    - OTP
+    - CRA
+HAU:
+    - GDN
+HBE:
+    - AUH
+HER:
+    - BUD
+    - OTP
+HHN:
+    - OTP
+    - CLJ
+    - KUT
+    - SKP
+    - SOF
+    - TIA
+    - VAR
+HMB:
+    - AUH
+HRG:
+    - BUD
+    - LGW
+    - LTN
+    - MXP
+    - VIE
+HSA:
+    - AUH
+IAS:
+    - BCN
+    - BSL
+    - BER
+    - BLL
+    - BLQ
+    - CRL
+    - CTA
+    - DTM
+    - EIN
+    - IST
+    - CPH
+    - LCA
+    - LPL
+    - LTN
+    - MAD
+    - BGY
+    - MMX
+    - FMM
+    - BVA
+    - CIA
+    - TLV
+    - TRN
+    - TSF
+IBZ:
+    - NAP
+    - FCO
+INI:
+    - BUD
+    - OTP
+IST:
+    - BUD
+    - DEB
+    - IAS
+    - LGW
+    - LTN
+JED:
+    - BUD
+    - OTP
+    - LGW
+    - MXP
+    - FCO
+    - VIE
+JMK:
+    - OTP
+    - NAP
+    - FCO
+JSI:
+    - MXP
+    - FCO
+JTR:
+    - BUD
+    - OTP
+    - NAP
+    - FCO
+    - WAW
+KEF:
+    - FCO
+KGS:
+    - FCO
+KRK:
+    - AUH
+    - BCN
+    - BSL
+    - BGO
+    - BLQ
+    - BBU
+    - OTP
+    - EIN
+    - GOA
+    - HER
+    - LCA
+    - LGW
+    - LTN
+    - LYS
+    - MXP
+    - AGP
+    - NCE
+    - OSL
+    - FCO
+    - SPU
+    - SVG
+    - TLV
+    - TIA
+    - VLC
+KSC:
+    - LTN
+KTW:
+    - AUH
+    - ALC
+    - ATH
+    - BCN
+    - BOJ
+    - CTA
+    - RMO
+    - DTM
+    - EIN
+    - FUE
+    - CPH
+    - CFU
+    - KUT
+    - LCA
+    - LPL
+    - LTN
+    - FNC
+    - MAD
+    - AGP
+    - MLA
+    - RAK
+    - NAP
+    - PMI
+    - PSA
+    - TGD
+    - KEF
+    - CIA
+    - FCO
+    - SPU
+    - TLV
+    - TFS
+    - TIA
+KUN:
+    - LTN
+KUT:
+    - AUH
+    - ATH
+    - BCN
+    - BER
+    - WRO
+    - CRL
+    - BUD
+    - DTM
+    - HHN
+    - KTW
+    - CPH
+    - LCA
+    - MXP
+    - FMM
+    - BVA
+    - POZ
+    - PRG
+    - RIX
+    - FCO
+    - SKG
+    - VNO
+    - WAW
+    - VIE
+LBA:
+    - FCO
+    - WAW
+    - VIE
+LCA:
+    - AUH
+    - ATH
+    - BEG
+    - WRO
+    - BUD
+    - OTP
+    - SPX
+    - RMO
+    - CLJ
+    - GDN
+    - DEB
+    - IAS
+    - EVN
+    - KTW
+    - KRK
+    - KUT
+    - LGW
+    - LTN
+    - MXP
+    - BVA
+    - PRG
+    - RDO
+    - FCO
+    - SOF
+    - TLV
+    - SKG
+    - VNO
+    - WAW
+    - VIE
+LEJ:
+    - OTP
+    - TIA
+LGW:
+    - AGA
+    - AYT
+    - ATH
+    - BUD
+    - OTP
+    - CTA
+    - DLM
+    - JED
+    - FAO
+    - VCE
+    - GNB
+    - HRG
+    - IST
+    - KRK
+    - LCA
+    - LYS
+    - MXP
+    - AGP
+    - RAK
+    - NAP
+    - TGD
+    - PRG
+    - FCO
+    - SSH
+    - TLV
+    - VAR
+    - VIE
+LIS:
+    - BEG
+    - BUD
+    - OTP
+    - CLJ
+    - LTN
+    - FCO
+    - SOF
+    - WAW
+LJU:
+    - SKP
+LPA:
+    - BUD
+    - OTP
+LPL:
+    - BUD
+    - OTP
+    - GDN
+    - IAS
+    - KTW
+    - WAW
+LTN:
+    - AMM
+    - AYT
+    - ATH
+    - BCM
+    - BEG
+    - GHV
+    - BTS
+    - WRO
+    - BUD
+    - OTP
+    - BOJ
+    - SPX
+    - RMO
+    - CLJ
+    - CND
+    - CRA
+    - DLM
+    - GDN
+    - DEB
+    - GNB
+    - HRG
+    - IAS
+    - IST
+    - KTW
+    - KUN
+    - KSC
+    - KRK
+    - LCA
+    - LIS
+    - LUZ
+    - PMI
+    - PDV
+    - TAT
+    - POZ
+    - PRG
+    - PRN
+    - SZG
+    - SJJ
+    - SUJ
+    - SSH
+    - SBZ
+    - SKP
+    - SOF
+    - SPU
+    - SCV
+    - TLL
+    - TLV
+    - TSR
+    - TIA
+    - TOS
+    - TGM
+    - VNO
+    - VAR
+    - WAW
+LUZ:
+    - BOJ
+    - LTN
+    - SPU
+LYS:
+    - OTP
+    - CLJ
+    - KRK
+    - LGW
+    - FCO
+    - SKP
+    - SOF
+    - TIA
+MAD:
+    - BUD
+    - GDN
+    - KTW
+    - FCO
+    - WAW
+    - VIE
+MCT:
+    - AUH
+MED:
+    - AUH
+MLA:
+    - BEG
+    - BUD
+    - OTP
+    - KTW
+    - SKP
+    - WAW
+MLE:
+    - AUH
+MLH:
+    - BNX
+    - BEG
+    - RMO
+    - INI
+    - SKP
+    - TIA
+    - TZL
+MMX:
+    - BEG
+    - OTP
+    - CLJ
+    - GDN
+    - IAS
+    - SKP
+    - TIA
+MXP:
+    - AUH
+    - AMM
+    - ATH
+    - BCN
+    - BUD
+    - OTP
+    - SPX
+    - RMO
+    - GDN
+    - JED
+    - HER
+    - HRG
+    - EVN
+    - CFU
+    - KRK
+    - KUT
+    - LCA
+    - LGW
+    - MAD
+    - AGP
+    - RAK
+    - BVA
+    - TGD
+    - PRG
+    - PRN
+    - KEF
+    - RUH
+    - RZE
+    - SSH
+    - JSI
+    - SKP
+    - TLL
+    - TLV
+    - TFS
+    - TIA
+    - VLC
+    - VNO
+    - WAW
+    - ZTH
+NAP:
+    - AUH
+    - ALC
+    - BCN
+    - BRI
+    - BSL
+    - BLQ
+    - CRL
+    - CDT
+    - CTA
+    - CHQ
+    - DTM
+    - EIN
+    - HHN
+    - CFU
+    - LCA
+    - LBA
+    - LIS
+    - LTN
+    - LYS
+    - MAD
+    - BGY
+    - AGP
+    - MMX
+    - FMM
+    - NAP
+    - NCE
+    - NUE
+    - PMI
+    - BVA
+    - CIA
+    - ZAZ
+    - STR
+    - TLV
+    - VLC
+    - TSF
+    - VIE
+    - ZTH
+NCE:
+    - BEG
+    - BUD
+    - OTP
+    - CLJ
+    - KRK
+    - FCO
+    - SOF
+    - TIA
+    - WAW
+    - VIE
+NQZ:
+    - AUH
+NUE:
+    - OTP
+    - RMO
+    - CLJ
+    - SBZ
+    - SKP
+    - TIA
+    - VAR
+NYO:
+    - BEG
+    - OTP
+    - SKP
+    - TIA
+    - WAW
+OHD:
+    - DTM
+    - FMM
+    - VIE
+OLB:
+    - WAW
+OPO:
+    - FCO
+    - WAW
+ORY:
+    - BUD
+    - FCO
+    - WAW
+OSL:
+    - GDN
+    - KRK
+OTP:
+    - AUH
+    - AHO
+    - ALC
+    - AYT
+    - ATH
+    - BCN
+    - BRI
+    - BSL
+    - BLL
+    - BHX
+    - BLQ
+    - CRL
+    - BUD
+    - CDT
+    - CTA
+    - RMO
+    - DTM
+    - JED
+    - DXB
+    - EIN
+    - HHN
+    - FDH
+    - GVA
+    - LPA
+    - HAM
+    - HER
+    - ADB
+    - CPH
+    - CFU
+    - KRK
+    - LCA
+    - LBA
+    - LEJ
+    - LIS
+    - LPL
+    - LGW
+    - LTN
+    - LYS
+    - MAD
+    - BGY
+    - MXP
+    - AGP
+    - MMX
+    - MLA
+    - RAK
+    - FMM
+    - JMK
+    - NAP
+    - NCE
+    - NUE
+    - TRF
+    - PMI
+    - BVA
+    - PSA
+    - FCO
+    - QSR
+    - SZG
+    - SDR
+    - JTR
+    - ZAZ
+    - SVQ
+    - NYO
+    - STR
+    - TLV
+    - TFS
+    - SKG
+    - TIA
+    - TRS
+    - TRN
+    - VLC
+    - TSF
+    - ZTH
+PDV:
+    - LTN
+PEG:
+    - TIA
+PMI:
+    - BUD
+    - OTP
+    - CLJ
+    - KTW
+    - LTN
+    - FCO
+    - WAW
+POZ:
+    - KUT
+    - LTN
+    - FCO
+    - TIA
+PRG:
+    - CTA
+    - VCE
+    - KUT
+    - LCA
+    - LGW
+    - LTN
+    - MXP
+    - NAP
+    - FCO
+    - TIA
+    - VAR
+PRN:
+    - DTM
+    - LTN
+    - MXP
+    - FMM
+    - VIE
+PSA:
+    - OTP
+    - KTW
+    - TIA
+    - WAW
+PSR:
+    - TIA
+QSR:
+    - BUD
+    - OTP
+    - TIA
+RAK:
+    - BEG
+    - BUD
+    - OTP
+    - GDN
+    - KRK
+    - MXP
+    - FCO
+    - SOF
+    - WAW
+RDO:
+    - LCA
+RHO:
+    - BUD
+    - WAW
+RIX:
+    - KUT
+RMF:
+    - FCO
+RMI:
+    - BUD
+    - OTP
+    - CRA
+RMO:
+    - AUH
+    - BCN
+    - MLH
+    - BER
+    - BLQ
+    - WRO
+    - CRL
+    - BUD
+    - OTP
+    - DTM
+    - VCE
+    - KTW
+    - LCA
+    - LTN
+    - MXP
+    - FMM
+    - NUE
+    - BVA
+    - FCO
+    - VRN
+    - WAW
+    - VIE
+RUH:
+    - BEG
+    - SBZ
+    - SKP
+    - TSR
+    - TIA
+RZE:
+    - BUD
+    - GDN
+    - DEB
+    - KTW
+    - LTN
+    - LUZ
+    - TLV
+    - WAW
+    - VIE
+SBZ:
+    - DTM
+    - FKB
+    - LTN
+    - FMM
+    - NUE
+SCV:
+    - DTM
+    - LTN
+    - BGY
+    - FMM
+    - CIA
+SDR:
+    - OTP
+SJJ:
+    - AUH
+    - LTN
+    - FCO
+SKD:
+    - AUH
+SKG:
+    - BUD
+    - OTP
+    - KUT
+    - LCA
+SKP:
+    - BCN
+    - MLH
+    - BER
+    - BLQ
+    - BTS
+    - BRE
+    - CRL
+    - BUD
+    - DTM
+    - EIN
+    - HHN
+    - FDH
+    - GOT
+    - HAM
+    - FKB
+    - CPH
+    - CGN
+    - LJU
+    - LTN
+    - LYS
+    - MXP
+    - MMX
+    - MLA
+    - FMM
+    - NUE
+    - TRF
+    - BVA
+    - CIA
+    - SZG
+    - NYO
+    - STR
+    - TSF
+SLL:
+    - AUH
+SOF:
+    - AUH
+    - ALC
+    - BCN
+    - BRI
+    - BSL
+    - BLQ
+    - CRL
+    - CTA
+    - DTM
+    - EIN
+    - HHN
+    - GVA
+    - HAM
+    - HER
+    - EVN
+    - CPH
+    - LCA
+    - LIS
+    - LTN
+    - LYS
+    - MAD
+    - BGY
+    - AGP
+    - FMM
+    - NAP
+    - NCE
+    - BVA
+    - FCO
+    - TLV
+    - VLC
+SPU:
+    - WRO
+    - GDN
+    - KTW
+    - KRK
+    - LTN
+    - LUZ
+    - FCO
+    - VNO
+    - WAW
+    - VIE
+SPX:
+    - AUH
+    - BUD
+    - LCA
+    - LTN
+    - MXP
+    - FCO
+SSH:
+    - BUD
+    - CTA
+    - LGW
+    - LTN
+    - MXP
+    - NAP
+    - FCO
+STR:
+    - BUD
+    - OTP
+    - CLJ
+    - SKP
+    - TIA
+SUJ:
+    - LTN
+SVG:
+    - GDN
+    - KRK
+SVQ:
+    - BBU
+    - OTP
+    - FCO
+    - WAW
+SZG:
+    - OTP
+    - LTN
+    - SKP
+SZZ:
+    - TRF
+TAS:
+    - AUH
+TAT:
+    - LTN
+TFS:
+    - BUD
+    - OTP
+    - GDN
+    - VCE
+    - KTW
+    - MXP
+    - FCO
+    - WAW
+    - VIE
+TGD:
+    - BUD
+    - DTM
+    - KTW
+    - LGW
+    - MXP
+    - FMM
+    - WAW
+    - VIE
+TGM:
+    - BUD
+    - LTN
+TIA:
+    - AUH
+    - AOI
+    - ATH
+    - BCN
+    - BRI
+    - MLH
+    - BER
+    - BLQ
+    - WRO
+    - BDS
+    - CRL
+    - BUD
+    - OTP
+    - CTA
+    - CIY
+    - GDN
+    - DTM
+    - EIN
+    - HHN
+    - GOA
+    - HAM
+    - FKB
+    - KTW
+    - KRK
+    - CGN
+    - LEJ
+    - LTN
+    - LYS
+    - MAD
+    - BGY
+    - MXP
+    - MMX
+    - FMM
+    - NAP
+    - NCE
+    - NUE
+    - TRF
+    - BVA
+    - PEG
+    - PSR
+    - PSA
+    - POZ
+    - PRG
+    - RMI
+    - FCO
+    - QSR
+    - NYO
+    - STR
+    - TRS
+    - TRN
+    - VLC
+    - TSF
+    - VRN
+    - WAW
+    - VIE
+TKU:
+    - GDN
+TLL:
+    - LTN
+    - MXP
+TLV:
+    - AUH
+    - ATH
+    - BUD
+    - OTP
+    - BOJ
+    - CLJ
+    - IAS
+    - KTW
+    - KRK
+    - LCA
+    - LGW
+    - LTN
+    - MXP
+    - FCO
+    - SOF
+    - VNO
+    - VAR
+    - WAW
+    - VIE
+TOS:
+    - OTP
+    - KTW
+    - TIA
+    - WAW
+TRD:
+    - GDN
+TRF:
+    - OTP
+    - GDN
+    - SKP
+    - SZZ
+    - TIA
+    - WAW
+TRN:
+    - OTP
+    - IAS
+    - TIA
+    - WAW
+TRS:
+    - OTP
+    - TIA
+TSF:
+    - OTP
+    - CLJ
+    - IAS
+    - SKP
+    - TSR
+    - TIA
+TSR:
+    - BCN
+    - BRI
+    - BLQ
+    - CRL
+    - DTM
+    - FKB
+    - LTN
+    - MAD
+    - BGY
+    - FMM
+    - BVA
+    - CIA
+    - VLC
+    - TSF
+    - ZTH
+TZL:
+    - MLH
+    - DTM
+    - FMM
+VAR:
+    - AUH
+    - BER
+    - CRL
+    - DTM
+    - EIN
+    - HHN
+    - HAM
+    - LGW
+    - LTN
+    - FMM
+    - NUE
+    - PRG
+    - TLV
+    - VIE
+VCE:
+    - ATH
+    - BCN
+    - BUD
+    - RMO
+    - EVN
+    - LGW
+    - MAD
+    - PRG
+    - TFS
+    - WAW
+VIE:
+    - AUH
+    - AMM
+    - BCN
+    - BIO
+    - BOJ
+    - CHQ
+    - RMO
+    - CLJ
+    - JED
+    - HRG
+    - EVN
+    - CFU
+    - KUT
+    - LCA
+    - LGW
+    - FNC
+    - AGP
+    - NAP
+    - NCE
+    - OHD
+    - TGD
+    - PRN
+    - KEF
+    - RUH
+    - FCO
+    - SPU
+    - TLV
+    - TFS
+    - TIA
+    - VAR
+    - ZTH
+VLC:
+    - BUD
+    - OTP
+    - CLJ
+    - GDN
+    - KRK
+    - MXP
+    - FCO
+    - SOF
+    - TSR
+    - TIA
+    - WAW
+VNO:
+    - BCN
+    - DTM
+    - EIN
+    - GNB
+    - KUT
+    - LCA
+    - LTN
+    - MXP
+    - AGP
+    - BVA
+    - FCO
+    - SPU
+    - TLV
+VRN:
+    - RMO
+    - GDN
+    - TIA
+    - WAW
+WAW:
+    - ALC
+    - BCN
+    - BRI
+    - BSL
+    - BIO
+    - BLQ
+    - CRL
+    - BBU
+    - BUD
+    - BOJ
+    - CTA
+    - CHQ
+    - RMO
+    - DTM
+    - DBV
+    - EIN
+    - VCE
+    - FUE
+    - GOA
+    - GNB
+    - GOT
+    - HER
+    - CPH
+    - CFU
+    - KUT
+    - LCA
+    - LBA
+    - LIS
+    - LPL
+    - LTN
+    - FNC
+    - MAD
+    - BGY
+    - MXP
+    - AGP
+    - MLA
+    - RAK
+    - NAP
+    - NCE
+    - OLB
+    - TRF
+    - PMI
+    - ORY
+    - PSA
+    - TGD
+    - OPO
+    - KEF
+    - RHO
+    - FCO
+    - JTR
+    - SVQ
+    - SPU
+    - NYO
+    - TLV
+    - TFS
+    - TIA
+    - TRN
+    - VLC
+    - VRN
+    - ZTH
+WRO:
+    - BCN
+    - BRI
+    - RMO
+    - EIN
+    - KUT
+    - LCA
+    - LTN
+    - AGP
+    - SPU
+    - TIA
+ZAZ:
+    - OTP
+    - CLJ
+    - FCO
+ZTH:
+    - BUD
+    - OTP
+    - CLJ
+    - MXP
+    - FCO
+    - TSR
+    - WAW
+    - VIE
