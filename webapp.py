@@ -267,7 +267,13 @@ with tab2:
         data_manager.config.flight_data.departure_date = selected_date.strftime("%d-%m-%Y") if selected_date else None
 
         # Re-set checked_flights in data_manager
-        data_manager.add_checked_flights(st.session_state.checked_flights, save_data=False)
+        if selected_date:
+            checked_flights = {hash_str: flight_obj for hash_str, flight_obj in st.session_state.checked_flights['checked_flights'].items()
+                               if datetime.strptime(flight_obj[0]['date'], "%a %d, %B %Y").date() == selected_date}
+            checked_flights = {"checked_flights": checked_flights}
+            data_manager.add_checked_flights(checked_flights, save_data=False)
+        else:
+            data_manager.add_checked_flights(st.session_state.checked_flights, save_data=False)
 
         # Check possible flights out of the data_manager.__airport_destinations
         check_possible_flights_workflow(data_manager.config.general.mode, save_data=False)
