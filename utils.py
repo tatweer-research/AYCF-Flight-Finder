@@ -514,25 +514,27 @@ def render_flight_banner(segment):
     `segment` is a dict with keys like carrier, flight_code, departure/arrival info, etc.
     """
 
+    # Extract segment data
     carrier = segment.get("carrier", "Unknown Carrier")
     flight_code = segment.get("flight_code", "N/A")
     duration = segment.get("duration", "N/A")
     price = segment.get("price", "N/A")
+    date = segment.get("date", "N/A")  # Retrieve the date with a fallback
 
-    # departure info
+    # Departure info
     dep_city = segment["departure"].get("city", "N/A")
     dep_time = segment["departure"].get("time", "N/A")
     dep_tz = segment["departure"].get("timezone", "")
 
-    # arrival info
+    # Arrival info
     arr_city = segment["arrival"].get("city", "N/A")
     arr_time = segment["arrival"].get("time", "N/A")
     arr_tz = segment["arrival"].get("timezone", "")
 
-    # (Optional) pass a logo_url if you have it, e.g. known carrier logos in a dict
-    # Here we just set None for demonstration
+    # Optional logo URL (unchanged)
     logo_url = None
 
+    # Updated HTML with date in the top row
     html_code = f"""
     <div style="
         display: flex;
@@ -544,17 +546,18 @@ def render_flight_banner(segment):
         background: #f9f9f9;
         font-family: Arial, sans-serif;
     ">
-        <!-- (Optional) Airline logo. Omit or pass a real URL if you have it -->
+        <!-- (Optional) Airline logo -->
         {f'<div style="display:flex; align-items:center; margin-right:1rem;"><img src="{logo_url}" alt="Carrier Logo" style="width:40px; height:auto;" /></div>' if logo_url else ''}
 
-        <!-- Main flight info: carrier, flight code, departure/arrival -->
+        <!-- Main flight info: date, carrier, flight code, departure/arrival -->
         <div style="flex-grow: 1; margin-right: 1rem;">
-            <!-- Top row: Carrier and flight code -->
+            <!-- Top row: Date, Carrier, and Flight Code -->
             <div style="font-size: 1rem; font-weight: bold; margin-bottom: 0.5rem;">
-                {carrier} &middot; {flight_code}
+                {date}
+            <!--    {date} - {carrier} · {flight_code} -->
             </div>
 
-            <!-- Middle row: Departure --> 
+            <!-- Middle row: Departure -->
             <div style="
                 display: flex;
                 align-items: center;
@@ -565,7 +568,7 @@ def render_flight_banner(segment):
                 <span><strong>{dep_city}</strong> ({dep_tz}) {dep_time}</span>
             </div>
 
-            <!-- Middle row: Arrival --> 
+            <!-- Middle row: Arrival -->
             <div style="
                 display: flex;
                 align-items: center;
@@ -582,7 +585,7 @@ def render_flight_banner(segment):
             </div>
         </div>
 
-        <!-- Price section (currently commented out) -->
+        <!-- Price section (unchanged, commented out) -->
         <!-- <div style="
             margin-left: auto;
             text-align: right;
@@ -590,7 +593,7 @@ def render_flight_banner(segment):
             font-size: 1.1rem;
         ">
             {price}
-        </div>  -->
+        </div> -->
     </div>
     """
     return html_code
