@@ -71,7 +71,8 @@ def one_way_workflow():
         scraper = ScraperService()
 
         flight_finder = FlightFinderService()
-        flight_finder.find_possible_one_stop_flights(max_stops=data_manager.config.flight_data.max_stops, save_data=True)
+        flight_finder.find_possible_one_stop_flights(max_stops=data_manager.config.flight_data.max_stops,
+                                                     save_data=True)
         flights = data_manager.get_possible_flights()
 
         departure_date = data_manager.config.flight_data.departure_date if data_manager.config.flight_data.departure_date \
