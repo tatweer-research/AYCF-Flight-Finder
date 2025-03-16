@@ -434,6 +434,14 @@ class DataManager:
         self.driver.command_executor.set_timeout(1000)
 
     @staticmethod
+    def get_last_modification_datetime(path: str):
+        # Get the last modification timestamp
+        mod_time = os.path.getmtime(path)
+
+        # Convert timestamp to a human-readable datetime format
+        return datetime.fromtimestamp(mod_time)
+
+    @staticmethod
     def save_data(data: Dict, path: str):
         with open(path, 'w', encoding='utf-8') as file:
             yaml.dump(data,
