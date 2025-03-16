@@ -508,52 +508,92 @@ def parse_destination_line(line):
 # ------------------------------
 # Helper function for building HTML for each flight segment
 # ------------------------------
-def create_segments_html(segments, title="Flight"):
+def render_flight_banner(segment):
     """
-    Given a list of flight segments (each a dict with keys like 'carrier', 'date', etc.),
-    return an HTML block with a nice layout.
+    Renders a single flight segment in a 'banner' style, like typical flight search engines.
+    `segment` is a dict with keys like carrier, flight_code, departure/arrival info, etc.
     """
-    if not segments:
-        return f"<p>No segments available for {title}.</p>"
 
-    # If you want to join multiple segments in one big block, do it here:
-    rows_html = []
-    for seg in segments:
-        # Extract details safely
-        carrier = seg.get("carrier", "Unknown carrier")
-        flight_code = seg.get("flight_code", "N/A")
-        date = seg.get("date", "N/A")
-        duration = seg.get("duration", "N/A")
-        price = seg.get("price", "N/A")
+    carrier = segment.get("carrier", "Unknown Carrier")
+    flight_code = segment.get("flight_code", "N/A")
+    duration = segment.get("duration", "N/A")
+    price = segment.get("price", "N/A")
 
-        dep_city = seg["departure"].get("city", "N/A")
-        dep_time = seg["departure"].get("time", "N/A")
-        dep_tz = seg["departure"].get("timezone", "")
+    # departure info
+    dep_city = segment["departure"].get("city", "N/A")
+    dep_time = segment["departure"].get("time", "N/A")
+    dep_tz = segment["departure"].get("timezone", "")
 
-        arr_city = seg["arrival"].get("city", "N/A")
-        arr_time = seg["arrival"].get("time", "N/A")
-        arr_tz = seg["arrival"].get("timezone", "")
+    # arrival info
+    arr_city = segment["arrival"].get("city", "N/A")
+    arr_time = segment["arrival"].get("time", "N/A")
+    arr_tz = segment["arrival"].get("timezone", "")
 
-        segment_html = f"""
-            <div style="border-left:3px solid #2b8cbe; padding-left:0.75rem; margin-bottom:0.75rem;">
-              <p style="margin-bottom:0.25rem;"><strong>Carrier:</strong> {carrier}</p>
-              <p style="margin-bottom:0.25rem;"><strong>Flight Code:</strong> {flight_code}</p>
-              <p style="margin-bottom:0.25rem;"><strong>Date:</strong> {date}</p>
-              <p style="margin-bottom:0.25rem;">
-                <strong>Departure:</strong> {dep_city} {dep_time} ({dep_tz}) <br/>
-                <strong>Arrival:</strong> {arr_city} {arr_time} ({arr_tz})
-              </p>
-              <p style="margin-bottom:0.25rem;"><strong>Duration:</strong> {duration}</p>
-              <p style="margin-bottom:0.25rem;"><strong>Price:</strong> {price}</p>
+    # (Optional) pass a logo_url if you have it, e.g. known carrier logos in a dict
+    # Here we just set None for demonstration
+    logo_url = None
+
+    html_code = f"""
+    <div style="
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        background: #f9f9f9;
+        font-family: Arial, sans-serif;
+    ">
+        <!-- (Optional) Airline logo. Omit or pass a real URL if you have it -->
+        {f'<div style="display:flex; align-items:center; margin-right:1rem;"><img src="{logo_url}" alt="Carrier Logo" style="width:40px; height:auto;" /></div>' if logo_url else ''}
+
+        <!-- Main flight info: carrier, flight code, departure/arrival -->
+        <div style="flex-grow: 1; margin-right: 1rem;">
+            <!-- Top row: Carrier and flight code -->
+            <div style="font-size: 1rem; font-weight: bold; margin-bottom: 0.5rem;">
+                {carrier} &middot; {flight_code}
             </div>
-            """
-        rows_html.append(segment_html)
 
-    block = f"""
-        <h5 style="margin-top:0;">{title}</h5>
-        {''.join(rows_html)}
-        """
-    return block
+            <!-- Middle row: Departure --> 
+            <div style="
+                display: flex;
+                align-items: center;
+                font-size: 0.95rem;
+                margin-bottom: 0.25rem;
+            ">
+                <span style="margin-right:0.25rem;">✈</span>
+                <span><strong>{dep_city}</strong> ({dep_tz}) {dep_time}</span>
+            </div>
+
+            <!-- Middle row: Arrival --> 
+            <div style="
+                display: flex;
+                align-items: center;
+                font-size: 0.95rem;
+                margin-bottom: 0.25rem;
+            ">
+                <span style="margin-right:0.25rem;">→</span>
+                <span><strong>{arr_city}</strong> ({arr_tz}) {arr_time}</span>
+            </div>
+
+            <!-- Bottom row: Duration -->
+            <div style="font-size: 0.9rem; color: #555;">
+                Duration: {duration}
+            </div>
+        </div>
+
+        <!-- Price section -->
+        <div style="
+            margin-left: auto;
+            text-align: right;
+            font-weight: bold;
+            font-size: 1.1rem;
+        ">
+            {price}
+        </div>
+    </div>
+    """
+    return html_code
 
 
 if __name__ == '__main__':

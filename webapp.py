@@ -11,7 +11,7 @@ from main import check_possible_flights_workflow, check_available_flights
 from services import FlightFinderService
 from services.data_manager import data_manager, logger
 from settings import ConfigSchema
-from utils import create_segments_html
+from utils import render_flight_banner
 
 
 class NoAirportsSelected(Exception):
@@ -263,68 +263,43 @@ with tab2:
         if not flight_list:
             st.warning("No flights found. Try changing some of the filters.")
         else:
-            is_round_trip = True if data_manager.config.general.mode == "roundtrip" else False
+            is_round_trip = (data_manager.config.general.mode == "roundtrip")
 
-            # Now display each flight in a "card":
+            # Now display each itinerary
             for idx, itinerary in enumerate(flight_list, start=1):
-                # Build an HTML snippet.
-                # We'll use <div> with a border, padding, etc.
-                # If you want more style, you can add more inline CSS or a small <style> block.
+                st.subheader(f"Option #{idx} - {'Round Trip' if is_round_trip else 'One Way'}")
 
                 if is_round_trip:
-                    # Round trip
-                    outward_segments = itinerary["outward_flight"]  # list of segments
-                    return_segments = itinerary["return_flight"]  # list of segments
+                    # For round trip: outward segments + return segments
+                    outward_segments = itinerary["outward_flight"]
+                    return_segments = itinerary["return_flight"]
 
-                    # Create HTML for outward flight
-                    outward_html = create_segments_html(
-                        outward_segments,
-                        title="Outward Flight"
-                    )
-                    # Create HTML for return flight
-                    return_html = create_segments_html(
-                        return_segments,
-                        title="Return Flight"
-                    )
+                    st.markdown("<strong>Outward Flight</strong>", unsafe_allow_html=True)
+                    for seg in outward_segments:
+                        banner_html = render_flight_banner(seg)
+                        st.html(banner_html)
 
-                    # Combine them into a single "card"
-                    flight_card_html = f"""
-                        <div style="border:1px solid #CCC; padding:1rem; margin-bottom:1rem; border-radius:6px;">
-                          <h4 style="margin-top:0;">Option #{idx} (Round Trip)</h4>
-                          {outward_html}
-                          <hr style="margin:1rem 0;" />
-                          {return_html}
-                        </div>
-                        """
+                    st.markdown("<strong>Return Flight</strong>", unsafe_allow_html=True)
+                    for seg in return_segments:
+                        banner_html = render_flight_banner(seg)
+                        st.html(banner_html)
+
                 else:
-                    # One-way
+                    # One-way can have first_flight + second_flight if there's a connection
                     first_segments = itinerary.get("first_flight", [])
                     second_segments = itinerary.get("second_flight", None)
 
-                    # Build outward flight
-                    outward_html = create_segments_html(
-                        first_segments,
-                        title="Flight"
-                    )
+                    # Display first_flight segments
+                    for seg in first_segments:
+                        banner_html = render_flight_banner(seg)
+                        st.html(banner_html)
+
                     # If there's a connecting flight
                     if second_segments:
-                        second_html = create_segments_html(
-                            second_segments,
-                            title="Connecting Flight"
-                        )
-                        outward_html = outward_html + (
-                                "<hr style='margin:1rem 0;' />" + second_html
-                        )
-
-                    flight_card_html = f"""
-                        <div style="border:1px solid #CCC; padding:1rem; margin-bottom:1rem; border-radius:6px;">
-                          <h4 style="margin-top:0;">Option #{idx} (One Way)</h4>
-                          {outward_html}
-                        </div>
-                        """
-
-                # Now display the card in Streamlit:
-                st.html(flight_card_html)
+                        st.markdown("<em>Connecting Flight</em>", unsafe_allow_html=True)
+                        for seg in second_segments:
+                            banner_html = render_flight_banner(seg)
+                            st.html(banner_html)
 
 
         # # Map Visualization
