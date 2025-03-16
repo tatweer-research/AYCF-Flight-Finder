@@ -182,8 +182,9 @@ with tab2:
              "So some connections may no be available anymore. Use with caution ;)")
 
     # Load checked flights YAML
-    multi_scraper_output = data_manager.config.data_manager.multi_scraper_output_path
-    checked_flights = data_manager.load_data(multi_scraper_output)['checked_flights']
+    multi_scraper_output = data_manager.load_data(data_manager.config.data_manager.multi_scraper_output_path)
+    checked_flights = {'checked_flights': multi_scraper_output}
+    data_manager.add_checked_flights(checked_flights, save_data=False)
 
     # Checkbox to enable/disable date selection
     all_possible_dates = st.checkbox("Check all possible dates (next 3 days)", key="tab2_checkbox")
@@ -252,10 +253,6 @@ with tab2:
 
         # Check possible flights out of the data_manager.__airport_destinations
         check_possible_flights_workflow(data_manager.config.general.mode, save_data=False)
-
-        # Add the scraper results to data_manager
-        checked_flights = data_manager.load_data(data_manager.config.data_manager.multi_scraper_output_path)
-        data_manager.add_checked_flights(checked_flights, save_data=False)
 
         # Check available flights output of possible flights and checked flights
         check_available_flights(data_manager.config.general.mode, save_data=False)
@@ -327,7 +324,7 @@ with tab2:
                         """
 
                 # Now display the card in Streamlit:
-                st.markdown(flight_card_html, unsafe_allow_html=True)
+                st.html(flight_card_html)
 
 
         # # Map Visualization
