@@ -582,15 +582,15 @@ def render_flight_banner(segment):
             </div>
         </div>
 
-        <!-- Price section -->
-        <div style="
+        <!-- Price section (currently commented out) -->
+        <!-- <div style="
             margin-left: auto;
             text-align: right;
             font-weight: bold;
             font-size: 1.1rem;
         ">
             {price}
-        </div>
+        </div>  -->
     </div>
     """
     return html_code

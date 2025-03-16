@@ -177,14 +177,28 @@ with tab1:
 with tab2:
     st.header("Static Flight Browser")
     st.write("Explore all available WizzAir flights for the next few days based on a static scraper. "
-             "Be aware that these flights were calculated based on our scraper that runs every day at 7am, "
-             "when WizzAir publishes their available flight connections."
+             "Be aware that these flights were calculated based on our scraper that runs every other hour, "
+             "when WizzAir publishes their available flight connections. "
              "So some connections may no be available anymore. Use with caution ;)")
 
     # Load checked flights YAML
-    multi_scraper_output = data_manager.load_data(data_manager.config.data_manager.multi_scraper_output_path)
-    checked_flights = {'checked_flights': multi_scraper_output}
-    data_manager.add_checked_flights(checked_flights, save_data=False)
+    latest_scraper_output_mod_time = data_manager.get_last_modification_datetime(
+        data_manager.config.data_manager.multi_scraper_output_path
+    )
+
+    if "last_scraper_output_mod_time" not in st.session_state or \
+            ("last_scraper_output_mod_time" in st.session_state and
+             st.session_state.last_scraper_output_mod_time < latest_scraper_output_mod_time) or \
+            "checked_flights" not in st.session_state:
+        # Update the session state with the latest modification time
+        st.session_state.last_scraper_output_mod_time = latest_scraper_output_mod_time
+
+        # Load the latest multi-scraper output data
+        scraper_output_data = data_manager.load_data(data_manager.config.data_manager.multi_scraper_output_path)
+
+        # Store checked flights
+        checked_flights = {'checked_flights': scraper_output_data}
+        st.session_state.checked_flights = checked_flights
 
     # Checkbox to enable/disable date selection
     all_possible_dates = st.checkbox("Check all possible dates (next 3 days)", key="tab2_checkbox")
@@ -192,7 +206,7 @@ with tab2:
     # Date input field (only shown if checkbox is checked)
     if not all_possible_dates:
         selected_date = st.date_input(
-            "Select your departure date (only applicable for **one-way** flights):",
+            "Select your departure date:",
             dt.date.today(),
             min_value=dt.date.today(),
             max_value=dt.date.today() + dt.timedelta(days=3),
@@ -201,7 +215,7 @@ with tab2:
         )
     else:
         selected_date = st.date_input(
-            "Select your departure date (only applicable for one-way flights):",
+            "Select your departure date:",
             None,
             min_value=dt.date.today(),
             max_value=dt.date.today() + dt.timedelta(days=3),
@@ -243,6 +257,7 @@ with tab2:
 
     if st.button('Submit', key="tab2_button_submit"):
         # Refresh the data manager config
+        data_manager._reset_databases()
         data_manager.load_config()
         data_manager.config.flight_data.departure_airports = departure_airports
         data_manager.config.flight_data.destination_airports = arrival_airports
@@ -251,55 +266,62 @@ with tab2:
         data_manager.config.flight_data.max_stops = 1 if stops == 'One-Stop' else 0
         data_manager.config.flight_data.departure_date = selected_date.strftime("%d-%m-%Y") if selected_date else None
 
+        # Re-set checked_flights in data_manager
+        data_manager.add_checked_flights(st.session_state.checked_flights, save_data=False)
+
         # Check possible flights out of the data_manager.__airport_destinations
         check_possible_flights_workflow(data_manager.config.general.mode, save_data=False)
 
         # Check available flights output of possible flights and checked flights
         check_available_flights(data_manager.config.general.mode, save_data=False)
         available_flights = data_manager.get_available_flights()
-        flight_list = available_flights.get("available_flights", [])
+        st.session_state.flight_list = available_flights.get("available_flights", [])
 
-        # If there's no data, show a warning
-        if not flight_list:
-            st.warning("No flights found. Try changing some of the filters.")
-        else:
-            is_round_trip = (data_manager.config.general.mode == "roundtrip")
+    # If there's no data, show a warning
+    if 'flight_list' not in st.session_state or \
+            ('flight_list' in st.session_state and not st.session_state.flight_list):
+        st.warning("No flights found. Try changing some of the filters.")
+    else:
+        is_round_trip = (data_manager.config.general.mode == "roundtrip")
 
-            # Now display each itinerary
-            for idx, itinerary in enumerate(flight_list, start=1):
-                st.subheader(f"Option #{idx} - {'Round Trip' if is_round_trip else 'One Way'}")
+        # Now display each itinerary
+        for idx, itinerary in enumerate(st.session_state.flight_list, start=1):
+            st.subheader(f"Option #{idx} - {'Round Trip' if is_round_trip else 'One Way'}")
 
-                if is_round_trip:
-                    # For round trip: outward segments + return segments
-                    outward_segments = itinerary["outward_flight"]
-                    return_segments = itinerary["return_flight"]
+            if is_round_trip:
+                # For round trip: outward segments + return segments
+                outward_segments = itinerary["outward_flight"]
+                return_segments = itinerary["return_flight"]
 
-                    st.markdown("<strong>Outward Flight</strong>", unsafe_allow_html=True)
-                    for seg in outward_segments:
+                st.markdown("<strong>Outward Flight</strong>", unsafe_allow_html=True)
+                for seg in outward_segments:
+                    banner_html = render_flight_banner(seg)
+                    st.html(banner_html)
+
+                st.markdown("<strong>Return Flight</strong>", unsafe_allow_html=True)
+                for seg in return_segments:
+                    banner_html = render_flight_banner(seg)
+                    st.html(banner_html)
+
+            else:
+                # One-way can have first_flight + second_flight if there's a connection
+                first_segments = itinerary.get("first_flight", [])
+                second_segments = itinerary.get("second_flight", None)
+
+                # Display first_flight segments
+                for seg in first_segments:
+                    banner_html = render_flight_banner(seg)
+                    st.html(banner_html)
+
+                # If there's a connecting flight
+                if second_segments:
+                    st.markdown("<em>Connecting Flight</em>", unsafe_allow_html=True)
+                    for seg in second_segments:
                         banner_html = render_flight_banner(seg)
                         st.html(banner_html)
 
-                    st.markdown("<strong>Return Flight</strong>", unsafe_allow_html=True)
-                    for seg in return_segments:
-                        banner_html = render_flight_banner(seg)
-                        st.html(banner_html)
 
-                else:
-                    # One-way can have first_flight + second_flight if there's a connection
-                    first_segments = itinerary.get("first_flight", [])
-                    second_segments = itinerary.get("second_flight", None)
-
-                    # Display first_flight segments
-                    for seg in first_segments:
-                        banner_html = render_flight_banner(seg)
-                        st.html(banner_html)
-
-                    # If there's a connecting flight
-                    if second_segments:
-                        st.markdown("<em>Connecting Flight</em>", unsafe_allow_html=True)
-                        for seg in second_segments:
-                            banner_html = render_flight_banner(seg)
-                            st.html(banner_html)
+        # TODO: print the last time the scraper output was written
 
 
         # # Map Visualization
