@@ -354,8 +354,8 @@ with tab2:
                         st.html(banner_html)
 
 
-        # TODO: print the last time the scraper output was written
-
+        st.info(f"Data last updated: {st.session_state.last_scraper_output_mod_time.strftime('%Y-%m-%d %H:%M:%S')}",
+                icon="ℹ️")
 
         # # Map Visualization
         # m = folium.Map(location=[30, 30], zoom_start=3)  # Centered on Europe/Middle East
