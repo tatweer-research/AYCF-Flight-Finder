@@ -536,66 +536,74 @@ def render_flight_banner(segment):
 
     # Updated HTML with date in the top row
     html_code = f"""
-    <div style="
-        display: flex;
-        align-items: center;
-        padding: 1rem;
-        margin-bottom: 1rem;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        background: #f9f9f9;
-        font-family: Arial, sans-serif;
-    ">
-        <!-- (Optional) Airline logo -->
-        {f'<div style="display:flex; align-items:center; margin-right:1rem;"><img src="{logo_url}" alt="Carrier Logo" style="width:40px; height:auto;" /></div>' if logo_url else ''}
-
-        <!-- Main flight info: date, carrier, flight code, departure/arrival -->
-        <div style="flex-grow: 1; margin-right: 1rem;">
-            <!-- Top row: Date, Carrier, and Flight Code -->
-            <div style="font-size: 1rem; font-weight: bold; margin-bottom: 0.5rem;">
-                {date}
-            <!--    {date} - {carrier} · {flight_code} -->
+        <div style="
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 600px;
+            margin: 1rem 0;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #ffffff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-family: 'Arial', sans-serif;
+        ">
+            <div style="
+                background: linear-gradient(90deg, #4a90e2, #357abd);
+                color: white;
+                padding: 0.8rem 1.2rem;
+                font-size: 1.1rem;
+                font-weight: bold;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            ">
+                <span>{segment.get('date', 'N/A')}</span>
+                <span>{segment.get('carrier', 'N/A')} · {segment.get('flight_code', 'N/A')}</span>
             </div>
-
-            <!-- Middle row: Departure -->
             <div style="
                 display: flex;
-                align-items: center;
-                font-size: 0.95rem;
-                margin-bottom: 0.25rem;
+                justify-content: space-between;
+                padding: 1rem;
             ">
-                <span style="margin-right:0.25rem;">✈</span>
-                <span><strong>{dep_city}</strong> ({dep_tz}) {dep_time}</span>
+                <div style="text-align: left;">
+                    <div style="font-size: 1rem; font-weight: bold; color: #333;">
+                        ✈ {segment['departure'].get('city', 'N/A')} ({segment['departure'].get('timezone', '')})
+                    </div>
+                    <div style="font-size: 1.2rem; color: #4a90e2;">
+                        {segment['departure'].get('time', 'N/A')}
+                    </div>
+                </div>
+                <div style="
+                    text-align: center;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    color: #666;
+                ">
+                    <span style="font-size: 0.9rem;">{segment.get('duration', 'N/A')}</span>
+                    <span style="font-size: 1rem;">➜</span>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 1rem; font-weight: bold; color: #333;">
+                        {segment['arrival'].get('city', 'N/A')} ({segment['arrival'].get('timezone', '')}) ➜
+                    </div>
+                    <div style="font-size: 1.2rem; color: #4a90e2;">
+                        {segment['arrival'].get('time', 'N/A')}
+                    </div>
+                </div>
             </div>
-
-            <!-- Middle row: Arrival -->
             <div style="
-                display: flex;
-                align-items: center;
-                font-size: 0.95rem;
-                margin-bottom: 0.25rem;
+                background: #f8f9fa;
+                padding: 0.5rem 1.2rem;
+                font-size: 0.9rem;
+                text-align: right;
+                color: #555;
             ">
-                <span style="margin-right:0.25rem;">→</span>
-                <span><strong>{arr_city}</strong> ({arr_tz}) {arr_time}</span>
-            </div>
-
-            <!-- Bottom row: Duration -->
-            <div style="font-size: 0.9rem; color: #555;">
-                Duration: {duration}
+                <!-- <span style="font-weight: bold; color: #e74c3c;">{segment.get('price', 'N/A')}</span> -->
             </div>
         </div>
-
-        <!-- Price section (unchanged, commented out) -->
-        <!-- <div style="
-            margin-left: auto;
-            text-align: right;
-            font-weight: bold;
-            font-size: 1.1rem;
-        ">
-            {price}
-        </div> -->
-    </div>
-    """
+        """
     return html_code
 
 

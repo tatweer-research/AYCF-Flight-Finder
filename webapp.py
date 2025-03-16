@@ -319,7 +319,7 @@ with tab2:
 
         # Now display each itinerary
         for idx, itinerary in enumerate(st.session_state.flight_list, start=1):
-            st.subheader(f"Option #{idx} - {'Round Trip' if is_round_trip else 'One Way'}")
+            st.subheader(f"Option #{idx}")  # - {'Round Trip' if is_round_trip else 'One Way'}")
 
             if is_round_trip:
                 # For round trip: outward segments + return segments
