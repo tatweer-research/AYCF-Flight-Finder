@@ -281,7 +281,34 @@ with tab2:
         # Check available flights output of possible flights and checked flights
         check_available_flights(data_manager.config.general.mode, save_data=False)
         available_flights = data_manager.get_available_flights()
-        st.session_state.flight_list = available_flights.get("available_flights", [])
+        flight_list = available_flights.get("available_flights", [])
+
+        # Function to extract the departure date based on trip type
+        def get_departure_date(itinerary):
+            # Determine which flight key to use based on trip type
+            if data_manager.config.general.mode == "oneway":
+                initial_flight = itinerary.get("first_flight", [])
+            elif data_manager.config.general.mode == "roundtrip":
+                initial_flight = itinerary.get("outward_flight", [])
+            else:
+                return None  # Return None for unrecognized modes
+
+            # Extract the date from the first segment of the initial flight
+            if initial_flight:
+                first_segment = initial_flight[0]
+                date_str = first_segment.get("date", "")
+                try:
+                    # Parse the date string (e.g., "Sun 16, March 2025")
+                    return dt.datetime.strptime(date_str, "%a %d, %B %Y")
+                except ValueError:
+                    return None  # Return None if the date format is invalid
+            return None  # Return None if there are no segments
+
+        # Sort the flight list by departure date
+        flight_list.sort(key=lambda x: get_departure_date(x) or dt.datetime.max)
+
+        # Update the session state with the sorted list
+        st.session_state.flight_list = flight_list
 
     # If there's no data, show a warning
     if 'flight_list' not in st.session_state or \
