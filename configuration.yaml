@@ -1,6 +1,6 @@
 general:
   driver_path: edge-driver/msedgedriver
-  page_loading_time: 3
+  page_loading_time: 5
   action_wait_time: 1
   rate_limit_wait_time: 30
   headless: yes  # yes or no - if yes, the browser will not be displayed
@@ -18,67 +18,25 @@ flight_data:
   departure_date:
   return_date:
   destination_airports:   # If not specified, all possible destination airports will be checked
-#    - London Luton
-#    - Memmingen/München-West
-#    - Paris Beauvais
-#    - Paris-Orly
-#    - Malé (Malediven)
-#    - Riad
-#    - Medina
-#    - Dschidda
-#    - Abu Dhabi
-#    - Amman
-#    - Aqaba
-#    - Baku
-#    - Bologna
-#    - Rom Ciampino
-#    - Rom Fiumicino
-#     - Budapest
-#    - Gran Canaria (Kanarische Inseln)
-#    - Kopenhagen
-#    - Samarkand
-#    - Teneriffa (Kanarische Inseln)
-#    - Madeira
-#    - Alicante
-#    - Bilbao
-#    - Castellón (Valencia)
-#    - Girona
-#    - Madrid
-#    - Ibiza
-#    - Palma de Mallorca
-#    - Santander
-#    - Saragossa
-#    - Sevilla
-#    - Valencia
-#    - Lissabon
-#    - Faro
-#    - Porto
-#    - Jerewan
+    - Amman (AMM)
+#    - Abu Dhabi (AUH)
 
   departure_airports:
-#    - Riad
-#    - Barcelona El Prat
-#    - Amman
-#    - Abu Dhabi
-    - Podgorica
-#    - Dubai
-#    - Aqaba
-#    - Dortmund
-#    - Memmingen/München-West
-#    - Nürnberg
-#    - Stuttgart
-#    - Wien
-#    - Leipzig
-#    - Karlsruhe/Baden-Baden
-#    - Friedrichshafen
-#    - Frankfurt-Hahn
-#    - Salzburg
-#    - Bremen
-#    - Berlin Brandenburg
-#    - Tel Aviv
-#    - Breslau
-#    - Budapest
-#    - Prag
+    - Abu Dhabi (AUH)
+#    - Amman (AMM)
+#    - Dortmund (DTM)
+#    - Memmingen/München-West (FMM)
+#    - Nürnberg (NUE)
+#    - Stuttgart (STR)
+#    - Wien (VIE)
+#    - Leipzig (LEJ)
+#    - Karlsruhe/Baden-Baden (FKB)
+#    - Friedrichshafen (FDH)
+#    - Frankfurt-Hahn (HHN)
+#    - Salzburg (SZG)
+#    - Bremen (BRE)
+#    - Berlin Brandenburg (BER)
+#    - Budapest (BUD)
 
 
 logging:
