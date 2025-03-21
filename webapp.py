@@ -116,7 +116,8 @@ with tab1:
             flight_finder.find_possible_roundtrip_flights_from_departure_airports()
         else:
             flight_finder.find_possible_one_stop_flights(max_stops=config.flight_data.max_stops)
-        estimated_time = flight_finder.get_estimated_checking_time(data_manager.get_possible_flights()['possible_flights'])
+        estimated_time = flight_finder.get_estimated_checking_time(
+            data_manager.get_possible_flights()['possible_flights'])
         return estimated_time
 
 
@@ -152,8 +153,9 @@ with tab1:
             file_name = f'{uuid.uuid4()}.yaml'
             data_manager.save_config(get_new_config(), f'jobs/{file_name}')
             estimated_time = get_scraping_time()
-            st.success(f'Your request has been received. I will notify you with the results at {email} and will be done '
-                       f'in about {estimated_time} 😎')
+            st.success(
+                f'Your request has been received. I will notify you with the results at {email} and will be done '
+                f'in about {estimated_time} 😎')
         except EmailNotValidError as e:
             st.error(f'Invalid email address: {e}')
             logger.error(f'Invalid email address: {e}')
@@ -167,11 +169,9 @@ with tab1:
             st.error(f'In the case of one-stop flights you need to select both departure and destination airports.')
             logger.error(f'No destination airports selected.')
 
-
     st.write("**Note**: this website is only useful if you possess the [*WizzAir All You Can Fly Pass*]("
              "https://www.wizzair.com/en-gb/information-and-services/memberships/all-you-can-fly). If you don't, "
              "please use the [regular WizzAir website](https://www.wizzair.com/en-gb).")
-
 
 # --- Tab 2: Static Flight Browser ---
 with tab2:
@@ -193,11 +193,12 @@ with tab2:
         # Update the session state with the latest modification time
         st.session_state.last_scraper_output_mod_time = latest_scraper_output_mod_time
 
+
         # Load the latest multi-scraper output data
         scraper_output_data = data_manager.load_data(data_manager.config.data_manager.multi_scraper_output_path)
 
         # Store checked flights
-        checked_flights = {'checked_flights': scraper_output_data}
+        checked_flights = scraper_output_data
         st.session_state.checked_flights = checked_flights
 
     # Checkbox to enable/disable date selection
@@ -255,7 +256,12 @@ with tab2:
         key="tab2_multiselect_arrair"
     )
 
+    st.info(f"Data last updated: {st.session_state.last_scraper_output_mod_time.strftime('%Y-%m-%d %H:%M:%S')}",
+            icon="ℹ️")
+
     if st.button('Submit', key="tab2_button_submit"):
+
+
         # Refresh the data manager config
         data_manager._reset_databases()
         data_manager.load_config()
@@ -268,7 +274,8 @@ with tab2:
 
         # Re-set checked_flights in data_manager
         if selected_date:
-            checked_flights = {hash_str: flight_obj for hash_str, flight_obj in st.session_state.checked_flights['checked_flights'].items()
+            checked_flights = {hash_str: flight_obj for hash_str, flight_obj in
+                               st.session_state.checked_flights['checked_flights'].items()
                                if datetime.strptime(flight_obj[0]['date'], "%a %d, %B %Y").date() == selected_date}
             checked_flights = {"checked_flights": checked_flights}
             data_manager.add_checked_flights(checked_flights, save_data=False)
@@ -282,6 +289,7 @@ with tab2:
         check_available_flights(data_manager.config.general.mode, save_data=False)
         available_flights = data_manager.get_available_flights()
         flight_list = available_flights.get("available_flights", [])
+
 
         # Function to extract the departure date based on trip type
         def get_departure_date(itinerary):
@@ -304,6 +312,7 @@ with tab2:
                     return None  # Return None if the date format is invalid
             return None  # Return None if there are no segments
 
+
         # Sort the flight list by departure date
         flight_list.sort(key=lambda x: get_departure_date(x) or dt.datetime.max)
 
@@ -319,7 +328,7 @@ with tab2:
 
         # Now display each itinerary
         for idx, itinerary in enumerate(st.session_state.flight_list, start=1):
-            st.subheader(f"Option #{idx}")  # - {'Round Trip' if is_round_trip else 'One Way'}")
+            # st.subheader(f"Option #{idx}")  # - {'Round Trip' if is_round_trip else 'One Way'}")
 
             if is_round_trip:
                 # For round trip: outward segments + return segments
@@ -353,9 +362,6 @@ with tab2:
                         banner_html = render_flight_banner(seg)
                         st.html(banner_html)
 
-
-        st.info(f"Data last updated: {st.session_state.last_scraper_output_mod_time.strftime('%Y-%m-%d %H:%M:%S')}",
-                icon="ℹ️")
 
         # # Map Visualization
         # m = folium.Map(location=[30, 30], zoom_start=3)  # Centered on Europe/Middle East
