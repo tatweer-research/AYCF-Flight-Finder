@@ -1,0 +1,51 @@
+general:
+  driver_path: edge-driver/msedgedriver
+  page_loading_time: 5
+  action_wait_time: 1
+  rate_limit_wait_time: 30
+  headless: yes  # yes or no - if yes, the browser will not be displayed
+  mode: oneway  # oneway or roundtrip
+  time_stamp: ""
+
+account:
+  username: ""
+  password: ""
+  wizzair_url: "https://multipass.wizzair.com/de/w6/subscriptions"
+
+
+flight_data:
+  max_stops: 0  # 0 or 1
+  departure_date:
+  return_date:
+  destination_airports:   # If not specified, all possible destination airports will be checked
+    - Amman (AMM)
+
+  departure_airports:
+    - Abu Dhabi (AUH)
+
+
+logging:
+  log_level_file: "DEBUG"
+  log_level_console: "INFO"
+  log_file: "wizzair-scraper.log"
+  date_format: "%Y-%m-%d %H:%M:%S"
+  log_format: "%(asctime)s - %(levelname)s - [%(module_path)s:%(lineno)d in %(funcName)s()] %(message)s"
+
+
+data_manager:
+  airport_database_path: data/airport_database.yaml
+  possible_flights_path: data/possible_flights.yaml
+  checked_flights_path: data/checked_flights.yaml
+  available_flights_path: data/available_flights.yaml
+  use_cache: yes  # yes or no - if yes data in the database will not be scraped again
+
+reporter:
+  report_path: data/report.pdf
+  logo_path: data/logo.png
+
+scraper:
+  initialize_driver: yes  # yes or no - if no, the driver will not be initialized
+
+
+emailer:
+  recipient: test
