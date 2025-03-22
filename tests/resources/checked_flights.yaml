@@ -1,4 +1,18 @@
 checked_flights:
+    4ae4bf3ff4a42ee4e0ab16ea522352077ce82dbf8ff7e4c37873faa98dcf6b56-25-03-2025:
+        -   arrival:
+                city: Abu Dhabi
+                time: '10:50'
+                timezone: UTC+3
+            carrier: Durchgeführt von 5W
+            date: Tue 25, March 2025
+            departure:
+                city: Amman
+                time: 08:10
+                timezone: UTC+4
+            duration: 02h 40m
+            flight_code: 5W7003
+            price: AED42.00
     4ae4bf3ff4a42ee4e0ab16ea524e52077ce82dbf8ff7e4c37873faa98dcf6b56-22-03-2025: null
     4ae4bf3ff4a42ee4e0ab16ea524e52077ce82dbf8ff7e4c37873faa98dcf6b56-23-03-2025: null
     4ae4bf3ff4a42ee4e0ab16ea524e52077ce82dbf8ff7e4c37873faa98dcf6b56-24-03-2025: null
@@ -8,7 +22,7 @@ checked_flights:
                 time: '10:50'
                 timezone: UTC+3
             carrier: Durchgeführt von 5W
-            date: Tue 22, March 2025
+            date: Sat 22, March 2025
             departure:
                 city: Abu Dhabi
                 time: 08:10
@@ -18,11 +32,11 @@ checked_flights:
             price: AED42.00
     4ae4bf3ff4a42ee4e0ab16ea524g52077ce82dbf8ff7e4c37873faa98dcf6b56-26-03-2025:
         -   arrival:
-                city: London Luton
+                city: Budapest
                 time: '6:50'
                 timezone: UTC+3
             carrier: Durchgeführt von 5W
-            date: Tue 25, March 2025
+            date: Mon 24, March 2025
             departure:
                 city: Abu Dhabi
                 time: 04:10
@@ -38,22 +52,8 @@ checked_flights:
             carrier: Durchgeführt von 5W
             date: Tue 25, March 2025
             departure:
-                city: London Luton
+                city: Budapest
                 time: 09:10
-                timezone: UTC+4
-            duration: 02h 40m
-            flight_code: 5W7003
-            price: AED42.00
-    4ae4bf3ff4a42ee4e0ab16ea522352077ce82dbf8ff7e4c37873faa98dcf6b56-25-03-2025:
-        -   arrival:
-                city: Abu Dhabi
-                time: '10:50'
-                timezone: UTC+3
-            carrier: Durchgeführt von 5W
-            date: Tue 25, March 2025
-            departure:
-                city: Amman
-                time: 08:10
                 timezone: UTC+4
             duration: 02h 40m
             flight_code: 5W7003
