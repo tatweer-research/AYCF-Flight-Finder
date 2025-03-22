@@ -38,6 +38,7 @@ data_manager:
   checked_flights_path: tests/resources/checked_flights.yaml
   available_flights_path: tests/resources/direct/available_flights.yaml
   use_cache: yes  # yes or no - if yes data in the database will not be scraped again
+  reset_databases: no  # yes or no - if yes, the databases will be reset
 
 reporter:
   report_path: data/report.pdf
