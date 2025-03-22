@@ -107,10 +107,10 @@ class DataManager:
         self.__airports_destinations = self.load_data(self.config.data_manager.airport_database_path)
 
         # Remove available flights, checked and possible flights databases
-        self.remove_file(self.config.data_manager.available_flights_path)
-        self.remove_file(self.config.data_manager.checked_flights_path)
-        self.remove_file(self.config.data_manager.possible_flights_path)
-        self.remove_file(self.config.reporter.report_path)
+        # self.remove_file(self.config.data_manager.available_flights_path)
+        # self.remove_file(self.config.data_manager.checked_flights_path)
+        # self.remove_file(self.config.data_manager.possible_flights_path)
+        # self.remove_file(self.config.reporter.report_path)
         Path('jobs').mkdir(exist_ok=True)
         Path('cache').mkdir(exist_ok=True)
 

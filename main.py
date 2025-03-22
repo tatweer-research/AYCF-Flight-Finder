@@ -125,7 +125,7 @@ def check_possible_flights_workflow(mode='roundtrip'):
     if mode == 'roundtrip':
         flight_finder.find_possible_roundtrip_flights_from_departure_airports()
     elif mode == 'oneway':
-        flight_finder.find_possible_one_stop_flights()
+        flight_finder.find_possible_one_stop_flights(max_stops=data_manager.config.flight_data.max_stops)
 
 
 def create_report(mode='roundtrip'):
@@ -197,25 +197,22 @@ def do_pending_jobs():
 
 
 if __name__ == '__main__':
-    # check_possible_flights_workflow('oneway')
     # one_way_workflow()
     # round_trip_workflow()
     # send_email()
     # schedule_one_way_workflow()
     # update_airports_database()
 
-    # finder = FlightFinderService()
-    # # finder.find_possible_roundtrip_flights_from_departure_airports()
-    # finder.find_possible_one_stop_flights(max_stops=1)
-    #
-    # checked_flights = data_manager.load_data(data_manager.config.data_manager.checked_flights_path)
-    # data_manager.add_checked_flights(checked_flights)
-    # check_available_flights('oneway')
-    # create_report('oneway')
+    check_possible_flights_workflow('oneway')
+
+    checked_flights = data_manager.load_data(data_manager.config.data_manager.checked_flights_path)
+    data_manager.add_checked_flights(checked_flights)
+    check_available_flights('oneway')
+    create_report('oneway')
     # create_report('roundtrip')
 
-    do_pending_jobs()
-
+    # do_pending_jobs()
+    #
     # Parallel Processing
     # finder = FlightFinderService()
     # finder.find_possible_one_stop_flights(max_stops=0)
