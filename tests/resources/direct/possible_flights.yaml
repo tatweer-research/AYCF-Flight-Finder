@@ -1,0 +1,6 @@
+possible_flights:
+    -   first_flight:
+            airport: Abu Dhabi (AUH)
+            destination: Amman (AMM)
+            hash: 4ae4bf3ff4a42ee4e0ab16ea524e52077ce82dbf8ff7e4c37873faa98dcf6b56
+        second_flight: null

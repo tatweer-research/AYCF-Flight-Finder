@@ -14,7 +14,7 @@ account:
 
 
 flight_data:
-  max_stops: 1  # 0 or 1
+  max_stops: 0  # 0 or 1
   departure_date:
   return_date:
   destination_airports:   # If not specified, all possible destination airports will be checked
@@ -33,10 +33,10 @@ logging:
 
 
 data_manager:
-  airport_database_path: data/airport_database.yaml
-  possible_flights_path: data/possible_flights.yaml
-  checked_flights_path: data/checked_flights.yaml
-  available_flights_path: data/available_flights.yaml
+  airport_database_path: tests/resources/airport_database.yaml
+  possible_flights_path: tests/resources/direct/possible_flights.yaml
+  checked_flights_path: tests/resources/checked_flights.yaml
+  available_flights_path: tests/resources/direct/available_flights.yaml
   use_cache: yes  # yes or no - if yes data in the database will not be scraped again
 
 reporter:

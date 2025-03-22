@@ -4,7 +4,7 @@ general:
   action_wait_time: 1
   rate_limit_wait_time: 30
   headless: yes  # yes or no - if yes, the browser will not be displayed
-  mode: roundtrip  # oneway or roundtrip
+  mode: oneway  # oneway or roundtrip
   time_stamp: ""
 
 account:
@@ -19,24 +19,9 @@ flight_data:
   return_date:
   destination_airports:   # If not specified, all possible destination airports will be checked
     - Amman (AMM)
-#    - Abu Dhabi (AUH)
 
   departure_airports:
     - Abu Dhabi (AUH)
-#    - Amman (AMM)
-#    - Dortmund (DTM)
-#    - Memmingen/München-West (FMM)
-#    - Nürnberg (NUE)
-#    - Stuttgart (STR)
-#    - Wien (VIE)
-#    - Leipzig (LEJ)
-#    - Karlsruhe/Baden-Baden (FKB)
-#    - Friedrichshafen (FDH)
-#    - Frankfurt-Hahn (HHN)
-#    - Salzburg (SZG)
-#    - Bremen (BRE)
-#    - Berlin Brandenburg (BER)
-#    - Budapest (BUD)
 
 
 logging:
