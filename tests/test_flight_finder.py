@@ -68,6 +68,20 @@ class TestFlightFinderService(unittest.TestCase):
 
         self.assertEqual(generated, expected, "Available one-way flights don't match expected results")
 
+    def test_find_available_roundtrip_flights(self):
+        data_manager._reset_databases()
+        data_manager.load_config("tests/resources/roundtrip/configuration.yaml")
+
+        possible = data_manager.load_data(data_manager.config.data_manager.possible_flights_path)
+        checked = data_manager.load_data(data_manager.config.data_manager.checked_flights_path)
+        expected = data_manager.load_data(data_manager.config.data_manager.available_flights_path)
+
+        data_manager.add_possible_flights(possible["possible_flights"])
+        data_manager.add_checked_flights(checked)
+
+        generated = self.service.find_available_roundtrip_flights()
+
+        self.assertEqual(generated, expected, "Available roundtrip flights don't match expected results")
 
 
 if __name__ == '__main__':
