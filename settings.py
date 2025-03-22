@@ -58,6 +58,7 @@ class DataManagerConfig(BaseModel):
     checked_flights_path: Union[str, os.PathLike]
     available_flights_path: Union[str, os.PathLike]
     use_cache: bool
+    reset_databases: bool
 
     # noinspection PyNestedDecorators
     @field_validator("airport_database_path",
