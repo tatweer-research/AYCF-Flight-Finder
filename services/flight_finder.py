@@ -99,7 +99,7 @@ class FlightFinderService:
                 destinations = data_manager.get_airport_destinations(current_airport)
 
                 for destination in destinations:
-                    if destination in visited:
+                    if destination in visited and depth == 0:
                         continue
 
                     # Direct flight (depth 1)
