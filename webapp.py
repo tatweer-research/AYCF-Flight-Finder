@@ -188,7 +188,7 @@ with tab1:
 
 # --- Tab 2: Static Flight Browser ---
 with tab2:
-    st.header("See Saved Flights Instantly")
+    st.header("Search Saved Flights Instantly")
     st.write(
         "This shows you flights that were fetched in the last 2.5 hours. It's super fast, but some results "
         "might be outdated or no longer available. Use it if you want a quick overview without waiting."
