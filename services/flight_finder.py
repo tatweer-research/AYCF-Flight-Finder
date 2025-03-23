@@ -57,6 +57,7 @@ class FlightFinderService:
 
         logger.info(f'Found {len(flights)} possible flights from {airport} to departure airports')
         data_manager.add_possible_flights(flights, save_data)
+        return flights
 
     def find_possible_roundtrip_flights_from_departure_airports(self, save_data=True):
         """
@@ -70,6 +71,7 @@ class FlightFinderService:
         estimated_time = self.get_estimated_checking_time(possible_flights)
         logger.info(f'Found a total of {len(possible_flights)} possible roundtrip flights from all departure airports')
         logger.info(f'Estimated scraping time: {estimated_time}')
+        return possible_flights
 
     def find_possible_one_stop_flights(self, max_stops=1, save_data=True):
         """
@@ -143,6 +145,7 @@ class FlightFinderService:
                     f'airports with max stops: {max_stops}')
         logger.info(f'Estimated scraping time: {estimated_time}')
         data_manager.add_possible_flights(flights, save_data)
+        return flights
 
     def get_estimated_checking_time(self, possible_flights):
         # Handle multiple cases for flight keys
