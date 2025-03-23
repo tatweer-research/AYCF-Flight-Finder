@@ -30,6 +30,20 @@ checked_flights:
             duration: 02h 40m
             flight_code: 5W7003
             price: AED42.00
+    4ae4bf3ff4a42ee4e0ab16ea524e520sdce82dbf8ff7e4c37873faa98dcf6b56-25-03-2025:
+        -   arrival:
+                city: Alexandria (Burg al-ʿArab)
+                time: '12:50'
+                timezone: UTC+3
+            carrier: Durchgeführt von 5W
+            date: Sat 22, March 2025
+            departure:
+                city: Abu Dhabi
+                time: 610
+                timezone: UTC+4
+            duration: 02h 40m
+            flight_code: 5W7003
+            price: AED42.00
     4ae4bf3ff4a42ee4e0ab16ea524g52077ce82dbf8ff7e4c37873faa98dcf6b56-26-03-2025:
         -   arrival:
                 city: Budapest

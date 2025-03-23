@@ -1,6 +1,21 @@
 available_flights:
     -   first_flight:
             -   arrival:
+                    city: Alexandria (Burg al-ʿArab)
+                    time: '12:50'
+                    timezone: UTC+3
+                carrier: Durchgeführt von 5W
+                date: Sat 22, March 2025
+                departure:
+                    city: Abu Dhabi
+                    time: 610
+                    timezone: UTC+4
+                duration: 02h 40m
+                flight_code: 5W7003
+                price: AED42.00
+        second_flight: null
+    -   first_flight:
+            -   arrival:
                     city: Amman
                     time: '10:50'
                     timezone: UTC+3
