@@ -19,6 +19,7 @@ flight_data:
   return_date:
   destination_airports:   # If not specified, all possible destination airports will be checked
     - Amman (AMM)
+    - Alexandria (Burg al-ʿArab) (HBE)
 
   departure_airports:
     - Abu Dhabi (AUH)
