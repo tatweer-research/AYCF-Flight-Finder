@@ -7,6 +7,9 @@ from services.reporter import ReportService
 
 
 class TestReporterService(unittest.TestCase):
+    def setUp(self):
+        data_manager._reset_databases()
+        data_manager.save_databases_to_disk = False
 
     def compare_pdfs(self, generated_path: Path, expected_path: Path):
         def extract_text(path):
