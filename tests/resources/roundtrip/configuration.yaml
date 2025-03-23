@@ -33,10 +33,17 @@ logging:
 
 
 data_manager:
+  airport_iata_icao_path: data/airport_iata_icao_filtered.csv
+  flight_data_path: data/flight_data.yaml
+  airport_name_special_cases_path: data/airport_name_special_cases.yaml
+  airport_database_iata_path: data/airport_database_iata.yaml
+  map_iata_to_german_name_path: data/map_iata_to_german_name.yaml
+  airport_database_dynamic_path: data/airport_database_dynamic.yaml
   airport_database_path: tests/resources/airport_database.yaml
   possible_flights_path: tests/resources/roundtrip/possible_flights.yaml
   checked_flights_path: tests/resources/checked_flights.yaml
   available_flights_path: tests/resources/roundtrip/available_flights.yaml
+  multi_scraper_output_path: data/multi_scraper_output.yaml
   use_cache: yes  # yes or no - if yes data in the database will not be scraped again
   reset_databases: no  # yes or no - if yes, the databases will be reset
 
