@@ -203,17 +203,17 @@ if __name__ == '__main__':
     # schedule_one_way_workflow()
     # update_airports_database()
 
-    mode = 'oneway'
-    check_possible_flights_workflow(mode)
-
-    checked_flights = data_manager.load_data(data_manager.config.data_manager.checked_flights_path)
-    data_manager.add_checked_flights(checked_flights)
-    check_available_flights(mode)
-    create_report(mode)
+    # mode = 'oneway'
+    # check_possible_flights_workflow(mode)
+    #
+    # checked_flights = data_manager.load_data(data_manager.config.data_manager.checked_flights_path)
+    # data_manager.add_checked_flights(checked_flights)
+    # check_available_flights(mode)
+    # create_report(mode)
     # create_report('roundtrip')
 
-    # do_pending_jobs()
-    #
+    do_pending_jobs()
+
     # Parallel Processing
     # finder = FlightFinderService()
     # finder.find_possible_one_stop_flights(max_stops=0)
