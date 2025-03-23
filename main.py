@@ -6,8 +6,7 @@ from pathlib import Path
 
 import schedule
 
-from services import ScraperService, data_manager, FlightFinderService, ReportService
-from services.data_manager import logger
+from services import ScraperService, data_manager, FlightFinderService, ReportService, logger
 from services.emailer import email_service, roundtrip_kwargs, oneway_kwargs
 from services.parallel_scraper import manage_parallel_scraping
 from utils import increment_date, get_current_date, is_date_in_range

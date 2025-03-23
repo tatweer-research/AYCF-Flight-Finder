@@ -9,7 +9,7 @@ import requests
 import yaml
 from pdfplumber import PDF
 
-from services import logger
+from services.logger_service import logger
 
 
 class WizzAirFlightConnectionParser:

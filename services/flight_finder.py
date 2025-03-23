@@ -1,7 +1,8 @@
 import hashlib
 from collections import deque
 
-from services.data_manager import data_manager, logger
+from services.data_manager import data_manager
+from services.logger_service import logger
 from utils import compare_times, remove_duplicates_from_list, get_city
 from utils import format_seconds
 
