@@ -561,7 +561,6 @@ def render_flight_banner(segment):
                 align-items: center;
             ">
                 <span>{segment.get('date', 'N/A')}</span>
-                <span>{segment.get('carrier', 'N/A')} · {segment.get('flight_code', 'N/A')}</span>
             </div>
             <div style="
                 display: flex;
