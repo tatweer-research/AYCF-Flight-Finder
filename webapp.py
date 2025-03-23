@@ -281,9 +281,12 @@ with tab2:
 
         # Re-set checked_flights in data_manager
         if selected_date:
-            checked_flights = {hash_str: flight_obj for hash_str, flight_obj in
-                               st.session_state.checked_flights['checked_flights'].items()
-                               if datetime.strptime(flight_obj[0]['date'], "%a %d, %B %Y").date() == selected_date}
+            checked_flights = {}
+            for hash_str, flight_obj in st.session_state.checked_flights['checked_flights'].items():
+                if flight_obj:  # Ensure flight_obj is not empty or None
+                    flight_date = datetime.strptime(flight_obj[0]['date'], "%a %d, %B %Y").date()
+                    if flight_date == selected_date:
+                        checked_flights[hash_str] = flight_obj
             checked_flights = {"checked_flights": checked_flights}
             data_manager.add_checked_flights(checked_flights, save_data=False)
         else:
