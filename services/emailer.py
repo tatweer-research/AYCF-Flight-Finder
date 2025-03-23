@@ -72,23 +72,22 @@ email_service = EmailService(sender_email='aycf.scanner@gmail.com', sender_passw
 
 ROUNDTRIP_SUBJECT = "Round Trip: Wizz Air Flights Report!"
 
-ONEWAY_SUBJECT = "One Way: Wizz Air Flights Report!"
 ONEWAY_MESSAGE_BODY = f"""
-Hey there! ✈️👋
+Hey there, Captain ✈️
 
-Attached is the report with the WizzAir flights I managed to dig up for you. If it’s empty... well, either WizzAir is taking a nap, or you're just too picky! 😅
+Your personalized WizzAYCF flight report is ready and attached!  
+We scraped, sorted, and sliced through WizzAir’s system—so you don’t have to.
 
-We’d love to hear what you think about our little hobby app—it’s like our baby, but with fewer diapers and more code. 💻🍼
+Now it’s your turn to take off 🚀  
+Happy travels!
 
-Got questions, ideas, or wild feature requests? Join our exclusive WhatsApp group—where brainstorming meets memes:
+– The Tatweer Ground Crew 🛠️
 
-https://chat.whatsapp.com/CHvgbPvqRcbJS0E6D4O8ka
-
-Catch you in the skies (or WhatsApp)!
-Moh & Kmar 🕵️‍♂️✨
-
-Website: https://aycf-flightfinder.tatweer.network/
+WhatsApp: https://chat.whatsapp.com/CHvgbPvqRcbJS0E6D4O8ka
+App: https://aycf-flightfinder.tatweer.network/
+Tatweer-Website: https://tatweer.network/
 """
+ONEWAY_SUBJECT = "AYCF Flight Report! 🚀"
 ATTACHMENT_PATHS = [data_manager.config.reporter.report_path]
 
 oneway_kwargs = {
