@@ -198,7 +198,7 @@ def do_pending_jobs():
 
 if __name__ == '__main__':
     # one_way_workflow()
-    # round_trip_workflow()
+    round_trip_workflow()
     # send_email()
     # schedule_one_way_workflow()
     # update_airports_database()
