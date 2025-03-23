@@ -512,31 +512,23 @@ def parse_destination_line(line):
 # ------------------------------
 def render_flight_banner(segment):
     """
-    Renders a single flight segment in a 'banner' style, like typical flight search engines.
-    `segment` is a dict with keys like carrier, flight_code, departure/arrival info, etc.
+    Renders a single flight segment in a 'banner' style with brand-themed colors.
     """
-
     # Extract segment data
     carrier = segment.get("carrier", "Unknown Carrier")
     flight_code = segment.get("flight_code", "N/A")
     duration = segment.get("duration", "N/A")
     price = segment.get("price", "N/A")
-    date = segment.get("date", "N/A")  # Retrieve the date with a fallback
+    date = segment.get("date", "N/A")
 
-    # Departure info
     dep_city = segment["departure"].get("city", "N/A")
     dep_time = segment["departure"].get("time", "N/A")
     dep_tz = segment["departure"].get("timezone", "")
 
-    # Arrival info
     arr_city = segment["arrival"].get("city", "N/A")
     arr_time = segment["arrival"].get("time", "N/A")
     arr_tz = segment["arrival"].get("timezone", "")
 
-    # Optional logo URL (unchanged)
-    logo_url = None
-
-    # Updated HTML with date in the top row
     html_code = f"""
         <div style="
             display: flex;
@@ -547,11 +539,11 @@ def render_flight_banner(segment):
             border-radius: 10px;
             overflow: hidden;
             background: #ffffff;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.08);
             font-family: 'Arial', sans-serif;
         ">
             <div style="
-                background: linear-gradient(90deg, #4a90e2, #357abd);
+                background: #6015e8;
                 color: white;
                 padding: 0.8rem 1.2rem;
                 font-size: 1.1rem;
@@ -560,7 +552,7 @@ def render_flight_banner(segment):
                 justify-content: space-between;
                 align-items: center;
             ">
-                <span>{segment.get('date', 'N/A')}</span>
+                <span>{date}</span>
             </div>
             <div style="
                 display: flex;
@@ -569,10 +561,10 @@ def render_flight_banner(segment):
             ">
                 <div style="text-align: left;">
                     <div style="font-size: 1rem; font-weight: bold; color: #333;">
-                        ✈ {segment['departure'].get('city', 'N/A')} ({segment['departure'].get('timezone', '')})
+                        ✈ {dep_city} ({dep_tz})
                     </div>
-                    <div style="font-size: 1.2rem; color: #4a90e2;">
-                        {segment['departure'].get('time', 'N/A')}
+                    <div style="font-size: 1.2rem; color: #6015e8;">
+                        {dep_time}
                     </div>
                 </div>
                 <div style="
@@ -580,28 +572,28 @@ def render_flight_banner(segment):
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
-                    color: #666;
+                    color: #888;
                 ">
-                    <span style="font-size: 0.9rem;">{segment.get('duration', 'N/A')}</span>
+                    <span style="font-size: 0.9rem;">{duration}</span>
                     <span style="font-size: 1rem;">➜</span>
                 </div>
                 <div style="text-align: right;">
                     <div style="font-size: 1rem; font-weight: bold; color: #333;">
-                        {segment['arrival'].get('city', 'N/A')} ({segment['arrival'].get('timezone', '')}) ➜
+                        {arr_city} ({arr_tz}) ➜
                     </div>
-                    <div style="font-size: 1.2rem; color: #4a90e2;">
-                        {segment['arrival'].get('time', 'N/A')}
+                    <div style="font-size: 1.2rem; color: #6015e8;">
+                        {arr_time}
                     </div>
                 </div>
             </div>
             <div style="
-                background: #f8f9fa;
+                background: #f1edfd;
                 padding: 0.5rem 1.2rem;
                 font-size: 0.9rem;
                 text-align: right;
-                color: #555;
+                color: #6015e8;
             ">
-                <!-- <span style="font-weight: bold; color: #e74c3c;">{segment.get('price', 'N/A')}</span> -->
+                <!-- Optional: add price or flight code here -->
             </div>
         </div>
         """
