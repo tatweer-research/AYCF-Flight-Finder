@@ -5,7 +5,8 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from services.data_manager import logger, data_manager
+from services.data_manager import data_manager
+from services.logger_service import logger
 
 
 class EmailService:

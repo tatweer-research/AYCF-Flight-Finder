@@ -1,0 +1,29 @@
+available_flights:
+    -   outward_flight:
+            -   arrival:
+                    city: Amman
+                    time: '10:50'
+                    timezone: UTC+3
+                carrier: Durchgeführt von 5W
+                date: Sat 22, March 2025
+                departure:
+                    city: Abu Dhabi
+                    time: 08:10
+                    timezone: UTC+4
+                duration: 02h 40m
+                flight_code: 5W7003
+                price: AED42.00
+        return_flight:
+            -   arrival:
+                    city: Abu Dhabi
+                    time: '10:50'
+                    timezone: UTC+3
+                carrier: Durchgeführt von 5W
+                date: Tue 25, March 2025
+                departure:
+                    city: Amman
+                    time: 08:10
+                    timezone: UTC+4
+                duration: 02h 40m
+                flight_code: 5W7003
+                price: AED42.00

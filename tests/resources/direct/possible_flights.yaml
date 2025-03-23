@@ -1,0 +1,11 @@
+possible_flights:
+    -   first_flight:
+            airport: Abu Dhabi (AUH)
+            destination: Alexandria (Burg al-ʿArab) (HBE)
+            hash: 30ad2805196149277e93b98fd251f53d0e3ed7cfe9881ad234efc50f9688847e
+        second_flight: null
+    -   first_flight:
+            airport: Abu Dhabi (AUH)
+            destination: Amman (AMM)
+            hash: 4ae4bf3ff4a42ee4e0ab16ea524e52077ce82dbf8ff7e4c37873faa98dcf6b56
+        second_flight: null
