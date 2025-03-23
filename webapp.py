@@ -34,7 +34,7 @@ st.markdown(
 )
 
 # Create tabs
-tab1, tab2 = st.tabs(["PDF Report", "Immediate Results (Beta)"])
+tab1, tab2, tab3 = st.tabs(["PDF Report", "Immediate Results (Beta)", "Notify Me (Coming Soon)"])
 
 
 def get_new_config(no_email=False) -> ConfigSchema:
@@ -374,5 +374,12 @@ with tab2:
                     for seg in second_segments:
                         banner_html = render_flight_banner(seg)
                         st.html(banner_html)
+
+with tab3:
+    st.header("Notify Me When New Flights Are Available")
+    st.write(
+        "This feature is coming soon! You'll be able to set up notifications for specific routes and dates. "
+        "Stay tuned for updates!"
+    )
 
 create_footer()
