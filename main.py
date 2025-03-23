@@ -6,8 +6,7 @@ from pathlib import Path
 
 import schedule
 
-from services import ScraperService, data_manager, FlightFinderService, ReportService
-from services.logger_service import logger
+from services import ScraperService, data_manager, FlightFinderService, ReportService, logger
 from services.emailer import email_service, roundtrip_kwargs, oneway_kwargs
 from services.parallel_scraper import manage_parallel_scraping
 from utils import increment_date, get_current_date, is_date_in_range
@@ -120,12 +119,12 @@ def one_way_workflow():
         data_manager.driver.quit()
 
 
-def check_possible_flights_workflow(mode='roundtrip'):
+def check_possible_flights_workflow(mode='roundtrip', save_data=True):
     flight_finder = FlightFinderService()
     if mode == 'roundtrip':
-        flight_finder.find_possible_roundtrip_flights_from_departure_airports()
+        flight_finder.find_possible_roundtrip_flights_from_departure_airports(save_data=save_data)
     elif mode == 'oneway':
-        flight_finder.find_possible_one_stop_flights()
+        flight_finder.find_possible_one_stop_flights(save_data=save_data)
 
 
 def create_report(mode='roundtrip'):
@@ -140,14 +139,14 @@ def send_email():
     email_service.send_email(**roundtrip_kwargs, recipient_emails=[data_manager.config.emailer.recipient])
 
 
-def check_available_flights(mode='roundtrip'):
+def check_available_flights(mode='roundtrip', save_data=True):
     flight_finder = FlightFinderService()
     if mode == 'oneway':
         available_flights = flight_finder.find_available_oneway_flights()
     elif mode == 'roundtrip':
         # flight_finder.find_possible_flights_from_departure_airports()
         available_flights = flight_finder.find_available_roundtrip_flights()
-    data_manager.add_available_flights(available_flights)
+    data_manager.add_available_flights(available_flights, save_data=save_data)
 
 
 def update_airports_database():
