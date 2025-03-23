@@ -11,7 +11,7 @@ from main import check_possible_flights_workflow, check_available_flights
 from services import FlightFinderService, logger
 from services.data_manager import data_manager
 from settings import ConfigSchema
-from utils import render_flight_banner, get_last_modification_datetime
+from utils import render_flight_banner, get_last_modification_datetime, create_footer
 
 
 class NoAirportsSelected(Exception):
@@ -375,6 +375,4 @@ with tab2:
                         banner_html = render_flight_banner(seg)
                         st.html(banner_html)
 
-st.write("**Note**: this website is only useful if you possess the [*WizzAir All You Can Fly Pass*]("
-         "https://www.wizzair.com/en-gb/information-and-services/memberships/all-you-can-fly). If you don't, "
-         "please use the [regular WizzAir website](https://www.wizzair.com/en-gb).")
+create_footer()

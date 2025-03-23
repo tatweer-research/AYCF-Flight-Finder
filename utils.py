@@ -619,3 +619,29 @@ def get_last_modification_datetime(path: str):
 
     # Convert timestamp to a human-readable datetime format
     return datetime.fromtimestamp(mod_time)
+
+
+def create_footer():
+    st.markdown("---")
+    import base64
+    import base64
+    # Load and encode the image
+    with open("data/whatsapp.webp", "rb") as image_file:
+        encoded_image = base64.b64encode(image_file.read()).decode()
+    # Render the HTML with partial clickable text
+    st.markdown(
+        f'''
+    <div style="display: flex; align-items: center;">
+        <img src="data:image/webp;base64,{encoded_image}" width="24" style="margin-right: 8px;" />
+        <span><strong>Join our </strong>
+        <a href="https://chat.whatsapp.com/CHvgbPvqRcbJS0E6D4O8ka" target="_blank" style="text-decoration: none;">
+            <strong>WhatsApp group</strong>
+        </a></span>
+    </div>
+    ''',
+        unsafe_allow_html=True
+    )
+    st.write("\n")
+    st.write("**Note**: this website is only useful if you possess the [*WizzAir All You Can Fly Pass*]("
+             "https://www.wizzair.com/en-gb/information-and-services/memberships/all-you-can-fly). If you don't, "
+             "please use the [regular WizzAir website](https://www.wizzair.com/en-gb).")
