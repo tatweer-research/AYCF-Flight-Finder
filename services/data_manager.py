@@ -13,26 +13,16 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.edge.options import Options
 
+from services.logger_service import logger
 from services.flight_connection_parser import WizzAirFlightConnectionParser
+from services.logger_service import ModulePathFormatter
 from settings import ConfigSchema
 from utils import find_possible_csv_matches, get_iata_code
-
-logger = logging.getLogger(__name__)
 
 
 class IndentedDumper(yaml.Dumper):
     def increase_indent(self, flow=False, indentless=False):
         return super(IndentedDumper, self).increase_indent(flow, False)
-
-
-class ModulePathFormatter(logging.Formatter):
-    def format(self, record):
-        # Convert the file path to a module-like path
-        content_root = os.getcwd()
-        relative_path = os.path.relpath(record.pathname, content_root)
-        module_path = relative_path.replace(os.sep, ".").rsplit(".py", 1)[0]
-        record.module_path = module_path
-        return super().format(record)
 
 
 class DataManager:
