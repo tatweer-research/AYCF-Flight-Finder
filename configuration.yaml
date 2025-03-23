@@ -43,7 +43,6 @@ data_manager:
   airport_iata_icao_path: data/airport_iata_icao_filtered.csv
   flight_data_path: data/flight_data.yaml
   airport_name_special_cases_path: data/airport_name_special_cases.yaml
-  airport_database_iata_path: data/airport_database_iata.yaml
   map_iata_to_german_name_path: data/map_iata_to_german_name.yaml
   airport_database_dynamic_path: data/airport_database_dynamic.yaml
   airport_database_path: data/airport_database.yaml
