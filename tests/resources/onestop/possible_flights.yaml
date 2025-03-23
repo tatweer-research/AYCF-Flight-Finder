@@ -1,0 +1,38 @@
+possible_flights:
+    -   first_flight:
+            airport: Abu Dhabi (AUH)
+            destination: Amman (AMM)
+            hash: 4ae4bf3ff4a42ee4e0ab16ea524e52077ce82dbf8ff7e4c37873faa98dcf6b56
+        second_flight: null
+    -   first_flight:
+            airport: Abu Dhabi (AUH)
+            destination: Budapest (BUD)
+            hash: 33059d633273d7b6f756a24b1f7ceddfd797d2a1defcf94101fa3088c62318a1
+        second_flight:
+            airport: Budapest (BUD)
+            destination: Amman (AMM)
+            hash: 04983f4659c1b40ab8277c84b56800caf6d092a5bdf1dd2a01b32ec40859fd46
+    -   first_flight:
+            airport: Abu Dhabi (AUH)
+            destination: Mailand Malpensa (MXP)
+            hash: 3739a6687af76d30c6e9adeda052e394cc1cb53fc18f8ef26c345ef9ec4b73dd
+        second_flight:
+            airport: Mailand Malpensa (MXP)
+            destination: Amman (AMM)
+            hash: 2cdd6cf0a69cff63be87513cf429412f5a5c8d3cdb305f5d401ea1ff763f71d0
+    -   first_flight:
+            airport: Abu Dhabi (AUH)
+            destination: Rom Fiumicino (FCO)
+            hash: 47ae190e6ef0b02a5be126d4cea961539bccb32c77b510599bee6b95c15d09cc
+        second_flight:
+            airport: Rom Fiumicino (FCO)
+            destination: Amman (AMM)
+            hash: b43b4a699554c4fad256dca7c40b77004eee5031480e4a6835504e8c0a59d8cb
+    -   first_flight:
+            airport: Abu Dhabi (AUH)
+            destination: Wien (VIE)
+            hash: 5857d12e5cdde0ac13f9a8bf0422de84af270fc401d92bb6e7e1ae158ace97b0
+        second_flight:
+            airport: Wien (VIE)
+            destination: Amman (AMM)
+            hash: 2136c9d509e21232eacb3a2c6195acccb0e5ae4dd8e22837c7e1933b2ab8e58d

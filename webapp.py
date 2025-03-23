@@ -121,19 +121,26 @@ def check_for_duplicate_jobs():
             raise DuplicateJobError()
 
 
+def validate_user_inputs():
+    if not departure_airports and not arrival_airports:
+        raise NoAirportsSelected()
+
+    if (not arrival_airports or not departure_airports) and stops == 'One-Stop':
+        raise OneAirportNotSelected()
+
+    try:
+        valid = validate_email(email)
+    except EmailNotValidError as e:
+        raise EmailNotValidError(f"Invalid email address: {e}")
+
+    check_for_duplicate_jobs()
+    return valid.email
+
+
 # Validate email when the user submits the form
 if st.button('Submit'):
     try:
-        if not departure_airports and not arrival_airports:
-            raise NoAirportsSelected()
-
-        if (not arrival_airports or not departure_airports) and stops == 'One-Stop':
-            raise OneAirportNotSelected()
-
-        # Validate the email
-        valid = validate_email(email)
-        email = valid.email
-        check_for_duplicate_jobs()
+        email = validate_user_inputs()
 
         file_name = f'{uuid.uuid4()}.yaml'
         data_manager.save_config(get_new_config(), f'jobs/{file_name}')
