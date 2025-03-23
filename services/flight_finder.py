@@ -166,7 +166,7 @@ class FlightFinderService:
         estimated_time = number_unique_flights * 5 * 4 + 20  # 5s per flight check and checked four times + 20s setup
         return format_seconds(estimated_time)
 
-    def find_available_oneway_flights(self):
+    def find_available_oneway_flights(self, save_data=True):
         """
         Finds available oneway flights from possible_flights if they exist in checked_flights,
         including direct flights, and ensures valid sequencing for connecting flights.
