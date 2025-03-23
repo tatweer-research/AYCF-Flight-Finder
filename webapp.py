@@ -28,6 +28,10 @@ class DuplicateJobError(Exception):
 
 st.set_page_config(page_title="Wizz Flight Finder", page_icon="✈️")
 st.title("Wizz AYCF Scanner 🚀")
+st.markdown(
+    '<small>An app by <a href="https://tatweer.network/" target="_blank" style="text-decoration: none; color: #4A90E2;">Tatweer®</a></small>',
+    unsafe_allow_html=True
+)
 
 # Create tabs
 tab1, tab2 = st.tabs(["PDF Report", "Immediate Results (Beta)"])
