@@ -11,7 +11,7 @@ from main import check_possible_flights_workflow, check_available_flights
 from services import FlightFinderService, logger
 from services.data_manager import data_manager
 from settings import ConfigSchema
-from utils import render_flight_banner
+from utils import render_flight_banner, get_last_modification_datetime
 
 
 class NoAirportsSelected(Exception):
@@ -189,7 +189,7 @@ with tab2:
              "So some connections may no be available anymore. Use with caution ;)")
 
     # Load checked flights YAML
-    latest_scraper_output_mod_time = data_manager.get_last_modification_datetime(
+    latest_scraper_output_mod_time = get_last_modification_datetime(
         data_manager.config.data_manager.multi_scraper_output_path
     )
 

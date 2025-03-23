@@ -1,3 +1,4 @@
+import os
 import re
 from datetime import datetime, timedelta
 
@@ -610,3 +611,11 @@ def render_flight_banner(segment):
 if __name__ == '__main__':
     name = "Budapest (BUD)"
     print(get_iata_code(name))  # Output: BUD
+
+
+def get_last_modification_datetime(path: str):
+    # Get the last modification timestamp
+    mod_time = os.path.getmtime(path)
+
+    # Convert timestamp to a human-readable datetime format
+    return datetime.fromtimestamp(mod_time)
