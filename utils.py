@@ -447,6 +447,7 @@ def create_custom_yamls():
     iata_to_german = {iata: name for iata, name in map_german_name_to_iata}
     # save_data(iata_to_german, 'data/map_iata_to_german_name.yaml')  # Save as YAML
     # save_data(routes_db, 'data/airport_database_iata.yaml')  # Save as YAML
+    return iata_to_german, routes_db
 
 
 def split_words(name):

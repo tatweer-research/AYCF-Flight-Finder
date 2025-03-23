@@ -6,7 +6,8 @@ from pathlib import Path
 
 import schedule
 
-from services import ScraperService, data_manager, FlightFinderService, ReportService, logger
+from services import ScraperService, data_manager, FlightFinderService, ReportService
+from services.logger_service import logger
 from services.emailer import email_service, roundtrip_kwargs, oneway_kwargs
 from services.parallel_scraper import manage_parallel_scraping
 from utils import increment_date, get_current_date, is_date_in_range
@@ -197,7 +198,7 @@ def do_pending_jobs():
 
 if __name__ == '__main__':
     # check_possible_flights_workflow('oneway')
-    # one_way_workflow()
+    one_way_workflow()
     # round_trip_workflow()
     # send_email()
     # schedule_one_way_workflow()
@@ -213,7 +214,7 @@ if __name__ == '__main__':
     # create_report('oneway')
     # create_report('roundtrip')
 
-    do_pending_jobs()
+    # do_pending_jobs()
 
     # Parallel Processing
     # finder = FlightFinderService()

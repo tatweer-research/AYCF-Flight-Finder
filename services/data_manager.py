@@ -16,7 +16,7 @@ from services.logger_service import logger
 from services.flight_connection_parser import WizzAirFlightConnectionParser
 from services.logger_service import ModulePathFormatter
 from settings import ConfigSchema
-from utils import find_possible_csv_matches, get_iata_code
+from utils import find_possible_csv_matches, get_iata_code, create_custom_yamls
 
 
 class IndentedDumper(yaml.Dumper):
@@ -161,8 +161,8 @@ class DataManager:
                 raise ValueError(f"No CSV match found for '{errors}' (even after special cases).")
 
             # Read airport_database_iata.yaml
-            routes_db = self.load_data(self.config.data_manager.airport_database_iata_path)
-            iata_to_german = self.load_data(self.config.data_manager.map_iata_to_german_name_path)
+            routes_db = self.routes_db
+            iata_to_german = self.iata_to_german
 
             # Cross-reference routes
             final_routes = {}  # e.g. { 'ABZ': ['GDN', 'ALA', ...], 'AUH': ['ALA', ...] }
@@ -216,6 +216,7 @@ class DataManager:
     def _reset_databases(self):
         # Update the connections in the dataframe
         if self.config.data_manager.use_wizz_availability_pdf:
+            self.iata_to_german, self.routes_db = create_custom_yamls()
             self._update_connections_in_df_airports()
         else:
             self.__airports_destinations = self.load_data(self.config.data_manager.airport_database_path)
