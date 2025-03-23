@@ -33,6 +33,7 @@ class ModulePathFormatter(logging.Formatter):
 
 class DataManager:
     def __init__(self):
+        self.save_databases_to_disk = True
         self._write_lock = threading.Lock()
 
         self.config = None
@@ -201,19 +202,22 @@ class DataManager:
 
     def add_possible_flights(self, flights: List[List]):
         self.__possible_flights['possible_flights'] += flights
-        self.save_data(self.__possible_flights, self.config.data_manager.possible_flights_path)
+        if self.save_databases_to_disk:
+            self.save_data(self.__possible_flights, self.config.data_manager.possible_flights_path)
 
     def add_checked_flight(self, flight: Dict, result: Dict, date: str):
         """Thread-safe addition of a single flight check result."""
         with self._write_lock:
             key = f"{flight['hash']}-{date}"
             self.__checked_flights['checked_flights'][key] = result
-            self.save_data(self.__checked_flights,
-                           self.config.data_manager.checked_flights_path)
+            if self.save_databases_to_disk:
+                self.save_data(self.__checked_flights,
+                               self.config.data_manager.checked_flights_path)
 
     def add_checked_flights(self, flights: Dict):
         self.__checked_flights = flights
-        self.save_data(self.__checked_flights, self.config.data_manager.checked_flights_path)
+        if self.save_databases_to_disk:
+            self.save_data(self.__checked_flights, self.config.data_manager.checked_flights_path)
 
     def get_checked_flight(self, flight: Dict, date: str):
         return self.__checked_flights['checked_flights'][f"{flight['hash']}-{date}"]
@@ -226,11 +230,13 @@ class DataManager:
 
     def add_available_flight(self, flight: Dict):
         self.__available_flights['available_flights'].append(flight)
-        self.save_data(self.__available_flights, self.config.data_manager.available_flights_path)
+        if self.save_databases_to_disk:
+            self.save_data(self.__available_flights, self.config.data_manager.available_flights_path)
 
     def add_available_flights(self, flights: Dict):
         self.__available_flights = flights
-        self.save_data(self.__available_flights, self.config.data_manager.available_flights_path)
+        if self.save_databases_to_disk:
+            self.save_data(self.__available_flights, self.config.data_manager.available_flights_path)
 
 
 # A singleton used to manage data across all services
