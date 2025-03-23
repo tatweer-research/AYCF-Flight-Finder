@@ -216,7 +216,10 @@ class DataManager:
 
     def _reset_databases(self):
         # Update the connections in the dataframe
-        self._update_connections_in_df_airports()
+        if self.config.data_manager.use_wizz_availability_pdf:
+            self._update_connections_in_df_airports()
+        else:
+            self.__airports_destinations = self.load_data(self.config.data_manager.airport_database_path)
 
         # Remove available flights, checked and possible flights databases
         if self.config.data_manager.reset_databases:

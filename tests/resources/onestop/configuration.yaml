@@ -44,8 +44,10 @@ data_manager:
   checked_flights_path: tests/resources/checked_flights.yaml
   available_flights_path: tests/resources/onestop/available_flights.yaml
   multi_scraper_output_path: data/multi_scraper_output.yaml
+
   use_cache: yes  # yes or no - if yes data in the database will not be scraped again
   reset_databases: no  # yes or no - if yes, the databases will be reset
+  use_wizz_availability_pdf: no  # yes or no - if yes, the availability of the flights will be checked in the Wizzair PDF
 
 reporter:
   report_path: data/report.pdf
