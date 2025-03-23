@@ -4,7 +4,7 @@ general:
   action_wait_time: 1
   rate_limit_wait_time: 30
   headless: yes  # yes or no - if yes, the browser will not be displayed
-  mode: roundtrip  # oneway or roundtrip
+  mode: oneway  # oneway or roundtrip
   time_stamp: ""
 
 account:
@@ -18,17 +18,11 @@ flight_data:
   departure_date:
   return_date:
   destination_airports:   # If not specified, all possible destination airports will be checked
-    - London Luton (LTN)
-    - Budapest (BUD)
-    - Kopenhagen (CPH)
-    - Madrid (MAD)
+    - Amman (AMM)
+    - Alexandria (Burg al-ʿArab) (HBE)
 
   departure_airports:
-    - Riad (RUH)
-    - Barcelona El Prat (BCN)
-    - Amman (AMM)
     - Abu Dhabi (AUH)
-    - Memmingen/München-West (FMM)
 
 
 logging:
@@ -40,19 +34,12 @@ logging:
 
 
 data_manager:
-  airport_iata_icao_path: data/airport_iata_icao_filtered.csv
-  flight_data_path: data/flight_data.yaml
-  airport_name_special_cases_path: data/airport_name_special_cases.yaml
-  airport_database_iata_path: data/airport_database_iata.yaml
-  map_iata_to_german_name_path: data/map_iata_to_german_name.yaml
-  airport_database_dynamic_path: data/airport_database_dynamic.yaml
-  airport_database_path: data/airport_database.yaml
-  possible_flights_path: data/possible_flights.yaml
-  checked_flights_path: data/checked_flights.yaml
-  available_flights_path: data/available_flights.yaml
-  multi_scraper_output_path: data/multi_scraper_output.yaml
+  airport_database_path: tests/resources/airport_database.yaml
+  possible_flights_path: tests/resources/direct/possible_flights.yaml
+  checked_flights_path: tests/resources/checked_flights.yaml
+  available_flights_path: tests/resources/direct/available_flights.yaml
   use_cache: yes  # yes or no - if yes data in the database will not be scraped again
-  reset_databases: yes  # yes or no - if yes, the databases will be reset
+  reset_databases: no  # yes or no - if yes, the databases will be reset
 
 reporter:
   report_path: data/report.pdf

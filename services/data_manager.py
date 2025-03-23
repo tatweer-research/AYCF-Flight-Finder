@@ -37,6 +37,7 @@ class ModulePathFormatter(logging.Formatter):
 
 class DataManager:
     def __init__(self):
+        self.save_databases_to_disk = True
         self._write_lock = threading.Lock()
 
         self.config: ConfigSchema = None  # noqa
@@ -228,14 +229,14 @@ class DataManager:
         self._update_connections_in_df_airports()
 
         # Remove available flights, checked and possible flights databases
-        self.remove_file(self.config.data_manager.available_flights_path)
-        self.remove_file(self.config.data_manager.checked_flights_path)
-        self.remove_file(self.config.data_manager.possible_flights_path)
-        self.remove_file(self.config.reporter.report_path)
+        if self.config.data_manager.reset_databases:
+            self.remove_file(self.config.data_manager.available_flights_path)
+            self.remove_file(self.config.data_manager.checked_flights_path)
+            self.remove_file(self.config.data_manager.possible_flights_path)
+            self.remove_file(self.config.reporter.report_path)
         Path('jobs').mkdir(exist_ok=True)
         Path('cache').mkdir(exist_ok=True)
 
-        # TODO: Write a dedicated class for flights
         self.__possible_flights = {'possible_flights': []}
         self.__checked_flights = {'checked_flights': {}}
         self.__available_flights = {'available_flights': []}
@@ -334,7 +335,7 @@ class DataManager:
 
     def add_possible_flights(self, flights: List[List], save_data=True):
         self.__possible_flights['possible_flights'] += flights
-        if save_data:
+        if self.save_databases_to_disk:
             self.save_data(self.__possible_flights, self.config.data_manager.possible_flights_path)
 
     def add_checked_flight(self, flight: Dict, result: Dict, date: str):
@@ -342,12 +343,13 @@ class DataManager:
         with self._write_lock:
             key = f"{flight['hash']}-{date}"
             self.__checked_flights['checked_flights'][key] = result
-            self.save_data(self.__checked_flights,
-                           self.config.data_manager.checked_flights_path)
+            if self.save_databases_to_disk:
+                self.save_data(self.__checked_flights,
+                               self.config.data_manager.checked_flights_path)
 
-    def add_checked_flights(self, flights: Dict, save_data=True):
+    def add_checked_flights(self, flights: Dict):
         self.__checked_flights = flights
-        if save_data:
+        if self.save_databases_to_disk:
             self.save_data(self.__checked_flights, self.config.data_manager.checked_flights_path)
 
     def get_checked_flight(self, flight: Dict, date: str):
@@ -361,11 +363,12 @@ class DataManager:
 
     def add_available_flight(self, flight: Dict):
         self.__available_flights['available_flights'].append(flight)
-        self.save_data(self.__available_flights, self.config.data_manager.available_flights_path)
+        if self.save_databases_to_disk:
+            self.save_data(self.__available_flights, self.config.data_manager.available_flights_path)
 
-    def add_available_flights(self, flights: Dict, save_data=True):
+    def add_available_flights(self, flights: Dict):
         self.__available_flights = flights
-        if save_data:
+        if self.save_databases_to_disk:
             self.save_data(self.__available_flights, self.config.data_manager.available_flights_path)
 
     def get_available_flights(self):

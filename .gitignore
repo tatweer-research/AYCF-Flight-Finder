@@ -2,3 +2,5 @@
 /.venv/
 /wizzair-scraper.log
 /wizzair-scraper-debug.log
+/.pytest_cache/
+/.tox/

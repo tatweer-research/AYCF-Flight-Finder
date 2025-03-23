@@ -1,3 +1,4 @@
+import json
 import shutil
 import time
 from copy import deepcopy
@@ -18,7 +19,7 @@ def round_trip_workflow():
         scraper = ScraperService()
 
         flight_finder = FlightFinderService()
-        flight_finder.find_possible_roundtrip_flights_from_departure_airports(save_data=True)
+        flight_finder.find_possible_roundtrip_flights_from_departure_airports()
         flights = data_manager.get_possible_flights()
 
         departure_date = data_manager.config.flight_data.departure_date if data_manager.config.flight_data.departure_date \
@@ -51,7 +52,7 @@ def round_trip_workflow():
                         return_result = scraper.check_direct_flight_availability(flight['return_flight'],
                                                                                  date)
         available_flights = flight_finder.find_available_roundtrip_flights()
-        data_manager.add_available_flights(available_flights, save_data=True)
+        data_manager.add_available_flights(available_flights)
         reporter = ReportService()
         reporter.generate_roundtrip_flight_report()
         email_service.send_email(**oneway_kwargs, recipient_emails=[data_manager.config.emailer.recipient])
@@ -70,8 +71,7 @@ def one_way_workflow():
         scraper = ScraperService()
 
         flight_finder = FlightFinderService()
-        flight_finder.find_possible_one_stop_flights(max_stops=data_manager.config.flight_data.max_stops,
-                                                     save_data=True)
+        flight_finder.find_possible_one_stop_flights(max_stops=data_manager.config.flight_data.max_stops)
         flights = data_manager.get_possible_flights()
 
         departure_date = data_manager.config.flight_data.departure_date if data_manager.config.flight_data.departure_date \
@@ -108,7 +108,7 @@ def one_way_workflow():
                         second_result = scraper.check_direct_flight_availability(flight['second_flight'],
                                                                                  date)
         available_flights = flight_finder.find_available_oneway_flights()
-        data_manager.add_available_flights(available_flights, save_data=True)
+        data_manager.add_available_flights(available_flights)
         reporter = ReportService()
         reporter.generate_oneway_flight_report()
         email_service.send_email(**oneway_kwargs, recipient_emails=[data_manager.config.emailer.recipient])
@@ -120,12 +120,12 @@ def one_way_workflow():
         data_manager.driver.quit()
 
 
-def check_possible_flights_workflow(mode='roundtrip', save_data=True):
+def check_possible_flights_workflow(mode='roundtrip'):
     flight_finder = FlightFinderService()
     if mode == 'roundtrip':
-        flight_finder.find_possible_roundtrip_flights_from_departure_airports(save_data)
+        flight_finder.find_possible_roundtrip_flights_from_departure_airports()
     elif mode == 'oneway':
-        flight_finder.find_possible_one_stop_flights(save_data)
+        flight_finder.find_possible_one_stop_flights()
 
 
 def create_report(mode='roundtrip'):
@@ -140,14 +140,14 @@ def send_email():
     email_service.send_email(**roundtrip_kwargs, recipient_emails=[data_manager.config.emailer.recipient])
 
 
-def check_available_flights(mode='roundtrip', save_data=True):
+def check_available_flights(mode='roundtrip'):
     flight_finder = FlightFinderService()
     if mode == 'oneway':
         available_flights = flight_finder.find_available_oneway_flights()
     elif mode == 'roundtrip':
         # flight_finder.find_possible_flights_from_departure_airports()
         available_flights = flight_finder.find_available_roundtrip_flights()
-    data_manager.add_available_flights(available_flights, save_data)
+    data_manager.add_available_flights(available_flights)
 
 
 def update_airports_database():

@@ -65,6 +65,7 @@ class DataManagerConfig(BaseModel):
     available_flights_path: Union[str, os.PathLike]
     multi_scraper_output_path: Union[str, os.PathLike]
     use_cache: bool
+    reset_databases: bool
 
     # noinspection PyNestedDecorators
     @field_validator("airport_iata_icao_path",

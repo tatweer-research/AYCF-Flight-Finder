@@ -410,7 +410,7 @@ def get_city(airport_name):
     Returns:
         str: City name
     """
-    return airport_name.split(" (")[0]
+    return airport_name.strip()[:-5].strip()
 
 
 def create_custom_yamls():
