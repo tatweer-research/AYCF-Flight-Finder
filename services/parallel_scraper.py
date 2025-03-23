@@ -5,7 +5,8 @@ import time
 import traceback
 from copy import deepcopy
 
-from services.data_manager import logger, data_manager
+from services.data_manager import data_manager
+from services.logger_service import logger
 from services.scraper import ScraperService
 from utils import get_current_date, increment_date, is_date_in_range
 

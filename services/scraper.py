@@ -7,7 +7,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from services.data_manager import data_manager, logger
+from services.data_manager import data_manager
+from services.logger_service import logger
 from utils import get_iata_code
 
 AIRPORTS_WITH_NAME_CLASHES = ['Basel-Mulhouse-Freiburg']

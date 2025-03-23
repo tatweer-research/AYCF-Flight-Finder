@@ -1,3 +1,5 @@
+import os
+import re
 from datetime import datetime, timedelta
 
 import pytz
@@ -180,7 +182,7 @@ def calculate_waiting_time(start_time, end_time, start_date=None, end_date=None)
 
 
 def calculate_waiting_time_deprecated(start_time, end_time, start_timezone="UTC", end_timezone="UTC",
-                           start_date=None, end_date=None):
+                                      start_date=None, end_date=None):
     """
     Calculate the waiting time between two times, considering different timezones.
 
@@ -412,6 +414,209 @@ def get_city(airport_name):
     return airport_name.strip()[:-5].strip()
 
 
+def create_custom_yamls():
+    """
+    This is the script used to create the files airport_database_iata.yaml and map_iata_to_german_name.yaml
+    """
+    routes_db = {}  # dictionary mapping, e.g. {"ABZ": ["GDN"], "AUH": ["HBE", "ALA", "AMM"], ...}
+    current_departure_iata = None
+    map_german_name_to_iata = set()
+
+    with open("data/airport_database.yaml", "r", encoding="utf-8") as f:
+        airport_db_raw = f.read()
+
+    for raw_line in airport_db_raw.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        # Check if this line is a "Departure" line with a colon
+        if line.endswith(":"):
+            # e.g. "Abu Dhabi (AUH):"
+            dep_name, dep_iata = parse_airport_line(line)
+            if dep_iata:
+                current_departure_iata = dep_iata
+                routes_db[current_departure_iata] = []
+                map_german_name_to_iata.add((dep_iata, dep_name))
+        else:
+            # arrival line
+            arr_name, arr_iata = parse_destination_line(line)
+            if arr_iata and current_departure_iata:
+                routes_db[current_departure_iata].append(arr_iata)
+                map_german_name_to_iata.add((arr_iata, arr_name))
+
+    iata_to_german = {iata: name for iata, name in map_german_name_to_iata}
+    # save_data(iata_to_german, 'data/map_iata_to_german_name.yaml')  # Save as YAML
+    # save_data(routes_db, 'data/airport_database_iata.yaml')  # Save as YAML
+    return iata_to_german, routes_db
+
+
+def split_words(name):
+    """
+    Split the given airport name into a list of lowercase words (no punctuation).
+    E.g. "Abu Dhabi" -> ["abu", "dhabi"]
+         "Basel/Mulhouse" -> ["basel", "mulhouse"]
+    """
+    return re.findall(r"[A-Za-z0-9]+", name.lower())
+
+
+def is_complete_word_match(json_airport_name, csv_airport_name):
+    """
+    Checks if all words of 'json_airport_name' appear as whole words in 'csv_airport_name'.
+    """
+    # Split both into lists of words (lowercase).
+    json_words = split_words(json_airport_name)
+    csv_words = split_words(csv_airport_name)
+
+    # We want every word from json_airport_name to appear in the CSV name's list of words:
+    return all(word in csv_words for word in json_words)
+
+
+def find_possible_csv_matches(airport_name, df_csv):
+    """
+    Returns all rows of df_csv where 'airport' is a *complete-word match* for airport_name.
+    If nothing found, returns an empty DataFrame.
+    """
+    matched_rows = df_csv[df_csv["airport"].apply(
+        lambda x: is_complete_word_match(airport_name, x)
+    )]
+    return matched_rows
+
+
+def parse_airport_line(line):
+    """
+    Given something like:
+       'Aberdeen (ABZ):'
+    return ('Aberdeen', 'ABZ')
+    """
+    # Regex to match:   Some Name (IATA):
+    match = re.match(r"^(.*?) \(([^()]+)\):$", line.strip())
+    if not match:
+        return None, None
+    return match.group(1).strip(), match.group(2).strip()
+
+
+def parse_destination_line(line):
+    """
+    Given something like:
+       '- Danzig (GDN)'
+    return ('Danzig', 'GDN')
+    """
+    match = re.match(r"^- (.*?) \(([^()]+)\)$", line.strip())
+    if not match:
+        return None, None
+    return match.group(1).strip(), match.group(2).strip()
+
+
+# ------------------------------
+# Helper function for building HTML for each flight segment
+# ------------------------------
+def render_flight_banner(segment):
+    """
+    Renders a single flight segment in a 'banner' style, like typical flight search engines.
+    `segment` is a dict with keys like carrier, flight_code, departure/arrival info, etc.
+    """
+
+    # Extract segment data
+    carrier = segment.get("carrier", "Unknown Carrier")
+    flight_code = segment.get("flight_code", "N/A")
+    duration = segment.get("duration", "N/A")
+    price = segment.get("price", "N/A")
+    date = segment.get("date", "N/A")  # Retrieve the date with a fallback
+
+    # Departure info
+    dep_city = segment["departure"].get("city", "N/A")
+    dep_time = segment["departure"].get("time", "N/A")
+    dep_tz = segment["departure"].get("timezone", "")
+
+    # Arrival info
+    arr_city = segment["arrival"].get("city", "N/A")
+    arr_time = segment["arrival"].get("time", "N/A")
+    arr_tz = segment["arrival"].get("timezone", "")
+
+    # Optional logo URL (unchanged)
+    logo_url = None
+
+    # Updated HTML with date in the top row
+    html_code = f"""
+        <div style="
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 600px;
+            margin: 1rem 0;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #ffffff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-family: 'Arial', sans-serif;
+        ">
+            <div style="
+                background: linear-gradient(90deg, #4a90e2, #357abd);
+                color: white;
+                padding: 0.8rem 1.2rem;
+                font-size: 1.1rem;
+                font-weight: bold;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            ">
+                <span>{segment.get('date', 'N/A')}</span>
+                <span>{segment.get('carrier', 'N/A')} · {segment.get('flight_code', 'N/A')}</span>
+            </div>
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                padding: 1rem;
+            ">
+                <div style="text-align: left;">
+                    <div style="font-size: 1rem; font-weight: bold; color: #333;">
+                        ✈ {segment['departure'].get('city', 'N/A')} ({segment['departure'].get('timezone', '')})
+                    </div>
+                    <div style="font-size: 1.2rem; color: #4a90e2;">
+                        {segment['departure'].get('time', 'N/A')}
+                    </div>
+                </div>
+                <div style="
+                    text-align: center;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    color: #666;
+                ">
+                    <span style="font-size: 0.9rem;">{segment.get('duration', 'N/A')}</span>
+                    <span style="font-size: 1rem;">➜</span>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 1rem; font-weight: bold; color: #333;">
+                        {segment['arrival'].get('city', 'N/A')} ({segment['arrival'].get('timezone', '')}) ➜
+                    </div>
+                    <div style="font-size: 1.2rem; color: #4a90e2;">
+                        {segment['arrival'].get('time', 'N/A')}
+                    </div>
+                </div>
+            </div>
+            <div style="
+                background: #f8f9fa;
+                padding: 0.5rem 1.2rem;
+                font-size: 0.9rem;
+                text-align: right;
+                color: #555;
+            ">
+                <!-- <span style="font-weight: bold; color: #e74c3c;">{segment.get('price', 'N/A')}</span> -->
+            </div>
+        </div>
+        """
+    return html_code
+
+
 if __name__ == '__main__':
     name = "Budapest (BUD)"
     print(get_iata_code(name))  # Output: BUD
+
+
+def get_last_modification_datetime(path: str):
+    # Get the last modification timestamp
+    mod_time = os.path.getmtime(path)
+
+    # Convert timestamp to a human-readable datetime format
+    return datetime.fromtimestamp(mod_time)

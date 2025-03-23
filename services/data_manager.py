@@ -5,15 +5,18 @@ import threading
 from pathlib import Path
 from typing import Dict, List
 
+import pandas as pd
 import yaml
 from pydantic import BaseModel
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.edge.options import Options
 
+from services.logger_service import logger
+from services.flight_connection_parser import WizzAirFlightConnectionParser
+from services.logger_service import ModulePathFormatter
 from settings import ConfigSchema
-
-logger = logging.getLogger(__name__)
+from utils import find_possible_csv_matches, get_iata_code, create_custom_yamls
 
 
 class IndentedDumper(yaml.Dumper):
@@ -21,30 +24,43 @@ class IndentedDumper(yaml.Dumper):
         return super(IndentedDumper, self).increase_indent(flow, False)
 
 
-class ModulePathFormatter(logging.Formatter):
-    def format(self, record):
-        # Convert the file path to a module-like path
-        content_root = os.getcwd()
-        relative_path = os.path.relpath(record.pathname, content_root)
-        module_path = relative_path.replace(os.sep, ".").rsplit(".py", 1)[0]
-        record.module_path = module_path
-        return super().format(record)
-
-
 class DataManager:
     def __init__(self):
         self.save_databases_to_disk = True
         self._write_lock = threading.Lock()
 
-        self.config = None
+        self.config: ConfigSchema = None  # noqa
         self.load_config()
         logger.info('Configuration file loaded successfully')
 
         self.driver = None
+
         self._setup_logging()
+
+        # Get the new airport destinations
+        self.flight_connection_parser = WizzAirFlightConnectionParser(self.config.data_manager.flight_data_path)
+        self.__airports_destinations = {}
+
+        # Read the airport_iata_icao_path CSV into a DataFrame
+        self.__orig_df_airport = None
+        self.__df_airport = None
+        self._setup_df_airports()
+
         self._reset_databases()
         if self.config.scraper.initialize_driver:
             self._setup_edge_driver()
+
+    def _setup_df_airports(self):
+        self.__orig_df_airport = pd.read_csv(self.config.data_manager.airport_iata_icao_path)
+        self.__orig_df_airport = self.__orig_df_airport[
+            self.__orig_df_airport['iata'].notna() & (self.__orig_df_airport['iata'] != '')]
+        self.__orig_df_airport = self.__orig_df_airport.drop_duplicates(subset='iata', keep='first')
+        # Create a dictionary mapping IATA codes to (latitude, longitude) tuples
+        airport_coords = self.__orig_df_airport.set_index('iata')[['latitude', 'longitude']].to_dict(orient='index')
+        self.__orig_df_airport["airport_coords"] = self.__orig_df_airport["iata"].map(
+            lambda iata: (
+                airport_coords[iata]["latitude"], airport_coords[iata]["longitude"]) if iata in airport_coords else None
+        )
 
     def load_config(self, path: str = 'configuration.yaml'):
         # Load the YAML file
@@ -104,8 +120,106 @@ class DataManager:
 
         logger.debug('Logging has been configured with both console and file handlers.')
 
+    def _update_connections_in_df_airports(self):
+        # Get possible IATA codes for airports in flight_connection_parser
+        with open(self.config.data_manager.airport_name_special_cases_path, "r", encoding="utf-8") as f:
+            special_name_map = yaml.safe_load(f)
+
+        self.__airports_destinations = {}
+        airport_to_iata = {}  # dictionary mapping e.g. {"Aalesund": [ "AES" ], "Aberdeen": [ "ABZ" ], ...}
+        flight_data, updated = self.flight_connection_parser.get_flight_data()
+        connections_dict = flight_data['connections']
+
+        if updated or not self.config.data_manager.airport_database_dynamic_path.exists():
+            # Since the PDF changed, we have to re-do this logic
+            logger.info('WizzAir updated its PDF. Updating internal database of flights.')
+
+            # Collect all departure & arrival names in one set
+            errors = []
+            all_airport_names = set()
+            for dep_name, arr_list in connections_dict.items():
+                all_airport_names.add(dep_name)  # the departure airport
+                all_airport_names.update(arr_list)  # all arrival airports
+
+            for json_airport in all_airport_names:
+                matched_df = find_possible_csv_matches(json_airport, self.__orig_df_airport)
+
+                # If no match, check special cases
+                if matched_df.empty and json_airport in special_name_map:
+                    corrected_name = special_name_map[json_airport]
+                    matched_df = find_possible_csv_matches(corrected_name, self.__orig_df_airport)
+
+                # If still none, raise an exception
+                if matched_df.empty:
+                    errors.append(json_airport)
+
+                # Gather unique IATA codes
+                iata_codes = matched_df["iata"].dropna().unique().tolist()
+                airport_to_iata[json_airport] = iata_codes
+
+            if errors:
+                raise ValueError(f"No CSV match found for '{errors}' (even after special cases).")
+
+            # Read airport_database_iata.yaml
+            routes_db = self.routes_db
+            iata_to_german = self.iata_to_german
+
+            # Cross-reference routes
+            final_routes = {}  # e.g. { 'ABZ': ['GDN', 'ALA', ...], 'AUH': ['ALA', ...] }
+
+            for dep_name, arr_names in connections_dict.items():
+                dep_iatas = airport_to_iata[dep_name]  # e.g. ["ABZ", "???", ...]
+
+                for dep_iata in dep_iatas:
+                    if dep_iata not in routes_db:
+                        # means the YAML has no routes from that IATA => skip
+                        continue
+
+                    # among the arrivals in flight_data.json, see which are possible in routes_db
+                    valid_arr_iatas = []
+                    for arr_name in arr_names:
+                        arr_iatas = airport_to_iata[arr_name]  # e.g. ["GDN", "???"]
+                        # Check each arr_iata to see if it's in the routes_db[dep_iata]
+                        for a in arr_iatas:
+                            if a in routes_db[dep_iata]:
+                                valid_arr_iatas.append(a)
+
+                    # store in final_routes
+                    if dep_iata not in final_routes:
+                        final_routes[dep_iata] = []
+                    final_routes[dep_iata].extend(valid_arr_iatas)
+
+            final_routes = {dep_iata: arr_iatas for dep_iata, arr_iatas in final_routes.items() if arr_iatas}
+
+            # Add new column to self.__orig_df_airport
+            def build_connections_list(iata_code):
+                if iata_code in final_routes:
+                    return list(set(final_routes[iata_code]))
+                else:
+                    return []
+
+            self.__orig_df_airport["connections"] = self.__orig_df_airport["iata"].apply(build_connections_list)
+
+            # Now drop any row that has an empty connections list:
+            self.__df_airport = self.__orig_df_airport[self.__orig_df_airport["connections"].apply(len) > 0]
+            self.__airports_destinations = {
+                f"{iata_to_german.get(origin, origin)} ({origin})":
+                    [f"{iata_to_german.get(dest, dest)} ({dest})" for dest in destinations]
+                for origin, destinations in final_routes.items()
+            }
+            self.save_data(self.__airports_destinations, self.config.data_manager.airport_database_dynamic_path)
+        else:
+            # Read from the cache
+            logger.info('Reading internal database of flights.')
+            self.__airports_destinations = self.load_data(self.config.data_manager.airport_database_dynamic_path)
+
     def _reset_databases(self):
-        self.__airports_destinations = self.load_data(self.config.data_manager.airport_database_path)
+        # Update the connections in the dataframe
+        if self.config.data_manager.use_wizz_availability_pdf:
+            self.iata_to_german, self.routes_db = create_custom_yamls()
+            self._update_connections_in_df_airports()
+        else:
+            self.__airports_destinations = self.load_data(self.config.data_manager.airport_database_path)
 
         # Remove available flights, checked and possible flights databases
         if self.config.data_manager.reset_databases:
@@ -170,6 +284,10 @@ class DataManager:
         else:
             print(f"The file {path} does not exist.")
 
+    def get_airport_coord(self, airport_name):
+        airport_iata = get_iata_code(airport_name)
+        return self.__df_airport.set_index("iata")["airport_coords"].get(airport_iata)
+
     def get_airport_database(self):
         return self.__airports_destinations
 
@@ -200,7 +318,7 @@ class DataManager:
     def get_possible_flights(self):
         return self.__possible_flights
 
-    def add_possible_flights(self, flights: List[List]):
+    def add_possible_flights(self, flights: List[List], save_data=True):
         self.__possible_flights['possible_flights'] += flights
         if self.save_databases_to_disk:
             self.save_data(self.__possible_flights, self.config.data_manager.possible_flights_path)
@@ -237,6 +355,9 @@ class DataManager:
         self.__available_flights = flights
         if self.save_databases_to_disk:
             self.save_data(self.__available_flights, self.config.data_manager.available_flights_path)
+
+    def get_available_flights(self):
+        return self.__available_flights
 
 
 # A singleton used to manage data across all services

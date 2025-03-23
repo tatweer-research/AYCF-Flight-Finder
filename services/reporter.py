@@ -7,7 +7,8 @@ from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer
 from reportlab.platypus.flowables import HRFlowable
 
-from services.data_manager import data_manager, logger
+from services.data_manager import data_manager
+from services.logger_service import logger
 from utils import compare_times, calculate_waiting_time, sum_flight_durations, calculate_arrival_date
 
 
