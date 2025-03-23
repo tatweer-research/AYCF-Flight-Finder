@@ -27,15 +27,33 @@ class DuplicateJobError(Exception):
 
 
 st.set_page_config(page_title="Wizz Flight Finder", page_icon="✈️")
-st.title("All You Can Fly Pass - WizzAir")
+st.title("Wizz AYCF Scanner 🚀")
 
 # Create tabs
-tab1, tab2 = st.tabs(["Offline Search", "Static Flight Browser"])
+tab1, tab2 = st.tabs(["PDF Report", "Immediate Results (Beta)"])
+
+
+def get_new_config(no_email=False) -> ConfigSchema:
+    config = copy.deepcopy(data_manager.config)
+    config.flight_data.departure_airports = departure_airports
+    config.flight_data.destination_airports = arrival_airports
+    if not no_email:
+        config.emailer.recipient = email
+    config.general.mode = trip_type.lower().replace(' ', '')
+    config.general.time_stamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    config.flight_data.max_stops = 1 if stops == 'One-Stop' else 0
+    config.flight_data.departure_date = selected_date.strftime("%d-%m-%Y") if selected_date else None
+    return config
+
 
 # --- Tab 1: Custom Search (Existing Functionality) ---
 with tab1:
-    st.header('Offline Search')
-    st.write("\n")
+    st.header("Get a Fresh Flight Report by Email")
+    st.write(
+        "This option goes directly to the WizzAir website and checks flights based on your settings. "
+        "It takes a bit longer but gives you the most accurate and up-to-date results. "
+        "You'll receive a full PDF report by email once it's done."
+    )
 
     # Checkbox to enable/disable date selection
     all_possible_dates = st.checkbox("Check all possible dates (next 3 days)", key="tab1_checkbox")
@@ -94,18 +112,6 @@ with tab1:
 
     # Prompt user for email input
     email = st.text_input('Enter your email address (it is needed to send you the pdf report):')
-
-
-    def get_new_config() -> ConfigSchema:
-        config = copy.deepcopy(data_manager.config)
-        config.flight_data.departure_airports = departure_airports
-        config.flight_data.destination_airports = arrival_airports
-        config.emailer.recipient = email
-        config.general.mode = trip_type.lower().replace(' ', '')
-        config.general.time_stamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        config.flight_data.max_stops = 1 if stops == 'One-Stop' else 0
-        config.flight_data.departure_date = selected_date.strftime("%d-%m-%Y") if selected_date else None
-        return config
 
 
     def get_scraping_time():
@@ -176,17 +182,13 @@ with tab1:
             st.error(f'In the case of one-stop flights you need to select both departure and destination airports.')
             logger.error(f'No destination airports selected.')
 
-    st.write("**Note**: this website is only useful if you possess the [*WizzAir All You Can Fly Pass*]("
-             "https://www.wizzair.com/en-gb/information-and-services/memberships/all-you-can-fly). If you don't, "
-             "please use the [regular WizzAir website](https://www.wizzair.com/en-gb).")
-
 # --- Tab 2: Static Flight Browser ---
 with tab2:
-    st.header("Static Flight Browser")
-    st.write("Explore all available WizzAir flights for the next few days based on a static scraper. "
-             "Be aware that these flights were calculated based on our scraper that runs every other hour, "
-             "when WizzAir publishes their available flight connections. "
-             "So some connections may no be available anymore. Use with caution ;)")
+    st.header("See Saved Flights Instantly")
+    st.write(
+        "This shows you flights that were fetched in the last 2.5 hours. It's super fast, but some results "
+        "might be outdated or no longer available. Use it if you want a quick overview without waiting."
+    )
 
     # Load checked flights YAML
     latest_scraper_output_mod_time = get_last_modification_datetime(
@@ -199,7 +201,6 @@ with tab2:
             "checked_flights" not in st.session_state:
         # Update the session state with the latest modification time
         st.session_state.last_scraper_output_mod_time = latest_scraper_output_mod_time
-
 
         # Load the latest multi-scraper output data
         scraper_output_data = data_manager.load_data(data_manager.config.data_manager.multi_scraper_output_path)
@@ -266,18 +267,12 @@ with tab2:
     st.info(f"Data last updated: {st.session_state.last_scraper_output_mod_time.strftime('%Y-%m-%d %H:%M:%S')}",
             icon="ℹ️")
 
-    if st.button('Submit', key="tab2_button_submit"):
-
+    if st.button('Search', key="tab2_button_submit"):
 
         # Refresh the data manager config
         data_manager._reset_databases()
         data_manager.load_config()
-        data_manager.config.flight_data.departure_airports = departure_airports
-        data_manager.config.flight_data.destination_airports = arrival_airports
-        data_manager.config.general.mode = trip_type.lower().replace(' ', '')
-        data_manager.config.general.time_stamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        data_manager.config.flight_data.max_stops = 1 if stops == 'One-Stop' else 0
-        data_manager.config.flight_data.departure_date = selected_date.strftime("%d-%m-%Y") if selected_date else None
+        data_manager.config = get_new_config(no_email=True)
 
         # Re-set checked_flights in data_manager
         if selected_date:
@@ -341,6 +336,7 @@ with tab2:
             # st.subheader(f"Option #{idx}")  # - {'Round Trip' if is_round_trip else 'One Way'}")
 
             if is_round_trip:
+                st.write("-" * 50)
                 # For round trip: outward segments + return segments
                 outward_segments = itinerary["outward_flight"]
                 return_segments = itinerary["return_flight"]
@@ -356,6 +352,7 @@ with tab2:
                     st.html(banner_html)
 
             else:
+                st.write("-" * 50)
                 # One-way can have first_flight + second_flight if there's a connection
                 first_segments = itinerary.get("first_flight", [])
                 second_segments = itinerary.get("second_flight", None)
@@ -371,3 +368,7 @@ with tab2:
                     for seg in second_segments:
                         banner_html = render_flight_banner(seg)
                         st.html(banner_html)
+
+st.write("**Note**: this website is only useful if you possess the [*WizzAir All You Can Fly Pass*]("
+         "https://www.wizzair.com/en-gb/information-and-services/memberships/all-you-can-fly). If you don't, "
+         "please use the [regular WizzAir website](https://www.wizzair.com/en-gb).")
