@@ -81,7 +81,7 @@ with tab1:
 
     # Add an option to choose between direct or ones-stop flights
     stops = st.radio(
-        "Stops:",
+        "Max Stops:",
         ('Direct', 'One-Stop'),
         key="tab1_radio_stops"
     )
@@ -235,7 +235,7 @@ with tab2:
 
     # Add an option to choose between direct or ones-stop flights
     stops = st.radio(
-        "Stops:",
+        "Max Stops:",
         ('Direct', 'One-Stop'),
         key="tab2_radio_stops"
     )
@@ -288,7 +288,9 @@ with tab2:
             data_manager.add_checked_flights(st.session_state.checked_flights, save_data=False)
 
         # Check possible flights out of the data_manager.__airport_destinations
-        check_possible_flights_workflow(data_manager.config.general.mode, save_data=False)
+        check_possible_flights_workflow(data_manager.config.general.mode,
+                                        save_data=False,
+                                        max_stops=data_manager.config.flight_data.max_stops)
 
         # Check available flights output of possible flights and checked flights
         check_available_flights(data_manager.config.general.mode, save_data=False)
