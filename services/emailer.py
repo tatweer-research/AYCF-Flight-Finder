@@ -68,7 +68,7 @@ class EmailService:
 
 
 # Initialize the EmailService
-email_service = EmailService(sender_email='mohundkmar@gmail.com', sender_password='')
+email_service = EmailService(sender_email='aycf.scanner@gmail.com', sender_password='paez ybiz hdcb nyrw')
 
 ROUNDTRIP_SUBJECT = "Round Trip: Wizz Air Flights Report!"
 
