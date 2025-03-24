@@ -600,11 +600,6 @@ def render_flight_banner(segment):
     return html_code
 
 
-if __name__ == '__main__':
-    name = "Budapest (BUD)"
-    print(get_iata_code(name))  # Output: BUD
-
-
 def get_last_modification_datetime(path: str):
     # Get the last modification timestamp
     mod_time = os.path.getmtime(path)
@@ -613,9 +608,7 @@ def get_last_modification_datetime(path: str):
     return datetime.fromtimestamp(mod_time)
 
 
-def create_footer():
-    st.markdown("---")
-    import base64
+def create_header():
     import base64
     # Load and encode the image
     with open("data/whatsapp.webp", "rb") as image_file:
@@ -634,6 +627,15 @@ def create_footer():
         unsafe_allow_html=True
     )
     st.write("\n")
+
+
+def create_footer():
+    st.markdown("---")
     st.write("**Note**: this website is only useful if you possess the [*WizzAir All You Can Fly Pass*]("
              "https://www.wizzair.com/en-gb/information-and-services/memberships/all-you-can-fly). If you don't, "
              "please use the [regular WizzAir website](https://www.wizzair.com/en-gb).")
+
+
+if __name__ == '__main__':
+    name = "Budapest (BUD)"
+    print(get_iata_code(name))  # Output: BUD

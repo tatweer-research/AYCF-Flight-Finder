@@ -11,7 +11,7 @@ from main import check_possible_flights_workflow, check_available_flights
 from services import FlightFinderService, logger
 from services.data_manager import data_manager
 from settings import ConfigSchema
-from utils import render_flight_banner, get_last_modification_datetime, create_footer
+from utils import render_flight_banner, get_last_modification_datetime, create_footer, create_header
 
 
 class NoAirportsSelected(Exception):
@@ -32,6 +32,8 @@ st.markdown(
     '<small>An app by <a href="https://tatweer.network/" target="_blank" style="text-decoration: none; color: #4A90E2;">Tatweer®</a></small>',
     unsafe_allow_html=True
 )
+
+create_header()
 
 # Create tabs
 tab1, tab2, tab3 = st.tabs(["PDF Report", "Immediate Results (Beta)", "Notify Me (Coming Soon)"])
