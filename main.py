@@ -119,12 +119,12 @@ def one_way_workflow():
         data_manager.driver.quit()
 
 
-def check_possible_flights_workflow(mode='roundtrip', save_data=True):
+def check_possible_flights_workflow(mode='roundtrip', save_data=True, max_stops=1):
     flight_finder = FlightFinderService()
     if mode == 'roundtrip':
         flight_finder.find_possible_roundtrip_flights_from_departure_airports(save_data=save_data)
     elif mode == 'oneway':
-        flight_finder.find_possible_one_stop_flights(save_data=save_data)
+        flight_finder.find_possible_one_stop_flights(save_data=save_data, max_stops=max_stops)
 
 
 def create_report(mode='roundtrip'):
@@ -195,17 +195,36 @@ def do_pending_jobs():
         time.sleep(10)
 
 
+def scrape_with_multiprocessing():
+    data_manager.config.flight_data.departure_airports = None
+    data_manager.config.flight_data.destination_airports = None
+    data_manager.config.data_manager.reset_databases = False
+    data_manager.config.data_manager.use_wizz_availability_pdf = True
+    data_manager.config.data_manager.checked_flights_path = \
+        data_manager.config.data_manager.multi_scraper_output_path
+    finder = FlightFinderService()
+    finder.find_possible_one_stop_flights(max_stops=0)
+    shared_dict = manage_parallel_scraping(data_manager.get_possible_flights()['possible_flights'],
+                                           data_manager.config,
+                                           max_workers=3)
+    # with open('shared_dict.json', 'w', encoding='utf-8') as f:
+    #     json.dump(shared_dict, f, ensure_ascii=False, indent=4)
+    data_manager.save_data({'checked_flights': shared_dict},
+                           data_manager.config.data_manager.multi_scraper_output_path)
+    data_manager._reset_databases()
+
+
 if __name__ == '__main__':
     # check_possible_flights_workflow('oneway')
-    one_way_workflow()
+    # one_way_workflow()
     # round_trip_workflow()
     # send_email()
     # schedule_one_way_workflow()
     # update_airports_database()
 
     # finder = FlightFinderService()
-    # # finder.find_possible_roundtrip_flights_from_departure_airports()
-    # finder.find_possible_one_stop_flights(max_stops=1)
+    # finder.find_possible_roundtrip_flights_from_departure_airports()
+    # finder.find_possible_one_stop_flights(max_stops=0)
     #
     # checked_flights = data_manager.load_data(data_manager.config.data_manager.checked_flights_path)
     # data_manager.add_checked_flights(checked_flights)
@@ -213,13 +232,9 @@ if __name__ == '__main__':
     # create_report('oneway')
     # create_report('roundtrip')
 
-    # do_pending_jobs()
+    do_pending_jobs()
 
     # Parallel Processing
-    # finder = FlightFinderService()
-    # finder.find_possible_one_stop_flights(max_stops=0)
-    # shared_dict = manage_parallel_scraping(data_manager.get_possible_flights()['possible_flights'],
-    #                                          data_manager.config,
-    #                          max_workers=3)
-    # with open('shared_dict.json', 'w', encoding='utf-8') as f:
-    #     json.dump(shared_dict, f, ensure_ascii=False, indent=4)
+    # while True:
+    #     scrape_with_multiprocessing()
+    #     time.sleep(60)
