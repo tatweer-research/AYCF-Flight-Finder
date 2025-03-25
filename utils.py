@@ -1,6 +1,9 @@
 import os
 import re
 from datetime import datetime, timedelta
+import paramiko
+from scp import SCPClient
+from paramiko import RSAKey
 
 import pytz
 import streamlit as st
@@ -634,6 +637,39 @@ def create_footer():
     st.write("**Note**: this website is only useful if you possess the [*WizzAir All You Can Fly Pass*]("
              "https://www.wizzair.com/en-gb/information-and-services/memberships/all-you-can-fly). If you don't, "
              "please use the [regular WizzAir website](https://www.wizzair.com/en-gb).")
+
+
+def upload_file_via_ssh(
+    local_path: str,
+    remote_path: str,
+    hostname: str,
+    username: str,
+    key_path: str,
+    port: int = 22
+):
+    """
+    Uploads a file to a remote server using SSH and a private key.
+
+    Args:
+        local_path: Path to the local file to upload.
+        remote_path: Destination path on the remote server.
+        hostname: Remote server hostname or IP.
+        username: SSH username.
+        key_path: Path to the private key file (e.g., ~/.ssh/id_rsa).
+        port: SSH port (default is 22).
+    """
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    try:
+
+        key = RSAKey.from_private_key_file(key_path)
+        ssh.connect(hostname, port=port, username=username, pkey=key)
+        with SCPClient(ssh.get_transport()) as scp:
+            scp.put(local_path, remote_path)
+        print(f"File uploaded successfully to {username}@{hostname}:{remote_path}")
+    finally:
+        ssh.close()
 
 
 if __name__ == '__main__':
