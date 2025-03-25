@@ -148,20 +148,21 @@ with tab1:
                 raise DuplicateJobError()
 
 
-    def validate_user_inputs():
+    def validate_user_inputs(instant=False):
         if not departure_airports and not arrival_airports:
             raise NoAirportsSelected()
 
         if (not arrival_airports or not departure_airports) and stops == 'One-Stop':
             raise OneAirportNotSelected()
 
-        try:
-            valid = validate_email(email)
-        except EmailNotValidError as e:
-            raise EmailNotValidError(f"Invalid email address: {e}")
+        if not instant:
+            try:
+                valid = validate_email(email)
+            except EmailNotValidError as e:
+                raise EmailNotValidError(f"Invalid email address: {e}")
 
-        check_for_duplicate_jobs()
-        return valid.email
+            check_for_duplicate_jobs()
+            return valid.email
 
 
     # Validate email when the user submits the form
@@ -274,108 +275,116 @@ with tab2:
             icon="ℹ️")
 
     if st.button('Search', key="tab2_button_submit"):
+        try:
+            # Refresh the data manager config
+            data_manager._reset_databases()
+            data_manager.load_config()
+            data_manager.config = get_new_config(no_email=True)
+            validate_user_inputs(instant=True)
 
-        # Refresh the data manager config
-        data_manager._reset_databases()
-        data_manager.load_config()
-        data_manager.config = get_new_config(no_email=True)
-
-        # Re-set checked_flights in data_manager
-        if selected_date:
-            checked_flights = {}
-            for hash_str, flight_obj in st.session_state.checked_flights['checked_flights'].items():
-                if flight_obj:  # Ensure flight_obj is not empty or None
-                    flight_date = datetime.strptime(flight_obj[0]['date'], "%a %d, %B %Y").date()
-                    if flight_date == selected_date:
-                        checked_flights[hash_str] = flight_obj
-            checked_flights = {"checked_flights": checked_flights}
-            data_manager.add_checked_flights(checked_flights, save_data=False)
-        else:
-            data_manager.add_checked_flights(st.session_state.checked_flights, save_data=False)
-
-        # Check possible flights out of the data_manager.__airport_destinations
-        check_possible_flights_workflow(data_manager.config.general.mode,
-                                        save_data=False,
-                                        max_stops=data_manager.config.flight_data.max_stops)
-
-        # Check available flights output of possible flights and checked flights
-        check_available_flights(data_manager.config.general.mode, save_data=False)
-        available_flights = data_manager.get_available_flights()
-        flight_list = available_flights.get("available_flights", [])
-
-
-        # Function to extract the departure date based on trip type
-        def get_departure_date(itinerary):
-            # Determine which flight key to use based on trip type
-            if data_manager.config.general.mode == "oneway":
-                initial_flight = itinerary.get("first_flight", [])
-            elif data_manager.config.general.mode == "roundtrip":
-                initial_flight = itinerary.get("outward_flight", [])
+            # Re-set checked_flights in data_manager
+            if selected_date:
+                checked_flights = {}
+                for hash_str, flight_obj in st.session_state.checked_flights['checked_flights'].items():
+                    if flight_obj:  # Ensure flight_obj is not empty or None
+                        flight_date = datetime.strptime(flight_obj[0]['date'], "%a %d, %B %Y").date()
+                        if flight_date == selected_date:
+                            checked_flights[hash_str] = flight_obj
+                checked_flights = {"checked_flights": checked_flights}
+                data_manager.add_checked_flights(checked_flights, save_data=False)
             else:
-                return None  # Return None for unrecognized modes
+                data_manager.add_checked_flights(st.session_state.checked_flights, save_data=False)
 
-            # Extract the date from the first segment of the initial flight
-            if initial_flight:
-                first_segment = initial_flight[0]
-                date_str = first_segment.get("date", "")
-                try:
-                    # Parse the date string (e.g., "Sun 16, March 2025")
-                    return dt.datetime.strptime(date_str, "%a %d, %B %Y")
-                except ValueError:
-                    return None  # Return None if the date format is invalid
-            return None  # Return None if there are no segments
+            # Check possible flights out of the data_manager.__airport_destinations
+            check_possible_flights_workflow(data_manager.config.general.mode,
+                                            save_data=False,
+                                            max_stops=data_manager.config.flight_data.max_stops)
+
+            # Check available flights output of possible flights and checked flights
+            check_available_flights(data_manager.config.general.mode, save_data=False)
+            available_flights = data_manager.get_available_flights()
+            flight_list = available_flights.get("available_flights", [])
 
 
-        # Sort the flight list by departure date
-        flight_list.sort(key=lambda x: get_departure_date(x) or dt.datetime.max)
+            # Function to extract the departure date based on trip type
+            def get_departure_date(itinerary):
+                # Determine which flight key to use based on trip type
+                if data_manager.config.general.mode == "oneway":
+                    initial_flight = itinerary.get("first_flight", [])
+                elif data_manager.config.general.mode == "roundtrip":
+                    initial_flight = itinerary.get("outward_flight", [])
+                else:
+                    return None  # Return None for unrecognized modes
 
-        # Update the session state with the sorted list
-        st.session_state.flight_list = flight_list
+                # Extract the date from the first segment of the initial flight
+                if initial_flight:
+                    first_segment = initial_flight[0]
+                    date_str = first_segment.get("date", "")
+                    try:
+                        # Parse the date string (e.g., "Sun 16, March 2025")
+                        return dt.datetime.strptime(date_str, "%a %d, %B %Y")
+                    except ValueError:
+                        return None  # Return None if the date format is invalid
+                return None  # Return None if there are no segments
 
-    # If there's no data, show a warning
-    if 'flight_list' not in st.session_state or \
-            ('flight_list' in st.session_state and not st.session_state.flight_list):
-        st.warning("No flights found. Try changing some of the filters.")
-    else:
-        is_round_trip = (data_manager.config.general.mode == "roundtrip")
 
-        # Now display each itinerary
-        for idx, itinerary in enumerate(st.session_state.flight_list, start=1):
-            # st.subheader(f"Option #{idx}")  # - {'Round Trip' if is_round_trip else 'One Way'}")
+            # Sort the flight list by departure date
+            flight_list.sort(key=lambda x: get_departure_date(x) or dt.datetime.max)
 
-            if is_round_trip:
-                st.write("-" * 50)
-                # For round trip: outward segments + return segments
-                outward_segments = itinerary["outward_flight"]
-                return_segments = itinerary["return_flight"]
+            # Update the session state with the sorted list
+            st.session_state.flight_list = flight_list
 
-                st.markdown("<strong>Outward Flight</strong>", unsafe_allow_html=True)
-                for seg in outward_segments:
-                    banner_html = render_flight_banner(seg)
-                    st.html(banner_html)
-
-                st.markdown("<strong>Return Flight</strong>", unsafe_allow_html=True)
-                for seg in return_segments:
-                    banner_html = render_flight_banner(seg)
-                    st.html(banner_html)
-
+            # If there's no data, show a warning
+            if 'flight_list' not in st.session_state or \
+                    ('flight_list' in st.session_state and not st.session_state.flight_list):
+                st.warning("No flights found. Try changing some of the filters.")
             else:
-                st.write("-" * 50)
-                # One-way can have first_flight + second_flight if there's a connection
-                first_segments = itinerary.get("first_flight", [])
-                second_segments = itinerary.get("second_flight", None)
+                is_round_trip = (data_manager.config.general.mode == "roundtrip")
 
-                # Display first_flight segments
-                for seg in first_segments:
-                    banner_html = render_flight_banner(seg)
-                    st.html(banner_html)
+                # Now display each itinerary
+                for idx, itinerary in enumerate(st.session_state.flight_list, start=1):
+                    # st.subheader(f"Option #{idx}")  # - {'Round Trip' if is_round_trip else 'One Way'}")
 
-                # If there's a connecting flight
-                if second_segments:
-                    st.markdown("<em>Connecting Flight</em>", unsafe_allow_html=True)
-                    for seg in second_segments:
-                        banner_html = render_flight_banner(seg)
-                        st.html(banner_html)
+                    if is_round_trip:
+                        st.write("-" * 50)
+                        # For round trip: outward segments + return segments
+                        outward_segments = itinerary["outward_flight"]
+                        return_segments = itinerary["return_flight"]
+
+                        st.markdown("<strong>Outward Flight</strong>", unsafe_allow_html=True)
+                        for seg in outward_segments:
+                            banner_html = render_flight_banner(seg)
+                            st.html(banner_html)
+
+                        st.markdown("<strong>Return Flight</strong>", unsafe_allow_html=True)
+                        for seg in return_segments:
+                            banner_html = render_flight_banner(seg)
+                            st.html(banner_html)
+
+                    else:
+                        st.write("-" * 50)
+                        # One-way can have first_flight + second_flight if there's a connection
+                        first_segments = itinerary.get("first_flight", [])
+                        second_segments = itinerary.get("second_flight", None)
+
+                        # Display first_flight segments
+                        for seg in first_segments:
+                            banner_html = render_flight_banner(seg)
+                            st.html(banner_html)
+
+                        # If there's a connecting flight
+                        if second_segments:
+                            st.markdown("<em>Connecting Flight</em>", unsafe_allow_html=True)
+                            for seg in second_segments:
+                                banner_html = render_flight_banner(seg)
+                                st.html(banner_html)
+
+        except NoAirportsSelected as e:
+            st.error(f'Please select at least one departure or one destination airport.')
+            logger.error(f'No departure airports selected.')
+        except OneAirportNotSelected as e:
+            st.error(f'In the case of one-stop flights you need to select both departure and destination airports.')
+            logger.error(f'No destination airports selected.')
 
 with tab3:
     st.header("Notify Me When New Flights Are Available")
