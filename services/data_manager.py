@@ -130,7 +130,7 @@ class DataManager:
         flight_data, updated = self.flight_connection_parser.get_flight_data()
         connections_dict = flight_data['connections']
 
-        if updated or not self.config.data_manager.airport_database_dynamic_path.exists():
+        if updated:
             # Since the PDF changed, we have to re-do this logic
             logger.info('WizzAir updated its PDF. Updating internal database of flights.')
 
@@ -292,7 +292,7 @@ class DataManager:
         return self.__airports_destinations
 
     def get_all_airports(self):
-        airports = []
+        airports = list(self.__airports_destinations.keys())
         for airport in self.__airports_destinations:
             airports += self.__airports_destinations[airport]
         return list(set(airports))
