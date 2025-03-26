@@ -10,8 +10,14 @@ from email_validator import validate_email, EmailNotValidError
 from main import check_possible_flights_workflow, check_available_flights
 from services import FlightFinderService, logger
 from services.data_manager import data_manager
+from services.logging_statistics import init_db, log_usage
 from settings import ConfigSchema
 from utils import render_flight_banner, get_last_modification_datetime, create_footer, create_header
+
+
+PDF_REPORT_TAB_NAME = "PDF Report"
+IMMEDIATE_RESULTS_TAB_NAME = "Immediate Results"
+NOTIFY_ME_TAB_NAME = "Notify Me"
 
 
 class NoAirportsSelected(Exception):
@@ -26,6 +32,9 @@ class DuplicateJobError(Exception):
     pass
 
 
+# Initialize the DB once at app startup
+init_db(data_manager.config.data_manager.db_path)
+
 st.set_page_config(page_title="Wizz Flight Finder", page_icon="✈️")
 st.title("Wizz AYCF Scanner 🚀")
 st.markdown(
@@ -36,7 +45,7 @@ st.markdown(
 create_header()
 
 # Create tabs
-tab1, tab2, tab3 = st.tabs(["PDF Report", "Immediate Results (Beta)", "Notify Me (Coming Soon)"])
+tab1, tab2, tab3 = st.tabs([PDF_REPORT_TAB_NAME, f"{IMMEDIATE_RESULTS_TAB_NAME} (Beta)", f"{NOTIFY_ME_TAB_NAME} (Coming Soon)"])
 
 
 def get_new_config(no_email=False) -> ConfigSchema:
@@ -167,6 +176,16 @@ with tab1:
 
     # Validate email when the user submits the form
     if st.button('Submit', key="tab1_button_submit"):
+        # Log usage
+        log_usage(
+            tab=PDF_REPORT_TAB_NAME,
+            stops=stops,
+            departure_airports=departure_airports,
+            arrival_airports=arrival_airports,
+            trip_type=trip_type,
+            db_path=data_manager.config.data_manager.db_path
+        )
+
         try:
             email = validate_user_inputs()
 
@@ -275,6 +294,14 @@ with tab2:
             icon="ℹ️")
 
     if st.button('Search', key="tab2_button_submit"):
+        log_usage(
+            tab=IMMEDIATE_RESULTS_TAB_NAME,
+            stops=stops,
+            departure_airports=departure_airports,
+            arrival_airports=arrival_airports,
+            trip_type=trip_type,
+            db_path=data_manager.config.data_manager.db_path
+        )
         try:
             # Refresh the data manager config
             data_manager._reset_databases()
