@@ -72,7 +72,8 @@ def _process_worker(flights, config_dict, shared_dict, lock):
 
                 # If the worker has completed 9 flight checks, wait for 30 seconds
                 if flight_count % 9 == 0:
-                    logger.info(f"PID-{os.getpid()}: Worker is pausing for 30 seconds to avoid rate limiting.")
+                    logger.info(f"PID-{os.getpid()}: Worker is pausing for "
+                                f"{data_manager.config.general.rate_limit_wait_time} seconds to avoid rate limiting.")
                     time.sleep(data_manager.config.general.rate_limit_wait_time)
 
     except Exception as e:

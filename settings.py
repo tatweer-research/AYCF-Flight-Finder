@@ -66,6 +66,7 @@ class DataManagerConfig(BaseModel):
     use_cache: bool
     reset_databases: bool
     use_wizz_availability_pdf: bool
+    usage_logs_path: Union[str, os.PathLike]
 
     # noinspection PyNestedDecorators
     @field_validator("airport_iata_icao_path",
@@ -78,6 +79,7 @@ class DataManagerConfig(BaseModel):
                      "checked_flights_path",
                      "available_flights_path",
                      "multi_scraper_output_path",
+                     "usage_logs_path",
                      mode="before")
     @classmethod
     def convert_to_pathlib(cls, v):
