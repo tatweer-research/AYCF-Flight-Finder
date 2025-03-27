@@ -9,7 +9,7 @@ import schedule
 from services import ScraperService, data_manager, FlightFinderService, ReportService, logger
 from services.emailer import email_service, roundtrip_kwargs, oneway_kwargs
 from services.parallel_scraper import manage_parallel_scraping
-from utils import increment_date, get_current_date, is_date_in_range
+from utils import increment_date, get_current_date, is_date_in_range, upload_file_via_ssh
 
 
 def round_trip_workflow():
@@ -196,22 +196,36 @@ def do_pending_jobs():
 
 
 def scrape_with_multiprocessing():
-    data_manager.config.flight_data.departure_airports = None
-    data_manager.config.flight_data.destination_airports = None
-    data_manager.config.data_manager.reset_databases = False
-    data_manager.config.data_manager.use_wizz_availability_pdf = True
-    data_manager.config.data_manager.checked_flights_path = \
-        data_manager.config.data_manager.multi_scraper_output_path
-    finder = FlightFinderService()
-    finder.find_possible_one_stop_flights(max_stops=0)
-    shared_dict = manage_parallel_scraping(data_manager.get_possible_flights()['possible_flights'],
-                                           data_manager.config,
-                                           max_workers=3)
-    # with open('shared_dict.json', 'w', encoding='utf-8') as f:
-    #     json.dump(shared_dict, f, ensure_ascii=False, indent=4)
-    data_manager.save_data({'checked_flights': shared_dict},
-                           data_manager.config.data_manager.multi_scraper_output_path)
-    data_manager._reset_databases()
+    try:
+        data_manager.config.flight_data.departure_airports = None
+        data_manager.config.flight_data.destination_airports = None
+        data_manager.config.data_manager.reset_databases = False
+        data_manager.config.data_manager.use_wizz_availability_pdf = True
+        data_manager.config.data_manager.checked_flights_path = \
+            data_manager.config.data_manager.multi_scraper_output_path
+        finder = FlightFinderService()
+        finder.find_possible_one_stop_flights(max_stops=0)
+        shared_dict = manage_parallel_scraping(data_manager.get_possible_flights()['possible_flights'],
+                                               data_manager.config,
+                                               max_workers=3)
+        # with open('shared_dict.json', 'w', encoding='utf-8') as f:
+        #     json.dump(shared_dict, f, ensure_ascii=False, indent=4)
+        data_manager.save_data({'checked_flights': shared_dict},
+                               data_manager.config.data_manager.multi_scraper_output_path)
+        data_manager._reset_databases()
+
+        # Upload the output file to the server
+        # upload_file_via_ssh(
+        #     local_path=r'C:\Users\Mohammad.Al-zoubi\Documents\projects\AYCF-Flight-Finder\data\multi_scraper_output'
+        #                r'.yaml',
+        #     remote_path=r'/home/ubuntu/AYCF-Flight-Finder/data/multi_scraper_output.yaml',
+        #     hostname='18.153.206.111',
+        #     username='ubuntu',
+        #     key_path=r'C:\Users\Mohammad.Al-zoubi\.ssh\aws-ec2-new'
+        # )
+
+    except Exception as e:
+        logger.exception(f"Failed to scrape with multiprocessing: {e}")
 
 
 if __name__ == '__main__':
