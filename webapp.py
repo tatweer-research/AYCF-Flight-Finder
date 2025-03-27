@@ -361,57 +361,59 @@ with tab2:
             # Update the session state with the sorted list
             st.session_state.flight_list = flight_list
 
-            # If there's no data, show a warning
-            if 'flight_list' not in st.session_state or \
-                    ('flight_list' in st.session_state and not st.session_state.flight_list):
-                st.warning("No flights found. Try changing some of the filters.")
-            else:
-                is_round_trip = (data_manager.config.general.mode == "roundtrip")
-
-                # Now display each itinerary
-                for idx, itinerary in enumerate(st.session_state.flight_list, start=1):
-                    # st.subheader(f"Option #{idx}")  # - {'Round Trip' if is_round_trip else 'One Way'}")
-
-                    if is_round_trip:
-                        st.write("-" * 50)
-                        # For round trip: outward segments + return segments
-                        outward_segments = itinerary["outward_flight"]
-                        return_segments = itinerary["return_flight"]
-
-                        st.markdown("<strong>Outward Flight</strong>", unsafe_allow_html=True)
-                        for seg in outward_segments:
-                            banner_html = render_flight_banner(seg)
-                            st.html(banner_html)
-
-                        st.markdown("<strong>Return Flight</strong>", unsafe_allow_html=True)
-                        for seg in return_segments:
-                            banner_html = render_flight_banner(seg)
-                            st.html(banner_html)
-
-                    else:
-                        st.write("-" * 50)
-                        # One-way can have first_flight + second_flight if there's a connection
-                        first_segments = itinerary.get("first_flight", [])
-                        second_segments = itinerary.get("second_flight", None)
-
-                        # Display first_flight segments
-                        for seg in first_segments:
-                            banner_html = render_flight_banner(seg)
-                            st.html(banner_html)
-
-                        # If there's a connecting flight
-                        if second_segments:
-                            st.markdown("<em>Connecting Flight</em>", unsafe_allow_html=True)
-                            for seg in second_segments:
-                                banner_html = render_flight_banner(seg)
-                                st.html(banner_html)
-
         except NoAirportsSelected as e:
             st.error(f'Please select at least one departure or one destination airport.')
             logger.error(f'No departure airports selected.')
         except OneAirportNotSelected as e:
             st.error(f'In the case of one-stop flights you need to select both departure and destination airports.')
             logger.error(f'No destination airports selected.')
+
+
+    # If there's no data, show a warning
+    if 'flight_list' not in st.session_state or \
+            ('flight_list' in st.session_state and not st.session_state.flight_list):
+        st.warning("No flights found. Try changing some of the filters.")
+    else:
+        is_round_trip = (data_manager.config.general.mode == "roundtrip")
+
+        # Now display each itinerary
+        for idx, itinerary in enumerate(st.session_state.flight_list, start=1):
+            # st.subheader(f"Option #{idx}")  # - {'Round Trip' if is_round_trip else 'One Way'}")
+
+            if is_round_trip:
+                st.write("-" * 50)
+                # For round trip: outward segments + return segments
+                outward_segments = itinerary["outward_flight"]
+                return_segments = itinerary["return_flight"]
+
+                st.markdown("<strong>Outward Flight</strong>", unsafe_allow_html=True)
+                for seg in outward_segments:
+                    banner_html = render_flight_banner(seg)
+                    st.html(banner_html)
+
+                st.markdown("<strong>Return Flight</strong>", unsafe_allow_html=True)
+                for seg in return_segments:
+                    banner_html = render_flight_banner(seg)
+                    st.html(banner_html)
+
+            else:
+                st.write("-" * 50)
+                # One-way can have first_flight + second_flight if there's a connection
+                first_segments = itinerary.get("first_flight", [])
+                second_segments = itinerary.get("second_flight", None)
+
+                # Display first_flight segments
+                for seg in first_segments:
+                    banner_html = render_flight_banner(seg)
+                    st.html(banner_html)
+
+                # If there's a connecting flight
+                if second_segments:
+                    st.markdown("<em>Connecting Flight</em>", unsafe_allow_html=True)
+                    for seg in second_segments:
+                        banner_html = render_flight_banner(seg)
+                        st.html(banner_html)
+
 
 with tab3:
     st.header("Notify Me When New Flights Are Available")
