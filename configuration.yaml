@@ -50,6 +50,7 @@ data_manager:
   checked_flights_path: data/checked_flights.yaml
   available_flights_path: data/available_flights.yaml
   multi_scraper_output_path: data/multi_scraper_output.yaml
+  usage_logs_path: data/usage_logs.yaml
 
   use_cache: yes  # yes or no - if yes data in the database will not be scraped again
   reset_databases: yes  # yes or no - if yes, the databases will be reset
