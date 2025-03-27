@@ -1,67 +1,80 @@
-import sqlite3
-from datetime import datetime
+import os
+import yaml
+import datetime
+from threading import Lock
 
 from services.logger_service import logger
 
-
-def init_db(db_path):
-    """Create or open a database file and ensure the usage_logs table exists."""
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS usage_logs (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            timestamp TEXT NOT NULL,
-            tab TEXT,
-            stops TEXT,
-            departure_airports TEXT,
-            arrival_airports TEXT,
-            trip_type TEXT
-        )
-    """)
-    conn.commit()
-    logger.info('Finish setting up SQLite DB')
-    return conn
+# Global lock to make YAML writes thread-safe
+yaml_write_lock = Lock()
 
 
-def log_usage(tab, stops, departure_airports, arrival_airports, trip_type, db_path):
-    """Insert a row in the usage_logs table."""
-    # Convert lists to comma-separated strings (if not already strings)
+def init_db(yaml_path):
+    """
+    Ensures that the YAML file exists and starts with:
+
+        usage_logs:
+
+    so that we can append log entries to it.
+    """
+    if not os.path.exists(yaml_path):
+        with open(yaml_path, 'w', encoding='utf-8') as f:
+            f.write("usage_logs:\n")
+    logger.info('Finish setting up YAML DB')
+
+
+def log_usage(tab, stops, departure_airports, arrival_airports, trip_type, yaml_path):
+    """
+    Appends a single usage log entry to the YAML file, without re-writing the whole file.
+    """
     try:
+        # Convert lists to comma-separated strings (if not already strings)
         if isinstance(departure_airports, list):
             departure_airports = ", ".join(departure_airports)
         if isinstance(arrival_airports, list):
             arrival_airports = ", ".join(arrival_airports)
 
-        conn = sqlite3.connect(db_path)
-        cursor = conn.cursor()
+        # Prepare a chunk of valid YAML that adds one item under '- '
+        # Indent each subsequent line by at least 2 spaces for valid YAML
+        log_entry = (
+            f"- timestamp: {datetime.datetime.now(datetime.UTC).isoformat()}\n"
+            f"  tab: {tab}\n"
+            f"  stops: {stops}\n"
+            f"  departure_airports: {departure_airports}\n"
+            f"  arrival_airports: {arrival_airports}\n"
+            f"  trip_type: {trip_type}\n"
+        )
 
-        cursor.execute("""
-            INSERT INTO usage_logs (timestamp, tab, stops, departure_airports, arrival_airports, trip_type)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (
-            datetime.utcnow().isoformat(),  # e.g. 2025-03-26T15:30:12.345678
-            tab,
-            stops,
-            departure_airports,
-            arrival_airports,
-            trip_type
-        ))
+        # Acquire the lock so no two threads append at the same time
+        with yaml_write_lock:
+            # Append this log entry at the end of the file
+            with open(yaml_path, 'a', encoding='utf-8') as f:
+                f.write(log_entry)
+                f.write("\n")  # Blank line after each item for readability
 
-        conn.commit()
-        conn.close()
-        logger.debug('Saved statistics')
+        logger.debug('Saved statistics via YAML append')
     except Exception as e:
         logger.exception(f'Error while saving statistics. Original error: {e}')
 
 
-def fetch_all_logs(db_path):
-    """Fetch all rows (for debugging/inspection)."""
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
+def fetch_all_logs(yaml_path):
+    """
+    Reads the entire YAML file and returns the list under 'usage_logs'.
+    """
+    try:
+        with yaml_write_lock:
+            if not os.path.exists(yaml_path):
+                # If the file doesn't exist, nothing to return
+                return []
 
-    cursor.execute("SELECT * FROM usage_logs ORDER BY id DESC")
-    rows = cursor.fetchall()
+            with open(yaml_path, 'r', encoding='utf-8') as f:
+                data = yaml.safe_load(f)
 
-    conn.close()
-    return rows
+        # If there's no data or the structure doesn't have a usage_logs key, return empty
+        if not data or 'usage_logs' not in data:
+            return []
+        return data['usage_logs']
+
+    except Exception as e:
+        logger.exception(f'Error while reading logs. Original error: {e}')
+        return []

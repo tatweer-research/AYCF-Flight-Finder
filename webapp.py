@@ -33,7 +33,7 @@ class DuplicateJobError(Exception):
 
 
 # Initialize the DB once at app startup
-init_db(data_manager.config.data_manager.db_path)
+init_db(data_manager.config.data_manager.usage_logs_path)
 
 st.set_page_config(page_title="Wizz Flight Finder", page_icon="✈️")
 st.title("Wizz AYCF Scanner 🚀")
@@ -183,7 +183,7 @@ with tab1:
             departure_airports=departure_airports,
             arrival_airports=arrival_airports,
             trip_type=trip_type,
-            db_path=data_manager.config.data_manager.db_path
+            yaml_path=data_manager.config.data_manager.usage_logs_path
         )
 
         try:
@@ -300,7 +300,7 @@ with tab2:
             departure_airports=departure_airports,
             arrival_airports=arrival_airports,
             trip_type=trip_type,
-            db_path=data_manager.config.data_manager.db_path
+            yaml_path=data_manager.config.data_manager.usage_logs_path
         )
         try:
             # Refresh the data manager config
