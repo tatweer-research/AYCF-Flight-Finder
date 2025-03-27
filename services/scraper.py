@@ -31,12 +31,18 @@ class ScraperService:
 
     def click_anmelden(self):
         """Clicks the 'Anmelden' button to open the login form."""
-        logger.debug("Attempting to locate and click the 'Anmelden' button.")
-        anmelden_button = self.driver.find_element(By.XPATH,
-                                                   "//button[contains(@class, 'CvoHeader-loginButton') and contains(text(), 'Anmelden')]")
-        anmelden_button.click()
-        logger.info("'Anmelden' button clicked successfully.")
-        time.sleep(self.config.general.page_loading_time)
+        logger.debug("Waiting for 'Anmelden' button to be clickable.")
+        try:
+            anmelden_button = WebDriverWait(self.driver, self.config.general.page_loading_time).until(
+                EC.element_to_be_clickable(
+                    (By.XPATH, "//button[contains(@class, 'CvoHeader-loginButton') and contains(text(), 'Anmelden')]"))
+            )
+            anmelden_button.click()
+            logger.info("'Anmelden' button clicked successfully.")
+            time.sleep(self.config.general.page_loading_time)
+        except Exception as e:
+            logger.error(f"Failed to click 'Anmelden' button: {e}")
+            raise
 
     def fill_in_login_info(self):
         """Fills in login information and submits the form."""
