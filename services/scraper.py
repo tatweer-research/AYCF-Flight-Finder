@@ -353,7 +353,7 @@ class ScraperService:
             return flight_data if flight_data else None
         except Exception as e:
             logger.error(f"PID-{os.getpid()}: Error reading flight information: {e}")
-            return
+            raise
 
     def setup_browser(self):
         # services/scraper.py
@@ -447,8 +447,7 @@ class ScraperService:
         """Checks if the given flight is available."""
         logger.debug(f"Checking flight availability for {flight} on {flight_date}.")
         if data_manager.is_flight_already_checked(flight, flight_date):
-            logger.info(f"Flight {flight['airport']} -> {flight['destination']} on {flight_date} has already been "
-                        f"checked.")
+            logger.info(f"Flight {flight['airport']} -> {flight['destination']} on {flight_date} has already been checked.")
             return data_manager.get_checked_flight(flight, flight_date)
 
         if not self.is_browser_ready():
@@ -457,25 +456,40 @@ class ScraperService:
         start_time = time.time()
         start_airport = flight['airport']
         destination = flight['destination']
-        try:
-            if self.__first_run:
-                self.select_start_airport(start_airport)
-                self.select_destination_airport(destination)
-                self.select_abflugdatum(flight_date)
-                self.click_suchen()
-                self.__first_run = False
-                time.sleep(self.config.general.action_wait_time)
-            else:
-                self.select_availability_start_airport(start_airport)
-                self.select_availability_destination_airport(destination)
-                self.select_availability_abflugdatum(flight_date)
-                self.click_availability_suchen()
-                time.sleep(self.config.general.action_wait_time)
-            result = self.read_flight_information()
-            data_manager.add_checked_flight(flight, result, flight_date)
-            end_time = time.time()
-            logger.info(f"Flight availability checked in {end_time - start_time:.2f} seconds.")
-            return result
-        except Exception as e:
-            logger.error(f"Error checking flight availability: {e}")
-            return
+        attempt = 0
+        max_attempts = 2
+
+        while attempt < max_attempts:
+            try:
+                if self.__first_run:
+                    self.select_start_airport(start_airport)
+                    self.select_destination_airport(destination)
+                    self.select_abflugdatum(flight_date)
+                    self.click_suchen()
+                    self.__first_run = False
+                    time.sleep(self.config.general.action_wait_time)
+                else:
+                    self.select_availability_start_airport(start_airport)
+                    self.select_availability_destination_airport(destination)
+                    self.select_availability_abflugdatum(flight_date)
+                    self.click_availability_suchen()
+                    time.sleep(self.config.general.action_wait_time)
+
+                result = self.read_flight_information()
+                if result is not None:
+                    data_manager.add_checked_flight(flight, result, flight_date)
+                end_time = time.time()
+                logger.info(f"Flight availability checked in {end_time - start_time:.2f} seconds.")
+                return result
+            except Exception as e:
+                logger.error(f"Error checking flight availability (attempt {attempt + 1}): {e}")
+                attempt += 1
+                if attempt < max_attempts:
+                    logger.info("Retrying: Closing browser, resetting state and reinitializing...")
+                    self.driver.quit()
+                    self.__first_run = True
+                    self.__browser_ready = False
+                    self.setup_browser()
+                else:
+                    logger.error("Max retry attempts reached. Giving up.")
+                    return
