@@ -362,7 +362,6 @@ class ScraperService:
             raise
 
     def setup_browser(self):
-        # services/scraper.py
         from selenium import webdriver
         from selenium.webdriver.edge.service import Service
         from selenium.webdriver.edge.options import Options
@@ -371,34 +370,64 @@ class ScraperService:
         try:
             driver_path = self.config.general.driver_path
             options = Options()
+
+            # Stealth settings
+            user_agent = (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/121.0.0.0 Safari/537.36"
+            )
+            options.add_argument(f"user-agent={user_agent}")
+            options.add_argument("--window-size=1280,800")
+            options.add_argument("--lang=en-US,en;q=0.9")
+
+            # Optional: disable headless mode on Hetzner
             if data_manager.config.general.headless:
-                options.add_argument("--headless")  # Ensure headless mode
+                options.add_argument("--headless")
                 options.add_argument("--disable-gpu")
                 options.add_argument("--no-sandbox")
                 options.add_argument("--disable-dev-shm-usage")
 
             service = Service(driver_path)
             self.driver = webdriver.Edge(service=service, options=options)
-            self.driver.set_page_load_timeout(60)  # Set a reasonable timeout
+            self.driver.set_page_load_timeout(60)
 
             logger.info("Browser initialized successfully.")
         except Exception as e:
             logger.error(f"Failed to initialize browser: {e}")
             raise
 
-        logger.debug("Setting up the browser for scraping.")
-        # Open the Wizz Air Multipass German website
-        self.driver.get(str(self.config.account.wizzair_url))
-        self.driver.maximize_window()
-        logger.info("WizzAir All You Can Fly website is opened.")
-        time.sleep(self.config.general.page_loading_time)
+        try:
+            logger.debug("Opening WizzAir site.")
+            self.driver.get(str(self.config.account.wizzair_url))
 
-        self.click_anmelden()
-        self.fill_in_login_info()
-        self.click_flug_suchen()
-        logger.info("Website is ready for further operations.")
-        self.__browser_ready = True
-        self.__first_run = True
+            # Simulate human behavior
+            time.sleep(2)
+            self.driver.execute_script("window.scrollTo(0, 400);")
+            time.sleep(1)
+            self.driver.execute_script("window.scrollTo(0, 800);")
+            time.sleep(self.config.general.page_loading_time)
+
+            # Detect CAPTCHA
+            if "captcha" in self.driver.page_source.lower():
+                logger.error("CAPTCHA detected! Saving page and screenshot.")
+                self.driver.save_screenshot("captcha_screenshot.png")
+                with open("captcha_page.html", "w", encoding="utf-8") as f:
+                    f.write(self.driver.page_source)
+                raise Exception("Blocked by CAPTCHA")
+
+            self.driver.maximize_window()
+            self.click_anmelden()
+            self.fill_in_login_info()
+            self.click_flug_suchen()
+
+            logger.info("WizzAir site is ready.")
+            self.__browser_ready = True
+            self.__first_run = True
+
+        except Exception as e:
+            logger.error(f"Error during browser setup: {e}")
+            raise
 
     def is_browser_ready(self):
         """Returns the readiness status of the browser."""
