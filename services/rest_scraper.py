@@ -16,13 +16,10 @@ def get_session_tokens(driver):
     cookie_dict = {c['name']: c['value'] for c in cookies}
     xsrf_token = cookie_dict.get("XSRF-TOKEN")
     laravel_session = cookie_dict.get("laravel_session")
-    # logger.info("🔐 XSRF-TOKEN:", xsrf_token)
-    # logger.info("🔐 laravel_session:", laravel_session)
     return xsrf_token, laravel_session, cookie_dict
 
 
 def convert_possible_to_request_flights(possible_flights, departure_date):
-    # Convert date from 'DD-MM-YYYY' to 'YYYY-MM-DD'
     formatted_date = datetime.strptime(departure_date, "%d-%m-%Y").strftime("%Y-%m-%d")
 
     formatted_flights = []
@@ -42,7 +39,7 @@ def convert_possible_to_request_flights(possible_flights, departure_date):
     return formatted_flights
 
 
-def convert_response_to_checked_flight(flight, hash_, date, cached_flights):
+def convert_response_to_checked_flight(flight, hash_, date, checked_flights):
     # Build entry key: reference - departure date in DD-MM-YYYY
     entry_key = f"{hash_}-{date}"
 
@@ -68,9 +65,9 @@ def convert_response_to_checked_flight(flight, hash_, date, cached_flights):
     }
 
     if not checked_flights.get(entry_key):
-        cached_flights[entry_key] = [entry]
+        checked_flights[entry_key] = [entry]
     else:
-        cached_flights[entry_key] += [entry]
+        checked_flights[entry_key] += [entry]
 
 
 # Initialize services
@@ -85,8 +82,6 @@ def setup_website():
 
     # Check a dummy flight availability to generate the needed tokens
     scraper.check_direct_flight_availability(flights[0]['first_flight'], date)
-
-
 
 
 def prepare_request_data():
@@ -115,6 +110,8 @@ def prepare_request_data():
 
 
 def manage_rest_scraping():
+    logger.info("Started rest scraping ✅")
+
     setup_website()
     url, headers, cookies = prepare_request_data()
 
@@ -132,10 +129,11 @@ def manage_rest_scraping():
                     response = requests.post(url, headers=headers, cookies=cookies, json=flight)
 
                     if success_count and success_count % 40 == 0:
+                        logger.info("Pausing for 30 seconds to avoid rate limiting ⏳")
                         scraper.driver.quit()
                         time.sleep(30)
                         scraper.setup_browser()
-                        xsrf_token, laravel_session, cookie_dict = get_session_tokens(scraper.driver)
+                        url, headers, cookies = prepare_request_data()
 
                     # 🧾 Handle response
                     if response.status_code == 200 or response.status_code == 400:
@@ -162,14 +160,20 @@ def manage_rest_scraping():
                 except Exception as e:
                     logger.exception(f"Error during request: {e}")
 
-            data_manager.save_data({'checked_flights': checked_flights},
-                                   data_manager.config.data_manager.multi_scraper_output_path)
+        data_manager.save_data({'checked_flights': checked_flights},
+                               data_manager.config.data_manager.multi_scraper_output_path)
     finally:
         logger.info("Completed availability check for all possible flights ✅")
 
         # Close the browser
         time.sleep(5)
         scraper.driver.quit()
+        data_manager._reset_databases()
 
 
-manage_rest_scraping()
+while True:
+    try:
+        manage_rest_scraping()
+        time.sleep(30)
+    except Exception as e:
+        logger.exception(f"Error during scraping: {e}")
