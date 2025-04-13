@@ -92,6 +92,7 @@ Athen (ATH):
 Bacău (BCM):
     - London Luton (LTN)
     - Mailand Bergamo (BGY)
+    - Mailand Malpensa (MXP)
     - Rom Fiumicino (FCO)
 Baku (GYD):
     - Abu Dhabi (AUH)
@@ -596,6 +597,7 @@ Dschidda (JED):
 Dubai (DXB):
     - Budapest (BUD)
     - Bukarest H. Coanda (OTP)
+    - Wien (VIE)
 Dubrovnik (DBV):
     - Warschau Chopin (WAW)
 Eindhoven (EIN):
@@ -629,6 +631,7 @@ Flughafen Venedig-Tessera Marco Polo (VCE):
     - London Gatwick (LGW)
     - Madrid (MAD)
     - Prag (PRG)
+    - Skopje (SKP)
     - Teneriffa (Kanarische Inseln) (TFS)
     - Warschau Chopin (WAW)
 Frankfurt-Hahn (HHN):
@@ -1033,6 +1036,7 @@ Mailand Malpensa (MXP):
     - Abu Dhabi (AUH)
     - Amman (AMM)
     - Athen (ATH)
+    - Bacău (BCM)
     - Barcelona El Prat (BCN)
     - Budapest (BUD)
     - Bukarest H. Coanda (OTP)
@@ -1061,6 +1065,7 @@ Mailand Malpensa (MXP):
     - Scharm El-Scheich (SSH)
     - Skiathos (JSI)
     - Skopje (SKP)
+    - Suceava (SCV)
     - Tallinn (TLL)
     - Tel Aviv (TLV)
     - Teneriffa (Kanarische Inseln) (TFS)
@@ -1377,10 +1382,13 @@ Rom Fiumicino (FCO):
     - Scharm El-Scheich (SSH)
     - Sevilla (SVQ)
     - Skiathos (JSI)
+    - Skopje (SKP)
     - Sofia (SOF)
     - Split (SPU)
+    - Suceava (SCV)
     - Tel Aviv (TLV)
     - Teneriffa (Kanarische Inseln) (TFS)
+    - Timișoara (TSR)
     - Tirana (TIA)
     - Valencia (VLC)
     - Vilnius (VNO)
@@ -1460,6 +1468,7 @@ Skopje (SKP):
     - Budapest (BUD)
     - Dortmund (DTM)
     - Eindhoven (EIN)
+    - Flughafen Venedig-Tessera Marco Polo (VCE)
     - Frankfurt-Hahn (HHN)
     - Friedrichshafen (FDH)
     - Göteborg Landvetter (GOT)
@@ -1478,6 +1487,7 @@ Skopje (SKP):
     - Oslo Sandefjord Torp (TRF)
     - Paris Beauvais (BVA)
     - Rom Ciampino (CIA)
+    - Rom Fiumicino (FCO)
     - Salzburg (SZG)
     - Stockholm Skavsta (NYO)
     - Stuttgart (STR)
@@ -1577,8 +1587,10 @@ Suceava (SCV):
     - Dortmund (DTM)
     - London Luton (LTN)
     - Mailand Bergamo (BGY)
+    - Mailand Malpensa (MXP)
     - Memmingen/München-West (FMM)
     - Rom Ciampino (CIA)
+    - Rom Fiumicino (FCO)
 Tallinn (TLL):
     - London Luton (LTN)
     - Mailand Malpensa (MXP)
@@ -1631,7 +1643,7 @@ Timișoara (TSR):
     - Mailand Bergamo (BGY)
     - Memmingen/München-West (FMM)
     - Paris Beauvais (BVA)
-    - Rom Ciampino (CIA)
+    - Rom Fiumicino (FCO)
     - Valencia (VLC)
     - Venedig Treviso (TSF)
     - Zakynthos (ZTH)
@@ -1693,6 +1705,7 @@ Tirana (TIA):
     - Wien (VIE)
 Triest (TRS):
     - Bukarest H. Coanda (OTP)
+    - Rom Fiumicino (FCO)
     - Tirana (TIA)
 Tromsø (TOS):
     - Bukarest H. Coanda (OTP)
@@ -1841,6 +1854,7 @@ Wien (VIE):
     - Chisinau (RMO)
     - Cluj-Napoca (CLJ)
     - Dschidda (JED)
+    - Dubai (DXB)
     - Hurghada (HRG)
     - Jerewan (EVN)
     - Korfu (CFU)
