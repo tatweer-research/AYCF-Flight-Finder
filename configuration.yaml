@@ -61,7 +61,7 @@ reporter:
   logo_path: data/logo.png
 
 scraper:
-  initialize_driver: yes  # yes or no - if no, the driver will not be initialized
+  initialize_driver: no  # yes or no - if no, the driver will not be initialized
 
 
 emailer:
