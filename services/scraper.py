@@ -492,7 +492,7 @@ class ScraperService:
         start_airport = flight['airport']
         destination = flight['destination']
         attempt = 0
-        max_attempts = 2
+        max_attempts = 1
 
         while attempt < max_attempts:
             try:
