@@ -60,7 +60,7 @@ def round_trip_workflow():
     finally:
         # Close the browser
         time.sleep(5)
-        data_manager.driver.quit()
+        scraper.driver.quit()
 
 
 def one_way_workflow():
@@ -116,7 +116,7 @@ def one_way_workflow():
     finally:
         # Close the browser
         time.sleep(5)
-        data_manager.driver.quit()
+        scraper.driver.quit()
 
 
 def check_possible_flights_workflow(mode='roundtrip', save_data=True, max_stops=1):
