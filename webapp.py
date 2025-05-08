@@ -45,7 +45,7 @@ st.markdown(
 create_header()
 
 # Create tabs
-tab1, tab2, tab3 = st.tabs([PDF_REPORT_TAB_NAME, f"{IMMEDIATE_RESULTS_TAB_NAME} (Beta)", f"{NOTIFY_ME_TAB_NAME} (Coming Soon)"])
+tab2, tab1, tab3 = st.tabs([f"{IMMEDIATE_RESULTS_TAB_NAME} (Beta)", PDF_REPORT_TAB_NAME, f"{NOTIFY_ME_TAB_NAME} (Coming Soon)"])
 
 
 def get_new_config(no_email=False) -> ConfigSchema:
