@@ -13,6 +13,7 @@ from services.data_manager import data_manager
 from services.logging_statistics import init_db, log_usage
 from settings import ConfigSchema
 from utils import render_flight_banner, get_last_modification_datetime, create_footer, create_header
+from captcha import display_captcha, validate_captcha, CaptchaError, CaptchaNotSetError, CaptchaIncorrectError
 
 
 PDF_REPORT_TAB_NAME = "PDF Report"
@@ -297,7 +298,11 @@ with tab2:
 
     # st.info(f"Data last updated: {st.session_state.last_scraper_output_mod_time.strftime('%Y-%m-%d %H:%M:%S')}",
     #         icon="ℹ️")
-
+    
+    # Add captcha verification
+    st.subheader("Verification")
+    display_captcha()
+    
     if st.button('Search', key="tab2_button_submit"):
         log_usage(
             tab=IMMEDIATE_RESULTS_TAB_NAME,
@@ -308,6 +313,9 @@ with tab2:
             yaml_path=data_manager.config.data_manager.usage_logs_path
         )
         try:
+            # Validate captcha first
+            validate_captcha()
+            
             # Refresh the data manager config
             data_manager._reset_databases()
             data_manager.load_config()
@@ -416,7 +424,13 @@ with tab2:
             logger.error(f'No departure airports selected.')
         except OneAirportNotSelected as e:
             st.error(f'In the case of one-stop flights you need to select both departure and destination airports.')
-            logger.error(f'No destination airports selected.')
+            logger.error(f'One airport not selected when one-stop is chosen.')
+        except CaptchaNotSetError as e:
+            st.error(f'Please enter the captcha code.')
+            logger.error(f'Captcha not entered.')
+        except CaptchaIncorrectError as e:
+            st.error(f'Incorrect captcha. Please try again.')
+            logger.error(f'Incorrect captcha entered.')
 
 with tab3:
     st.header("Notify Me When New Flights Are Available")
