@@ -99,6 +99,8 @@ class ReporterConfig(BaseModel):
 
 class ScraperConfig(BaseModel):
     initialize_driver: bool
+    session_uuid: str = "0ee15f1c-1bbf-41de-b89b-95c4e7040a46"  # Default value
+    xsrf_token: str = "eyJpdiI6ImhXWmJZNG5VSEVuR1I1cnRzQ1RWaVE9PSIsInZhbHVlIjoic3Y4VThiQnJhUldxM0hjeXllM0NubHd5Z2ZTZlEzVys3N05rY3I5aGJsZExFVjk5NnNQYjNyUUVlMXRWRWdQVFBkaVhvYzlIdHBIRlZ3WStTemFheXc9PSIsIm1hYyI6IjAxOThiYjQ3MWMzNDQzZDVkMDJkYjkyODkyYjU5MTJiNjU0ZTIzNzk5ZTY5NmQ2MGEyMmUyMDgzM2Y2YzgyMTYifQ=="  # Default value
 
 
 class EmailerConfig(BaseModel):
