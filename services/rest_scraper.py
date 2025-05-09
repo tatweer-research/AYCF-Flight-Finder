@@ -175,10 +175,10 @@ def manage_rest_scraping():
         scraper.driver.quit()
         data_manager._reset_databases()
 
-
-while True:
-    try:
-        manage_rest_scraping()
-        time.sleep(30)
-    except Exception as e:
-        logger.exception(f"Error during scraping: {e}")
+if __name__ == '__main__':
+    while True:
+        try:
+            manage_rest_scraping()
+            time.sleep(30)
+        except Exception as e:
+            logger.exception(f"Error during scraping: {e}")
