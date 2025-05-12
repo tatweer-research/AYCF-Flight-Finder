@@ -20,7 +20,7 @@ def init_db(yaml_path):
     if not os.path.exists(yaml_path):
         with open(yaml_path, 'w', encoding='utf-8') as f:
             f.write("usage_logs:\n")
-    logger.info('Finish setting up YAML DB')
+        logger.info('Finish setting up YAML DB')
 
 
 def log_usage(tab, stops, departure_airports, arrival_airports, trip_type, yaml_path):
