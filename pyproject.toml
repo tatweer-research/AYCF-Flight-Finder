@@ -5,6 +5,7 @@ description = "A web app that helps WizzAir All You Can Fly (AYCF) pass holders 
 requires-python = ">=3.11"
 dependencies = [
     "email-validator==2.2.0",
+    "opencv-python-headless>=4.11.0.86",
     "paramiko>=3.5.1",
     "pathlib==1.0.1",
     "pdfplumber>=0.11.5",

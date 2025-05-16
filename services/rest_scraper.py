@@ -87,7 +87,7 @@ def setup_website():
 def prepare_request_data():
     xsrf_token, laravel_session, _ = get_session_tokens(scraper.driver)
     # 🔗 Endpoint URL (UUID must match the session)
-    session_uuid = "b128d7ef-d1e5-4b7a-aa5e-6e66fc5e4e73"
+    session_uuid = data_manager.config.scraper.session_uuid
     base_url = "https://multipass.wizzair.com"
     url = f"{base_url}/de/w6/subscriptions/json/availability/{session_uuid}"
     # 📄 Headers with new X-XSRF-TOKEN
@@ -97,7 +97,7 @@ def prepare_request_data():
         "Content-Type": "application/json",
         "Origin": "https://multipass.wizzair.com",
         "Referer": scraper.driver.current_url,
-        "X-XSRF-TOKEN": "eyJpdiI6InlGaE9ERHNFNmhUbFg2YmJxOGhraHc9PSIsInZhbHVlIjoiVFwvTWRrYnUwM0UxRnMwempOY280dE9COGNCUlFNWU1HdmQ3eGNHRTdPbUN6ZGVGSTF3TThwcEhzaWkzeVNqbXhCUjdTYWs0Y2RBdm9HY2xlR2lrVDlBPT0iLCJtYWMiOiI0M2NjNDYyNDhhMjY0ZDA3ZjBiNDFkMzAzMDQxZGM0YWMxZDg0MGI2OGZhNThjZWEyYWIyYTgyY2Q0ODcyM2RiIn0="
+        "X-XSRF-TOKEN": data_manager.config.scraper.xsrf_token
     }
     # 🍪 Cookies
     cookies = {
@@ -175,10 +175,10 @@ def manage_rest_scraping():
         scraper.driver.quit()
         data_manager._reset_databases()
 
-
-while True:
-    try:
-        manage_rest_scraping()
-        time.sleep(30)
-    except Exception as e:
-        logger.exception(f"Error during scraping: {e}")
+if __name__ == '__main__':
+    while True:
+        try:
+            manage_rest_scraping()
+            time.sleep(30)
+        except Exception as e:
+            logger.exception(f"Error during scraping: {e}")
