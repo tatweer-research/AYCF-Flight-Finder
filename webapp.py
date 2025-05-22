@@ -13,7 +13,7 @@ from services.data_manager import data_manager
 from services.logging_statistics import init_db, log_usage
 from settings import ConfigSchema
 from utils import render_flight_banner, get_last_modification_datetime, create_footer, create_header
-from captcha import display_captcha, validate_captcha, CaptchaError, CaptchaNotSetError, CaptchaIncorrectError
+# from captcha import display_captcha, validate_captcha, CaptchaError, CaptchaNotSetError, CaptchaIncorrectError
 
 
 PDF_REPORT_TAB_NAME = "PDF Report"
@@ -301,7 +301,7 @@ with tab2:
     
     # Add captcha verification
     st.subheader("Verification")
-    display_captcha()
+    # display_captcha()
     
     if st.button('Search', key="tab2_button_submit"):
         log_usage(
@@ -314,7 +314,7 @@ with tab2:
         )
         try:
             # Validate captcha first
-            validate_captcha()
+            # validate_captcha()
             
             # Refresh the data manager config
             data_manager._reset_databases()
@@ -380,12 +380,12 @@ with tab2:
         except OneAirportNotSelected as e:
             st.error(f'In the case of one-stop flights you need to select both departure and destination airports.')
             logger.error(f'One airport not selected when one-stop is chosen.')
-        except CaptchaNotSetError as e:
-            st.error(f'Please enter the captcha code.')
-            logger.error(f'Captcha not entered.')
-        except CaptchaIncorrectError as e:
-            st.error(f'Incorrect captcha. Please try again.')
-            logger.error(f'Incorrect captcha entered.')
+        # except CaptchaNotSetError as e:
+        #     st.error(f'Please enter the captcha code.')
+        #     logger.error(f'Captcha not entered.')
+        # except CaptchaIncorrectError as e:
+        #     st.error(f'Incorrect captcha. Please try again.')
+        #     logger.error(f'Incorrect captcha entered.')
 
 
     # If there's no data, show a warning
