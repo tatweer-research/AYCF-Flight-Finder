@@ -300,7 +300,7 @@ with tab2:
     #         icon="ℹ️")
     
     # Add captcha verification
-    st.subheader("Verification")
+    # st.subheader("Verification")
     # display_captcha()
     
     if st.button('Search', key="tab2_button_submit"):
