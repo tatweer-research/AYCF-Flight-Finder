@@ -37,7 +37,7 @@ class DuplicateJobError(Exception):
 init_db(data_manager.config.data_manager.usage_logs_path)
 
 st.set_page_config(page_title="Wizz Flight Finder", page_icon="✈️")
-st.title("Wizz AYCF Scanner 🚀")
+st.title("Wizz AYCF Flight Finder 🚀")
 st.markdown(
     '<small>An app by <a href="https://tatweer.network/" target="_blank" style="text-decoration: none; color: #4A90E2;">Tatweer®</a></small>',
     unsafe_allow_html=True
@@ -300,7 +300,7 @@ with tab2:
     #         icon="ℹ️")
     
     # Add captcha verification
-    st.subheader("Verification")
+    # st.subheader("Verification")
     # display_captcha()
     
     if st.button('Search', key="tab2_button_submit"):
