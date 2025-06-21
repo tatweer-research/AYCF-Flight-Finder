@@ -630,6 +630,12 @@ def create_header():
         unsafe_allow_html=True
     )
     st.write("\n")
+    st.markdown(
+        '<div style="color: gray; font-size: 0.85rem;">Interested in buying the source code and scraping method? '
+        'Contact us at <a href="mailto:contact@tatweer.network">contact@tatweer.network</a></div>',
+        unsafe_allow_html=True
+    )
+    st.write("\n")
 
 
 def create_footer():
