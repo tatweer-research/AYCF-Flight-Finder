@@ -1,6 +1,6 @@
 [theme]
-primaryColor = "#6015e8"
-backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F1EDFD"
-textColor = "#000000"
-#font = "monospace"
+primaryColor = "#C90076"              # Vivid magenta – matches banner left
+backgroundColor = "#FFF8FC"           # Soft blush – clean, inviting
+secondaryBackgroundColor = "#F4E8FF"  # Pale lavender – from banner right
+textColor = "#2D0039"                 # Deep plum – readable, elegant
+#font = "sans serif"
