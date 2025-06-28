@@ -150,9 +150,10 @@ def manage_rest_scraping():
                         continue
                     # After a certain number of successes, pause to avoid rate limiting
                     if success_count and success_count % 40 == 0:
-                        logger.info("Pausing for 30 seconds to avoid rate limiting ⏳")
+                        wait_time = data_manager.config.general.rate_limit_wait_time
+                        logger.info(f"Pausing for {wait_time} seconds to avoid rate limiting ⏳")
                         scraper.driver.quit()
-                        time.sleep(30)
+                        time.sleep(wait_time)
                         scraper.setup_browser()
                         url, headers, cookies = prepare_request_data()
                     success_count += 1
