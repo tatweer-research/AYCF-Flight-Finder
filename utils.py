@@ -664,7 +664,7 @@ def render_flight_banner(segment: Mapping[str, Any]) -> None:
 
     # Meta-info grid
     meta_items = [
-        ("Carrier", segment.get("carrier")),
+        # ("Carrier", segment.get("carrier")),
         ("Duration", segment.get("duration")),
         ("Price", segment.get("price")),
     ]
