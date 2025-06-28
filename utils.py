@@ -1,12 +1,19 @@
+from __future__ import annotations
+
 import os
 import re
 from datetime import datetime, timedelta
-# import paramiko
-# from scp import SCPClient
-# from paramiko import RSAKey
+from functools import lru_cache
+from typing import Any, Dict, Mapping
 
 import pytz
 import streamlit as st
+import yaml
+
+
+# import paramiko
+# from scp import SCPClient
+# from paramiko import RSAKey
 
 
 def increment_date(date_str, days=1):
@@ -513,155 +520,199 @@ def parse_destination_line(line):
 # ------------------------------
 # Helper function for building HTML for each flight segment
 # ------------------------------
-import streamlit as st
-import yaml
-import os
-from functools import lru_cache
+"""utils.py – helper functions for the Wizz Streamlit UI
 
-# Path to the YAML that ships with the project
-DATA_PATH = "data/city_country_map.yaml"
+This version restores the original (pre‑refactor) **extension‑style** flight card you
+preferred while retaining automatic country‑flag detection via the bundled YAML.
+
+All imports now appear *after* the module docstring but *before* any other code so that
+`from __future__ import annotations` sits in the legally required position.
+
+Place `data/city_country_map.yaml` at the repository root (next to `webapp.py`).
+"""
+
+# ---------------------------------------------------------------------------
+# Data helpers
+# ---------------------------------------------------------------------------
+
+# Path to the YAML shipped with the project (../data relative to this file)
+DATA_PATH = r"data/city_country_map.yaml"
+
 
 
 @lru_cache(maxsize=1)
-def _city_to_country() -> dict:
-    """Lazy‑load *city → ISO‑3166‑1 alpha‑2* mapping.
-
-    If the file is missing we degrade gracefully by returning an empty
-    dict so the banner simply omits the flag instead of crashing.
-    """
+def _city_to_country() -> Mapping[str, str]:
+    """Lazy‑load *city → ISO‑3166‑1 alpha‑2* mapping from the YAML file."""
     try:
-        with open(DATA_PATH, "r", encoding="utf-8") as fh:
-            return yaml.safe_load(fh) or {}
+        with open(DATA_PATH, "r", encoding="utf-8") as f:
+            raw: dict[str, str] = yaml.safe_load(f) or {}
     except FileNotFoundError:
         return {}
+    return {city.lower(): code.upper() for city, code in raw.items()}
 
 
-def _iso_to_flag(iso: str | None) -> str:
-    """Convert a two‑letter ISO country code into its Unicode flag.
+# ---------------------------------------------------------------------------
+# Flag helpers
+# ---------------------------------------------------------------------------
 
-    Returns *empty string* when *iso* is ``None`` or malformed so callers
-    can safely concatenate the result without extra guards.
-    """
-    if not iso or len(iso) != 2:
+def _iso_to_flag(country_code: str | None) -> str:
+    """Return a 🇦🇪‑style flag emoji from a two‑letter ISO code or empty string."""
+    if not country_code or len(country_code) != 2 or not country_code.isalpha():
         return ""
-    iso = iso.upper()
-    return chr(ord(iso[0]) + 127397) + chr(ord(iso[1]) + 127397)
+    cc = country_code.upper()
+    return chr(ord(cc[0]) + 127397) + chr(ord(cc[1]) + 127397)
 
 
-def _city_to_flag(city: str) -> str:
-    """Look up *city* → *ISO* → flag. Empty string on failure."""
-    return _iso_to_flag(_city_to_country().get(city))
+def _city_to_flag(city: str | None) -> str:
+    """Best-effort city → flag lookup using the YAML mapping."""
+    if not city:
+        return ""
+    code = _city_to_country().get(city.lower())
+    return _iso_to_flag(code)
 
 
 # ---------------------------------------------------------------------------
-# PUBLIC API
+# CSS: gradient border, tidy card layout, mobile‑friendly route line
 # ---------------------------------------------------------------------------
 
-def render_flight_banner(segment: dict) -> None:  # noqa: C901  (function is mostly HTML)
-    """Render a single flight *segment* in the Streamlit app.
+CARD_CSS = """
+<style>
+.wizz-card {
+  background: linear-gradient(128deg, #c90076 0%, #510077 100%);
+  border-radius: 1rem;
+  padding: 1px;
+  margin-bottom: 1.25rem;
+}
+.wizz-inner {
+  background: #ffffff;
+  border-radius: 0.9rem;
+  padding: 1rem 1.25rem;
+  font-family: system-ui, sans-serif;
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+.wizz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: .65rem;
+  font-weight: 600;
+  color: #510077;
+}
+.wizz-route {
+  font-size: 1.17rem;
+  font-weight: 500;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .35rem;
+  margin-top: .2rem;
+  margin-bottom: .9rem;
+}
+.wizz-route .city  { white-space: nowrap; }
+.wizz-route .arrow { flex: 0 0 auto; }
 
-    The layout mirrors the card used in the browser extension and adds
-    automatic flag detection via the *city_country_map.yaml* file.
+.wizz-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: .25rem .75rem;
+  font-size: .9rem;
+  color: #4b5563;
+}
+.wizz-meta span:nth-child(odd) { font-weight: 500; }
+</style>
+"""
 
-    Parameters
-    ----------
-    segment : dict
-        Example structure::
 
-            {
-              "date": "Mon 23, June 2025",
-              "departure": {"city": "Abu Dhabi", "time": "07:15", "timezone": "UTC+4"},
-              "arrival":   {"city": "Almaty",   "time": "12:35", "timezone": "UTC+5"},
-              "duration": "05h 20m",
-              "flight_code": "5W7169",
-              "carrier": "Operated by 5W",   # optional
-              "price": "AED 42.00"           # optional
-            }
-    """
+# ---------------------------------------------------------------------------
+# Main renderer used by the Streamlit UI
+# ---------------------------------------------------------------------------
 
-    dep = segment["departure"]
-    arr = segment["arrival"]
+def render_flight_banner(segment: Mapping[str, Any]) -> None:
+    """Render a single flight segment as a **Wizz‑style** card."""
+    dep = segment.get("departure", {})
+    arr = segment.get("arrival", {})
 
-    dep_flag = _iso_to_flag(dep.get("country_code")) or _city_to_flag(dep["city"])
-    arr_flag = _iso_to_flag(arr.get("country_code")) or _city_to_flag(arr["city"])
+    def _line(city_dict: Mapping[str, str]) -> str:
+        """Compose one side of the route with flag, city, time, and timezone."""
+        flag = _iso_to_flag(city_dict.get("country_code")) or _city_to_flag(
+            city_dict.get("city")
+        )
+        city = city_dict.get("city", "?")
+        time = city_dict.get("time", "??:??")
+        tz = city_dict.get("timezone")
+        tz_part = f" <small>({tz})</small>" if tz else ""
+        return f"{flag}&nbsp;{city}&nbsp;<strong>{time}</strong>{tz_part}"
 
-    card_css = (
-        "background:#fff;border:1px solid #e4e4e7;border-radius:0.75rem;"
-        "box-shadow:0 1px 4px rgba(0,0,0,.07);padding:0;overflow:hidden;"
+    html_parts: list[str] = [CARD_CSS, "<div class='wizz-card'><div class='wizz-inner'>"]
+
+    # Header row
+    html_parts.append(
+        f"<div class='wizz-header'>"
+        f"<span>{segment.get('date', '')}</span>"
+        f"<span>{segment.get('flight_code', '')}</span>"
+        f"</div>"
     )
-    header_css = (
-        "background:linear-gradient(90deg,#c90076 0%,#20006d 100%);color:#fff;"
-        "padding:0.5rem 0.8rem;font-weight:600;"
-    )
-    body_css = "padding:0.8rem 1rem;font-size:0.9rem;"
 
-    st.markdown(f"<div style='{card_css}'>", unsafe_allow_html=True)
-
-    # ---------------- Header ------------------------------------------------
-    header_text = f"✈️ {dep_flag} {dep['city']} ➜ {arr_flag} {arr['city']}"
-    st.markdown(f"<div style='{header_css}'>{header_text}</div>", unsafe_allow_html=True)
-
-    # ---------------- Body --------------------------------------------------
-    price_html = (
-        f"<span style='font-weight:600;color:#c90076;'>{segment['price']}</span>"
-        if segment.get("price")
-        else ""
+    # Route line (flag city → flag city)
+    html_parts.append(
+        "<div class='wizz-route'>"
+        f"<span class='city'>{_line(dep)}</span>"
+        f"<span class='arrow'>&rarr;</span>"
+        f"<span class='city'>{_line(arr)}</span>"
+        "</div>"
     )
 
-    carrier_html = (
-        f"<div style='margin-top:0.2rem;color:#71717a;'>{segment['carrier']}</div>"
-        if segment.get("carrier")
-        else ""
-    )
+    # Meta-info grid
+    meta_items = [
+        ("Carrier", segment.get("carrier")),
+        ("Duration", segment.get("duration")),
+        ("Price", segment.get("price")),
+    ]
+    html_parts.append("<div class='wizz-meta'>")
+    for label, value in meta_items:
+        if value and str(value).lower() != "none":
+            html_parts.append(f"<span>{label}</span><span>{value}</span>")
+    html_parts.append("</div></div></div>")  # /wizz-meta, /inner, /card
 
-    body_html = f"""<div style='{body_css}'>
-        <div><strong>{segment['date']}</strong></div>
-        <div style='display:flex;justify-content:space-between;margin-top:0.4rem;'>
-            <span>{dep['time']} {dep['timezone']} → {arr['time']} {arr['timezone']}</span>
-            <span>{segment['duration']}</span>
-        </div>
-        <div style='display:flex;justify-content:space-between;margin-top:0.2rem;'>
-            <span>{segment.get('flight_code','')}</span>
-            {price_html}
-        </div>
-        {carrier_html}
-    </div>"""
-
-    st.markdown(body_html, unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("\n".join(html_parts), unsafe_allow_html=True)
 
 
-def get_last_modification_datetime(path: str):
-    # Get the last modification timestamp
-    mod_time = os.path.getmtime(path)
+# ---------------------------------------------------------------------------
+# Misc utility used elsewhere in the project
+# ---------------------------------------------------------------------------
 
-    # Convert timestamp to a human-readable datetime format
-    return datetime.fromtimestamp(mod_time)
+def get_last_modification_datetime(path: str) -> datetime:
+    """Return the *datetime* of last modification for *path*."""
+    return datetime.fromtimestamp(os.path.getmtime(path))
 
 
-def create_header():
+def create_header() -> None:  # pragma: no cover
+    """Render the WhatsApp‑group promo + contact line."""
     import base64
-    # Load and encode the image
+
     with open("data/whatsapp.webp", "rb") as image_file:
         encoded_image = base64.b64encode(image_file.read()).decode()
-    # Render the HTML with partial clickable text
+
     st.markdown(
-        f'''
-    <div style="display: flex; align-items: center;">
-        <img src="data:image/webp;base64,{encoded_image}" width="24" style="margin-right: 8px;" />
-        <span><strong>Join our </strong>
-        <a href="https://chat.whatsapp.com/CHvgbPvqRcbJS0E6D4O8ka" target="_blank" style="text-decoration: none;">
-            <strong>WhatsApp group</strong>
-        </a></span>
+        f"""
+    <div style='display:flex;align-items:center;'>
+      <img src='data:image/webp;base64,{encoded_image}' width='24' style='margin-right:8px;' />
+      <span><strong>Join our </strong>
+      <a href='https://chat.whatsapp.com/CHvgbPvqRcbJS0E6D4O8ka' target='_blank' style='text-decoration:none;'>
+        <strong>WhatsApp group</strong></a></span>
     </div>
-    ''',
-        unsafe_allow_html=True
+    """,
+        unsafe_allow_html=True,
     )
+
     st.write("\n")
     st.markdown(
-        '<div style="color: gray; font-size: 0.85rem;">Interested in buying the source code and scraping method? '
-        'Contact us at <a href="mailto:contact@tatweer.network">contact@tatweer.network</a></div>',
-        unsafe_allow_html=True
+        (
+            "<div style='color:gray;font-size:0.85rem;'>Interested in buying the "
+            "source code and scraping method? Contact us at "
+            "<a href='mailto:contact@tatweer.network'>contact@tatweer.network</a></div>"
+        ),
+        unsafe_allow_html=True,
     )
     st.write("\n")
 
