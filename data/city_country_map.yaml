@@ -2,7 +2,9 @@ Aberdeen: GB
 Abu Dhabi: AE
 Agadir: MA
 Alexandria: EG
+Alexandria (Burg al-ʿArab): EG
 Alghero: IT
+Alghero (Sardinien): IT
 Alicante: ES
 Almaty: KZ
 Amman: JO
@@ -36,10 +38,15 @@ Bucharest Baneasa: RO
 Budapest: HU
 Bukarest H. Coanda: RO
 Burgas: BG
+Burgas (Schwarzes Meer): BG
 Cairo: EG
+Cairo (Sphinx): EG
 Castellón: ES
+Castellón (Valencia): ES
 Catania: IT
+Catania (Sizilien): IT
 Chania: GR
+Chania (Kreta): GR
 Chisinau: MD
 Cluj-Napoca: RO
 Comiso: IT
@@ -60,17 +67,20 @@ Flughafen Venedig-Tessera Marco Polo: IT
 Frankfurt-Hahn: DE
 Friedrichshafen: DE
 Fuerteventura: ES
+Fuerteventura (Kanarische Inseln): ES
 Gabala: AZ
 Genf: CH
 Genua: IT
 Girona: ES
 Glasgow: GB
 Gran Canaria: ES
+Gran Canaria (Kanarische Inseln): ES
 Grenoble: FR
 Göteborg Landvetter: SE
 Hamburg: DE
 Haugesund: 'NO'
 Heraklion: GR
+Heraklion (Kreta): GR
 Hurghada: EG
 Iași: RO
 Ibiza: ES
@@ -107,6 +117,7 @@ Malaga: ES
 Malmö: SE
 Malta: MT
 Malé: MV
+Malé (Malediven): MV
 Marrakesch: MA
 Marsa Alam: EG
 Maskat: OM
@@ -119,6 +130,7 @@ Niš: RS
 Nürnberg: DE
 Ohrid: MK
 Olbia: IT
+Olbia (Sardinien): IT
 Olsztyn-Mazury: PL
 Oslo Gardermoen: 'NO'
 Oslo Sandefjord Torp: 'NO'
@@ -130,6 +142,7 @@ Paris-Orly: FR
 Perugia: IT
 Pescara: IT
 Pisa: IT
+Pisa (Toskana): IT
 Plowdiw: BG
 Podgorica: ME
 Poprad-Tatry: SK
@@ -160,6 +173,7 @@ Satu Mare: RO
 Scharm El-Scheich: EG
 Sevilla: ES
 Sibiu: RO
+Sibiu (Hermannstadt): RO
 Skiathos: GR
 Skopje: MK
 Sofia: BG
@@ -175,6 +189,7 @@ Tallinn: EE
 Taschkent: UZ
 Tel Aviv: IL
 Teneriffa: ES
+Teneriffa (Kanarische Inseln): ES
 Thessaloniki: GR
 Timișoara: RO
 Tirana: AL
@@ -191,6 +206,7 @@ Venedig Treviso: IT
 Verona: IT
 Vilnius: LT
 Warna: BG
+Warna (Schwarzes Meer): BG
 Warschau Chopin: PL
 Wien: AT
 Zakynthos: GR
