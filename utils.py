@@ -513,94 +513,122 @@ def parse_destination_line(line):
 # ------------------------------
 # Helper function for building HTML for each flight segment
 # ------------------------------
-def render_flight_banner(segment):
+import streamlit as st
+import yaml
+import os
+from functools import lru_cache
+
+# Path to the YAML that ships with the project
+DATA_PATH = "data/city_country_map.yaml"
+
+
+@lru_cache(maxsize=1)
+def _city_to_country() -> dict:
+    """Lazy‑load *city → ISO‑3166‑1 alpha‑2* mapping.
+
+    If the file is missing we degrade gracefully by returning an empty
+    dict so the banner simply omits the flag instead of crashing.
     """
-    Renders a single flight segment in a 'banner' style with brand-themed colors.
+    try:
+        with open(DATA_PATH, "r", encoding="utf-8") as fh:
+            return yaml.safe_load(fh) or {}
+    except FileNotFoundError:
+        return {}
+
+
+def _iso_to_flag(iso: str | None) -> str:
+    """Convert a two‑letter ISO country code into its Unicode flag.
+
+    Returns *empty string* when *iso* is ``None`` or malformed so callers
+    can safely concatenate the result without extra guards.
     """
-    # Extract segment data
-    carrier = segment.get("carrier", "Unknown Carrier")
-    flight_code = segment.get("flight_code", "N/A")
-    duration = segment.get("duration", "N/A")
-    price = segment.get("price", "N/A")
-    date = segment.get("date", "N/A")
+    if not iso or len(iso) != 2:
+        return ""
+    iso = iso.upper()
+    return chr(ord(iso[0]) + 127397) + chr(ord(iso[1]) + 127397)
 
-    dep_city = segment["departure"].get("city", "N/A")
-    dep_time = segment["departure"].get("time", "N/A")
-    dep_tz = segment["departure"].get("timezone", "")
 
-    arr_city = segment["arrival"].get("city", "N/A")
-    arr_time = segment["arrival"].get("time", "N/A")
-    arr_tz = segment["arrival"].get("timezone", "")
+def _city_to_flag(city: str) -> str:
+    """Look up *city* → *ISO* → flag. Empty string on failure."""
+    return _iso_to_flag(_city_to_country().get(city))
 
-    html_code = f"""
-        <div style="
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            max-width: 600px;
-            margin: 1rem 0;
-            border-radius: 10px;
-            overflow: hidden;
-            background: #ffffff;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.08);
-            font-family: 'Arial', sans-serif;
-        ">
-            <div style="
-                background: #6015e8;
-                color: white;
-                padding: 0.8rem 1.2rem;
-                font-size: 1.1rem;
-                font-weight: bold;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            ">
-                <span>{date}</span>
-            </div>
-            <div style="
-                display: flex;
-                justify-content: space-between;
-                padding: 1rem;
-            ">
-                <div style="text-align: left;">
-                    <div style="font-size: 1rem; font-weight: bold; color: #333;">
-                        ✈ {dep_city} ({dep_tz})
-                    </div>
-                    <div style="font-size: 1.2rem; color: #6015e8;">
-                        {dep_time}
-                    </div>
-                </div>
-                <div style="
-                    text-align: center;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    color: #888;
-                ">
-                    <span style="font-size: 0.9rem;">{duration}</span>
-                    <span style="font-size: 1rem;">➜</span>
-                </div>
-                <div style="text-align: right;">
-                    <div style="font-size: 1rem; font-weight: bold; color: #333;">
-                        {arr_city} ({arr_tz}) ➜
-                    </div>
-                    <div style="font-size: 1.2rem; color: #6015e8;">
-                        {arr_time}
-                    </div>
-                </div>
-            </div>
-            <div style="
-                background: #f1edfd;
-                padding: 0.5rem 1.2rem;
-                font-size: 0.9rem;
-                text-align: right;
-                color: #6015e8;
-            ">
-                <!-- Optional: add price or flight code here -->
-            </div>
+
+# ---------------------------------------------------------------------------
+# PUBLIC API
+# ---------------------------------------------------------------------------
+
+def render_flight_banner(segment: dict) -> None:  # noqa: C901  (function is mostly HTML)
+    """Render a single flight *segment* in the Streamlit app.
+
+    The layout mirrors the card used in the browser extension and adds
+    automatic flag detection via the *city_country_map.yaml* file.
+
+    Parameters
+    ----------
+    segment : dict
+        Example structure::
+
+            {
+              "date": "Mon 23, June 2025",
+              "departure": {"city": "Abu Dhabi", "time": "07:15", "timezone": "UTC+4"},
+              "arrival":   {"city": "Almaty",   "time": "12:35", "timezone": "UTC+5"},
+              "duration": "05h 20m",
+              "flight_code": "5W7169",
+              "carrier": "Operated by 5W",   # optional
+              "price": "AED 42.00"           # optional
+            }
+    """
+
+    dep = segment["departure"]
+    arr = segment["arrival"]
+
+    dep_flag = _iso_to_flag(dep.get("country_code")) or _city_to_flag(dep["city"])
+    arr_flag = _iso_to_flag(arr.get("country_code")) or _city_to_flag(arr["city"])
+
+    card_css = (
+        "background:#fff;border:1px solid #e4e4e7;border-radius:0.75rem;"
+        "box-shadow:0 1px 4px rgba(0,0,0,.07);padding:0;overflow:hidden;"
+    )
+    header_css = (
+        "background:linear-gradient(90deg,#c90076 0%,#20006d 100%);color:#fff;"
+        "padding:0.5rem 0.8rem;font-weight:600;"
+    )
+    body_css = "padding:0.8rem 1rem;font-size:0.9rem;"
+
+    st.markdown(f"<div style='{card_css}'>", unsafe_allow_html=True)
+
+    # ---------------- Header ------------------------------------------------
+    header_text = f"✈️ {dep_flag} {dep['city']} ➜ {arr_flag} {arr['city']}"
+    st.markdown(f"<div style='{header_css}'>{header_text}</div>", unsafe_allow_html=True)
+
+    # ---------------- Body --------------------------------------------------
+    price_html = (
+        f"<span style='font-weight:600;color:#c90076;'>{segment['price']}</span>"
+        if segment.get("price")
+        else ""
+    )
+
+    carrier_html = (
+        f"<div style='margin-top:0.2rem;color:#71717a;'>{segment['carrier']}</div>"
+        if segment.get("carrier")
+        else ""
+    )
+
+    body_html = f"""<div style='{body_css}'>
+        <div><strong>{segment['date']}</strong></div>
+        <div style='display:flex;justify-content:space-between;margin-top:0.4rem;'>
+            <span>{dep['time']} {dep['timezone']} → {arr['time']} {arr['timezone']}</span>
+            <span>{segment['duration']}</span>
         </div>
-        """
-    return html_code
+        <div style='display:flex;justify-content:space-between;margin-top:0.2rem;'>
+            <span>{segment.get('flight_code','')}</span>
+            {price_html}
+        </div>
+        {carrier_html}
+    </div>"""
+
+    st.markdown(body_html, unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
 
 def get_last_modification_datetime(path: str):
