@@ -407,13 +407,13 @@ with tab2:
 
                 st.markdown("<strong>Outward Flight</strong>", unsafe_allow_html=True)
                 for seg in outward_segments:
-                    banner_html = render_flight_banner(seg)
-                    st.html(banner_html)
+                    render_flight_banner(seg)
+                    
 
                 st.markdown("<strong>Return Flight</strong>", unsafe_allow_html=True)
                 for seg in return_segments:
-                    banner_html = render_flight_banner(seg)
-                    st.html(banner_html)
+                    render_flight_banner(seg)
+                    
 
             else:
                 st.write("-" * 50)
@@ -423,15 +423,15 @@ with tab2:
 
                 # Display first_flight segments
                 for seg in first_segments:
-                    banner_html = render_flight_banner(seg)
-                    st.html(banner_html)
+                    render_flight_banner(seg)
+                    
 
                 # If there's a connecting flight
                 if second_segments:
                     st.markdown("<em>Connecting Flight</em>", unsafe_allow_html=True)
                     for seg in second_segments:
-                        banner_html = render_flight_banner(seg)
-                        st.html(banner_html)
+                        render_flight_banner(seg)
+                        
 
 
 with tab3:
