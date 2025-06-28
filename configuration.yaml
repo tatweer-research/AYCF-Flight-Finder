@@ -2,7 +2,7 @@ general:
   driver_path: edge-driver/msedgedriver
   page_loading_time: 5
   action_wait_time: 1
-  rate_limit_wait_time: 30
+  rate_limit_wait_time: 45
   headless: yes  # yes or no - if yes, the browser will not be displayed
   mode: roundtrip  # oneway or roundtrip
   time_stamp: ""
@@ -61,7 +61,9 @@ reporter:
   logo_path: data/logo.png
 
 scraper:
-  initialize_driver: no  # yes or no - if no, the driver will not be initialized
+  initialize_driver: yes  # yes or no - if no, the driver will not be initialized
+  session_uuid: "b128d7ef-d1e5-4b7a-aa5e-6e66fc5e4e73"  # Session UUID for API requests
+  xsrf_token: "eyJpdiI6InlGaE9ERHNFNmhUbFg2YmJxOGhraHc9PSIsInZhbHVlIjoiVFwvTWRrYnUwM0UxRnMwempOY280dE9COGNCUlFNWU1HdmQ3eGNHRTdPbUN6ZGVGSTF3TThwcEhzaWkzeVNqbXhCUjdTYWs0Y2RBdm9HY2xlR2lrVDlBPT0iLCJtYWMiOiI0M2NjNDYyNDhhMjY0ZDA3ZjBiNDFkMzAzMDQxZGM0YWMxZDg0MGI2OGZhNThjZWEyYWIyYTgyY2Q0ODcyM2RiIn0="  # XSRF token for API requests
 
 
 emailer:

@@ -1,12 +1,19 @@
+from __future__ import annotations
+
 import os
 import re
 from datetime import datetime, timedelta
-# import paramiko
-# from scp import SCPClient
-# from paramiko import RSAKey
+from functools import lru_cache
+from typing import Any, Dict, Mapping
 
 import pytz
 import streamlit as st
+import yaml
+
+
+# import paramiko
+# from scp import SCPClient
+# from paramiko import RSAKey
 
 
 def increment_date(date_str, days=1):
@@ -513,127 +520,199 @@ def parse_destination_line(line):
 # ------------------------------
 # Helper function for building HTML for each flight segment
 # ------------------------------
-def render_flight_banner(segment):
-    """
-    Renders a single flight segment in a 'banner' style with brand-themed colors.
-    """
-    # Extract segment data
-    carrier = segment.get("carrier", "Unknown Carrier")
-    flight_code = segment.get("flight_code", "N/A")
-    duration = segment.get("duration", "N/A")
-    price = segment.get("price", "N/A")
-    date = segment.get("date", "N/A")
+"""utils.py – helper functions for the Wizz Streamlit UI
 
-    dep_city = segment["departure"].get("city", "N/A")
-    dep_time = segment["departure"].get("time", "N/A")
-    dep_tz = segment["departure"].get("timezone", "")
+This version restores the original (pre‑refactor) **extension‑style** flight card you
+preferred while retaining automatic country‑flag detection via the bundled YAML.
 
-    arr_city = segment["arrival"].get("city", "N/A")
-    arr_time = segment["arrival"].get("time", "N/A")
-    arr_tz = segment["arrival"].get("timezone", "")
+All imports now appear *after* the module docstring but *before* any other code so that
+`from __future__ import annotations` sits in the legally required position.
 
-    html_code = f"""
-        <div style="
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            max-width: 600px;
-            margin: 1rem 0;
-            border-radius: 10px;
-            overflow: hidden;
-            background: #ffffff;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.08);
-            font-family: 'Arial', sans-serif;
-        ">
-            <div style="
-                background: #6015e8;
-                color: white;
-                padding: 0.8rem 1.2rem;
-                font-size: 1.1rem;
-                font-weight: bold;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            ">
-                <span>{date}</span>
-            </div>
-            <div style="
-                display: flex;
-                justify-content: space-between;
-                padding: 1rem;
-            ">
-                <div style="text-align: left;">
-                    <div style="font-size: 1rem; font-weight: bold; color: #333;">
-                        ✈ {dep_city} ({dep_tz})
-                    </div>
-                    <div style="font-size: 1.2rem; color: #6015e8;">
-                        {dep_time}
-                    </div>
-                </div>
-                <div style="
-                    text-align: center;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    color: #888;
-                ">
-                    <span style="font-size: 0.9rem;">{duration}</span>
-                    <span style="font-size: 1rem;">➜</span>
-                </div>
-                <div style="text-align: right;">
-                    <div style="font-size: 1rem; font-weight: bold; color: #333;">
-                        {arr_city} ({arr_tz}) ➜
-                    </div>
-                    <div style="font-size: 1.2rem; color: #6015e8;">
-                        {arr_time}
-                    </div>
-                </div>
-            </div>
-            <div style="
-                background: #f1edfd;
-                padding: 0.5rem 1.2rem;
-                font-size: 0.9rem;
-                text-align: right;
-                color: #6015e8;
-            ">
-                <!-- Optional: add price or flight code here -->
-            </div>
-        </div>
-        """
-    return html_code
+Place `data/city_country_map.yaml` at the repository root (next to `webapp.py`).
+"""
+
+# ---------------------------------------------------------------------------
+# Data helpers
+# ---------------------------------------------------------------------------
+
+# Path to the YAML shipped with the project (../data relative to this file)
+DATA_PATH = r"data/city_country_map.yaml"
 
 
-def get_last_modification_datetime(path: str):
-    # Get the last modification timestamp
-    mod_time = os.path.getmtime(path)
 
-    # Convert timestamp to a human-readable datetime format
-    return datetime.fromtimestamp(mod_time)
+@lru_cache(maxsize=1)
+def _city_to_country() -> Mapping[str, str]:
+    """Lazy‑load *city → ISO‑3166‑1 alpha‑2* mapping from the YAML file."""
+    try:
+        with open(DATA_PATH, "r", encoding="utf-8") as f:
+            raw: dict[str, str] = yaml.safe_load(f) or {}
+    except FileNotFoundError:
+        return {}
+    return {city.lower(): code.upper() for city, code in raw.items()}
 
 
-def create_header():
+# ---------------------------------------------------------------------------
+# Flag helpers
+# ---------------------------------------------------------------------------
+
+def _iso_to_flag(country_code: str | None) -> str:
+    """Return a 🇦🇪‑style flag emoji from a two‑letter ISO code or empty string."""
+    if not country_code or len(country_code) != 2 or not country_code.isalpha():
+        return ""
+    cc = country_code.upper()
+    return chr(ord(cc[0]) + 127397) + chr(ord(cc[1]) + 127397)
+
+
+def _city_to_flag(city: str | None) -> str:
+    """Best-effort city → flag lookup using the YAML mapping."""
+    if not city:
+        return ""
+    code = _city_to_country().get(city.lower())
+    return _iso_to_flag(code)
+
+
+# ---------------------------------------------------------------------------
+# CSS: gradient border, tidy card layout, mobile‑friendly route line
+# ---------------------------------------------------------------------------
+
+CARD_CSS = """
+<style>
+.wizz-card {
+  background: linear-gradient(128deg, #c90076 0%, #510077 100%);
+  border-radius: 1rem;
+  padding: 1px;
+  margin-bottom: 1.25rem;
+}
+.wizz-inner {
+  background: #ffffff;
+  border-radius: 0.9rem;
+  padding: 1rem 1.25rem;
+  font-family: system-ui, sans-serif;
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+.wizz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: .65rem;
+  font-weight: 600;
+  color: #510077;
+}
+.wizz-route {
+  font-size: 1.17rem;
+  font-weight: 500;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .35rem;
+  margin-top: .2rem;
+  margin-bottom: .9rem;
+}
+.wizz-route .city  { white-space: nowrap; }
+.wizz-route .arrow { flex: 0 0 auto; }
+
+.wizz-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: .25rem .75rem;
+  font-size: .9rem;
+  color: #4b5563;
+}
+.wizz-meta span:nth-child(odd) { font-weight: 500; }
+</style>
+"""
+
+
+# ---------------------------------------------------------------------------
+# Main renderer used by the Streamlit UI
+# ---------------------------------------------------------------------------
+
+def render_flight_banner(segment: Mapping[str, Any]) -> None:
+    """Render a single flight segment as a **Wizz‑style** card."""
+    dep = segment.get("departure", {})
+    arr = segment.get("arrival", {})
+
+    def _line(city_dict: Mapping[str, str]) -> str:
+        """Compose one side of the route with flag, city, time, and timezone."""
+        flag = _iso_to_flag(city_dict.get("country_code")) or _city_to_flag(
+            city_dict.get("city")
+        )
+        city = city_dict.get("city", "?")
+        time = city_dict.get("time", "??:??")
+        tz = city_dict.get("timezone")
+        tz_part = f" <small>({tz})</small>" if tz else ""
+        return f"{flag}&nbsp;{city}&nbsp;<strong>{time}</strong>{tz_part}"
+
+    html_parts: list[str] = [CARD_CSS, "<div class='wizz-card'><div class='wizz-inner'>"]
+
+    # Header row
+    html_parts.append(
+        f"<div class='wizz-header'>"
+        f"<span>{segment.get('date', '')}</span>"
+        f"<span>{segment.get('flight_code', '')}</span>"
+        f"</div>"
+    )
+
+    # Route line (flag city → flag city)
+    html_parts.append(
+        "<div class='wizz-route'>"
+        f"<span class='city'>{_line(dep)}</span>"
+        f"<span class='arrow'>&rarr;</span>"
+        f"<span class='city'>{_line(arr)}</span>"
+        "</div>"
+    )
+
+    # Meta-info grid
+    meta_items = [
+        ("Carrier", segment.get("carrier")),
+        ("Duration", segment.get("duration")),
+        ("Price", segment.get("price")),
+    ]
+    html_parts.append("<div class='wizz-meta'>")
+    for label, value in meta_items:
+        if value and str(value).lower() != "none":
+            html_parts.append(f"<span>{label}</span><span>{value}</span>")
+    html_parts.append("</div></div></div>")  # /wizz-meta, /inner, /card
+
+    st.markdown("\n".join(html_parts), unsafe_allow_html=True)
+
+
+# ---------------------------------------------------------------------------
+# Misc utility used elsewhere in the project
+# ---------------------------------------------------------------------------
+
+def get_last_modification_datetime(path: str) -> datetime:
+    """Return the *datetime* of last modification for *path*."""
+    return datetime.fromtimestamp(os.path.getmtime(path))
+
+
+def create_header() -> None:  # pragma: no cover
+    """Render the WhatsApp‑group promo + contact line."""
     import base64
-    # Load and encode the image
+
     with open("data/whatsapp.webp", "rb") as image_file:
         encoded_image = base64.b64encode(image_file.read()).decode()
-    # Render the HTML with partial clickable text
+
     st.markdown(
-        f'''
-    <div style="display: flex; align-items: center;">
-        <img src="data:image/webp;base64,{encoded_image}" width="24" style="margin-right: 8px;" />
-        <span><strong>Join our </strong>
-        <a href="https://chat.whatsapp.com/CHvgbPvqRcbJS0E6D4O8ka" target="_blank" style="text-decoration: none;">
-            <strong>WhatsApp group</strong>
-        </a></span>
+        f"""
+    <div style='display:flex;align-items:center;'>
+      <img src='data:image/webp;base64,{encoded_image}' width='24' style='margin-right:8px;' />
+      <span><strong>Join our </strong>
+      <a href='https://chat.whatsapp.com/CHvgbPvqRcbJS0E6D4O8ka' target='_blank' style='text-decoration:none;'>
+        <strong>WhatsApp group</strong></a></span>
     </div>
-    ''',
-        unsafe_allow_html=True
+    """,
+        unsafe_allow_html=True,
     )
+
     st.write("\n")
     st.markdown(
-        '<div style="color: gray; font-size: 0.85rem;">Interested in buying the source code and scraping method? '
-        'Contact us at <a href="mailto:contact@tatweer.network">contact@tatweer.network</a></div>',
-        unsafe_allow_html=True
+        (
+            "<div style='color:gray;font-size:0.85rem;'>Interested in buying the "
+            "source code and scraping method? Contact us at "
+            "<a href='mailto:contact@tatweer.network'>contact@tatweer.network</a></div>"
+        ),
+        unsafe_allow_html=True,
     )
     st.write("\n")
 
