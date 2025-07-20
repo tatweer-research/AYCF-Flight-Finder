@@ -28,7 +28,7 @@ def setup_rest_api(scraper):
     scraper.setup_browser()
     # Check a dummy flight to generate tokens
     finder = FlightFinderService()
-    flights = finder.find_possible_one_stop_flights(max_stops=0)
+    flights = finder.find_possible_one_stop_flights(max_stops=0, save_data=False)
     date = get_current_date()
     # Check a flight availability to generate the needed tokens
     if flights and 'first_flight' in flights[0]:
@@ -89,22 +89,22 @@ def round_trip_workflow(mode='classic'):
             checked_flights = {}
             success_count = 0
             dates = [increment_date(departure_date, i) for i in range(4)]
-            
+
             for date in dates:
                 possible_flights_data = flights.get('possible_flights', [])
                 api_flights = convert_possible_to_request_flights(possible_flights_data, date)
-                
+
                 for i, (flight_data, hash_) in enumerate(api_flights):
                     try:
                         response, url, headers, cookies = send_request_with_retries(
                             url, headers, cookies, flight_data, max_retries=3
                         )
-                        
+
                         if response is None:
                             logger.error(f"Request for {flight_data['origin']} → {flight_data['destination']} failed after retries")
                             checked_flights[f'{hash_}-{date}'] = None
                             continue
-                            
+
                         # After a certain number of successes, pause to avoid rate limiting
                         if success_count and success_count % 40 == 0:
                             logger.info("Pausing for 30 seconds to avoid rate limiting ⏳")
@@ -112,13 +112,13 @@ def round_trip_workflow(mode='classic'):
                             time.sleep(30)
                             scraper.setup_browser()
                             url, headers, cookies = prepare_request_data()
-                            
+
                         success_count += 1
                         logger.info(f"Request {flight_data['origin']} → {flight_data['destination']} succeeded ✅ (Total successes: {success_count})")
-                        
+
                         data = response.json()
                         response_flights = data.get("flightsOutbound")
-                        
+
                         if response_flights:
                             for response_flight in response_flights:
                                 convert_response_to_checked_flight(response_flight, hash_, date, checked_flights)
@@ -126,21 +126,21 @@ def round_trip_workflow(mode='classic'):
                             checked_flights[f'{hash_}-{date}'] = None
                     except Exception as e:
                         logger.exception(f"Error during request: {e}")
-                        
+
             # Save checked flights data
             data_manager.add_checked_flights(
                 {'checked_flights': checked_flights}
             )
         else:
             raise ValueError(f"Invalid mode: {mode}. Must be 'classic' or 'rest'.")
-            
+
         available_flights = flight_finder.find_available_roundtrip_flights()
         data_manager.add_available_flights(available_flights)
         reporter = ReportService()
         reporter.generate_roundtrip_flight_report()
         email_service.send_email(**oneway_kwargs, recipient_emails=[data_manager.config.emailer.recipient])
     except Exception as e:
-        logger.error(f"Failed to complete the round-trip workflow: {e}")
+        logger.exception(f"Failed to complete the round-trip workflow: {e}")
     finally:
         # Close the browser
         time.sleep(5)
@@ -380,7 +380,7 @@ def scrape_with_multiprocessing():
 if __name__ == '__main__':
     # check_possible_flights_workflow('oneway')
     # one_way_workflow(mode='rest')
-    # round_trip_workflow()
+    round_trip_workflow(mode='rest')
     # send_email()
     # schedule_one_way_workflow()
     # update_airports_database()
@@ -395,7 +395,7 @@ if __name__ == '__main__':
     # create_report('oneway')
     # create_report('roundtrip')
 
-    do_pending_jobs()
+    # do_pending_jobs()
 
     # Parallel Processing
     # while True:
