@@ -380,7 +380,7 @@ def scrape_with_multiprocessing():
 if __name__ == '__main__':
     # check_possible_flights_workflow('oneway')
     # one_way_workflow(mode='rest')
-    round_trip_workflow(mode='rest')
+    # round_trip_workflow(mode='rest')
     # send_email()
     # schedule_one_way_workflow()
     # update_airports_database()
@@ -395,7 +395,7 @@ if __name__ == '__main__':
     # create_report('oneway')
     # create_report('roundtrip')
 
-    # do_pending_jobs()
+    do_pending_jobs()
 
     # Parallel Processing
     # while True:
