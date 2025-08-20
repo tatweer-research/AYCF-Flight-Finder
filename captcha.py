@@ -92,17 +92,15 @@ def validate_captcha():
     Raises CaptchaError if validation fails.
     """
     user_input = st.session_state.get("captcha_input", "")
+    user_input = str(user_input).strip()
     
     if not user_input:
-        st.session_state.refresh_captcha = True
         raise CaptchaNotSetError("Please enter the captcha code.")
     
     try:
         if int(user_input) != st.session_state.captcha_answer:
-            st.session_state.refresh_captcha = True
             raise CaptchaIncorrectError("Incorrect captcha. Please try again.")
     except ValueError:
-        st.session_state.refresh_captcha = True
         raise CaptchaIncorrectError("Please enter a valid number.")
     
     # If we get here, captcha is valid
