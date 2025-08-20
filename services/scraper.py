@@ -407,7 +407,11 @@ class ScraperService:
             self.driver.maximize_window()
             self.click_anmelden()
             self.fill_in_login_info()
-            self.click_flug_suchen()
+            try:
+                self.click_flug_suchen()
+            except Exception as e:
+                logger.error(f"Failed to click 'Flug suchen': {e}")
+                pass
 
             logger.info("WizzAir site is ready.")
             self.__browser_ready = True
