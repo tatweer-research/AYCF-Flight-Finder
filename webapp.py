@@ -13,7 +13,7 @@ from services.data_manager import data_manager
 from services.logging_statistics import init_db, log_usage
 from settings import ConfigSchema
 from utils import render_flight_banner, get_last_modification_datetime, create_footer, create_header
-# from captcha import display_captcha, validate_captcha, CaptchaError, CaptchaNotSetError, CaptchaIncorrectError
+from captcha import display_captcha, validate_captcha, CaptchaError, CaptchaNotSetError, CaptchaIncorrectError
 
 
 PDF_REPORT_TAB_NAME = "PDF Report"
@@ -37,6 +37,36 @@ class DuplicateJobError(Exception):
 init_db(data_manager.config.data_manager.usage_logs_path)
 
 st.set_page_config(page_title="Wizz Flight Finder", page_icon="✈️")
+
+# CAPTCHA gate - must be completed before any content loads
+if 'captcha_verified' not in st.session_state:
+    st.session_state.captcha_verified = False
+
+if not st.session_state.captcha_verified:
+    st.title("Verification Required")
+    st.info("Please complete the CAPTCHA to proceed.", icon="🔒")
+    display_captcha()
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Verify", key="captcha_verify_button"):
+            try:
+                validate_captcha()
+                st.session_state.captcha_verified = True
+                st.success("Verification successful! Loading the app...")
+                st.rerun()
+            except CaptchaNotSetError as e:
+                st.warning(str(e))
+            except CaptchaIncorrectError as e:
+                st.error(str(e))
+            except CaptchaError as e:
+                st.error(str(e))
+    with col2:
+        if st.button("Refresh Captcha", key="captcha_refresh_button"):
+            st.session_state.refresh_captcha = True
+            st.rerun()
+    st.stop()
+
+# Main app header (rendered only after CAPTCHA passes)
 st.title("Wizz AYCF Flight Finder 🚀")
 st.markdown(
     '<small>An app by <a href="https://tatweer.network/" target="_blank" style="text-decoration: none; color: #4A90E2;">Tatweer®</a></small>',
