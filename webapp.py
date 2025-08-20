@@ -16,16 +16,6 @@ from utils import render_flight_banner, get_last_modification_datetime, create_f
 from captcha import display_captcha, validate_captcha, CaptchaError, CaptchaNotSetError, CaptchaIncorrectError
 
 
-# Fast, cache-aware loader for large YAML outputs
-@st.cache_data(show_spinner=False)
-def _load_yaml_cached(path: str, mtime_ts: float):
-    """
-    Load YAML content from disk, cached by (path, mtime).
-    The mtime_ts argument exists solely to invalidate the cache when the file changes.
-    """
-    return data_manager.load_data(path)
-
-
 PDF_REPORT_TAB_NAME = "PDF Report"
 IMMEDIATE_RESULTS_TAB_NAME = "Immediate Results"
 NOTIFY_ME_TAB_NAME = "Notify Me"
@@ -262,22 +252,24 @@ with tab2:
         "might be outdated or no longer available. Use it if you want a quick overview without waiting."
     )
 
-    # Load checked flights YAML (fast, cache-aware)
-    multi_path = data_manager.config.data_manager.multi_scraper_output_path
-    latest_dt = get_last_modification_datetime(multi_path)
-    latest_ts = latest_dt.timestamp()
+    # Load checked flights YAML
+    latest_scraper_output_mod_time = get_last_modification_datetime(
+        data_manager.config.data_manager.multi_scraper_output_path
+    )
 
-    # Use Streamlit cache so disk is not hit on every rerun unless file changed
-    scraper_output_data = _load_yaml_cached(multi_path, latest_ts)
+    if "last_scraper_output_mod_time" not in st.session_state or \
+            ("last_scraper_output_mod_time" in st.session_state and
+             st.session_state.last_scraper_output_mod_time < latest_scraper_output_mod_time) or \
+            "checked_flights" not in st.session_state:
+        # Update the session state with the latest modification time
+        st.session_state.last_scraper_output_mod_time = latest_scraper_output_mod_time
 
-    # Update session state only when needed
-    if (
-        "last_scraper_output_mod_time" not in st.session_state
-        or st.session_state.last_scraper_output_mod_time < latest_dt
-        or "checked_flights" not in st.session_state
-    ):
-        st.session_state.last_scraper_output_mod_time = latest_dt
-        st.session_state.checked_flights = scraper_output_data
+        # Load the latest multi-scraper output data
+        scraper_output_data = data_manager.load_data(data_manager.config.data_manager.multi_scraper_output_path)
+
+        # Store checked flights
+        checked_flights = scraper_output_data
+        st.session_state.checked_flights = checked_flights
 
     # Checkbox to enable/disable date selection
     all_possible_dates = st.checkbox("Check all possible dates (next 3 days)", key="tab2_checkbox")
